@@ -1,0 +1,19 @@
+<!-- 
+      ##TODO##
+  Side navigation from w3schools
+-->
+<div class="sidenav">
+  <a href="#">Fogadó</a>
+  <a href="#">Aréna</a>
+  <a href="#">Fegyverbolt</a>
+  <a href="#">Varázsbolt</a>
+  <a href="{% url 'profile' user_id=request.user.id %}">Karakter</a>
+  <a href="{% url 'public_chat' %}">Chat</a>
+  <a href="{% url 'search' %}">Hall of Heroes</a>
+  <a href="{% url 'logout' %}">Logout</a>
+</div>
+
+<!-- Page content 
+<div class="main">
+  ...
+</div>-->

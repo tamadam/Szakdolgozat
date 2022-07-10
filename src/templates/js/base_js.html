@@ -1,0 +1,31 @@
+<script type="text/javascript">
+	
+	function setProfilePicture(imageSource, elementId) {
+		// beállítja az igazi profilképet
+		let image = document.getElementById(elementId)
+		image.src = imageSource
+	}
+
+
+	function loadProfilePicture(imageSource, profileImageId){
+		// profilkép betöltését indítja el
+		var profileImageLoader = new Image()
+		profileImageLoader.src = imageSource
+
+		if !(profileImageLoader.complete){
+			profileImageLoader.onload = function(){
+				// beállítja az alapértelmezett profilképet
+				setProfilePicture(profileImageLoader.src, profileImageId)
+				profileImageLoader.onload = function(){
+					// pass
+				}
+			}
+		else{
+			setProfilePicture(profileImageLoader.src, profileImageId)
+			profileImageLoader.onload = function() {
+				// pass
+			}
+			}
+		}
+	}
+</script>
