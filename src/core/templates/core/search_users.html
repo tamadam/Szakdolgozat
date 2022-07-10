@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="main">
+	{% for character in characters %}
+		<p>{{character}}</p>
+	{% endfor %}
+</div>
+
+{% endblock %}
