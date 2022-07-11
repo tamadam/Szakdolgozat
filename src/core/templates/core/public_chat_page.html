@@ -80,6 +80,10 @@ PUBLIC CHAT oldal:
 <div id="online-users-id">
 
 </div>
+<div id="online-users-name-id">
+	
+	
+</div>
 	<div class="d-flex flex-column">
 		<div class="d-flex chat-messages" id="chat_messages_id">
 			
@@ -182,6 +186,7 @@ PUBLIC CHAT oldal:
 		}
 		else if (data.message_type == 5){
 			setNumberOfOnlineUsers(data.num_of_online_users)
+			setNameOfOnlineUsers(data.online_users_name)
 		}
 
 		if (data.messages_payload){
@@ -450,10 +455,14 @@ PUBLIC CHAT oldal:
 
 	function setNumberOfOnlineUsers(num){
 		online = document.getElementById("online-users-id")
+
 		online.innerHTML = 'Online lévők száma: ' + num
 	}
 
-
+	function setNameOfOnlineUsers(listOfUsers){
+		onlineNames = document.getElementById("online-users-name-id")
+		onlineNames.innerHTML = 'Online lévők neve: ' + listOfUsers
+	}
 
 	// <<<-------------------------------------------------->>> //
 	// <<<-------------------------------------------------->>> //

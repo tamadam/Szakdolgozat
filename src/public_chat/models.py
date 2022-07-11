@@ -48,6 +48,7 @@ class PublicChatRoom(models.Model):
 		return f"MainRoom_ID_{self.id}"
 
 
+
 class PublicChatRoomMessageManager(models.Manager):
 	def by_room(self, room):
 		"""

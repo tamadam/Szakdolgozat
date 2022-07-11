@@ -201,12 +201,17 @@ class PublicChatRoomConsumer(AsyncJsonWebsocketConsumer):
 			})
 
 
-		online_users = await get_room_users(room_id)
+		online_users_count = await get_number_of_users_in_room(room_id)
+		online_users_name = await get_name_of_the_users_in_room(room_id)
+
+
+
 		await self.channel_layer.group_send(
 				room.group_name,
 				{
 					'type': 'number.of.online.users',
-					'online_users': online_users,
+					'online_users': online_users_count,
+					'online_users_name': online_users_name,
 				}
 			)
 
@@ -238,13 +243,15 @@ class PublicChatRoomConsumer(AsyncJsonWebsocketConsumer):
 			)
 
 
-		online_users = await get_room_users(room_id)
+		online_users_count = await get_number_of_users_in_room(room_id)
+		online_users_name = await get_name_of_the_users_in_room(room_id)
 
 		await self.channel_layer.group_send(
 				room.group_name,
 				{
 					'type': 'number.of.online.users',
-					'online_users': online_users,
+					'online_users': online_users_count,
+					'online_users_name': online_users_name,					
 				}
 			)
 
@@ -270,16 +277,28 @@ class PublicChatRoomConsumer(AsyncJsonWebsocketConsumer):
 		await self.send_json({
 				'message_type': MESSAGE_TYPE_NUMBER_OF_ONLINE_USERS,
 				'num_of_online_users': event['online_users'],
+				'online_users_name': event['online_users_name'],
 			})
 
 
 
 @database_sync_to_async
-def get_room_users(room_id):
-    users = PublicChatRoom.objects.get(id=room_id).users
-    if users:
-        return len(users.all())
-    return 0
+def get_number_of_users_in_room(room_id):
+	users = PublicChatRoom.objects.get(id=room_id).users
+	if users:
+		return len(users.all())
+	return 0
+
+
+@database_sync_to_async
+def get_name_of_the_users_in_room(room_id):
+	online_users_name = []
+	users = PublicChatRoom.objects.get(id=room_id).users
+	if users:
+		for user in users.all():
+			online_users_name.append(user.username)
+		return online_users_name
+	return online_users_name
 
 
 
