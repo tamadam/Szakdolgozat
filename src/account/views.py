@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import *
-from .forms import AccountRegistrationForm
+from .forms import AccountRegistrationForm, AccountEditForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -70,36 +70,69 @@ def logout_view(request):
 	return redirect('login')
 
 
+@login_required(login_url='login')
 def profile_view(request, *args, **kwargs):
 	context = {}
+
 	user_id = kwargs.get('user_id')
 	try:
-		account = Character.objects.get(account=user_id)
-	except Character.DoesNotExist:
+		account = Account.objects.get(id=user_id)
+	except Account.DoesNotExist:
 		return HttpResponse('Account does not exist')
 
-	if account:
-		context = {
-			'username': account.account.username,
-			'character_type': account.character_type,
-			'user_id': account.account.id,
-			'level': account.level,
-			'strength': account.strength,
-			'profile_image': account.account.profile_image.url
-		}
+	owner_of_the_profile = False
+
+	if request.user.id == account.id: 
+		owner_of_the_profile = True
 
 
-	owner_of_the_profile = True
-	current_user = request.user
+	context = {
+		'username': account.username,
+		'user_id': account.id,
+		'level': account.character.level,
+		'strength': account.character.strength,
+		'profile_image': account.profile_image.url,
+		'character_type': account.character.character_type,
+		'is_owner': owner_of_the_profile,
+	}
 
-	if current_user.is_authenticated and current_user != account.account: #account.account mivel characterbol hivatkozunk a accountra
-		owner_of_the_profile = False
-	elif not current_user.is_authenticated:
-		owner_of_the_profile = False
 
-	context['is_owner'] = owner_of_the_profile
+	
 
 	return render(request, 'account/profile.html', context)
+
+
+@login_required(login_url='login')
+def edit_profile_view(request, *args, **kwargs):
+	context = {}
+	#print(','.join('{0}={1!r}'.format(k,v) for k,v in kwargs.items()))
+	user_id = kwargs.get('user_id')
+
+	try:
+		account = Account.objects.get(id=user_id)
+	except Account.DoesNotExist:
+		return HttpResponse('Account does not exist')
+
+	if request.user.id != account.id:
+		return HttpResponse('You are not allowed to edit other players profile')
+
+
+	# itt már biztosan mi akarjuk szerkeszteni a profilunkat
+
+	form = AccountEditForm(instance=account)
+
+	if request.method == 'POST':
+		form = AccountEditForm(request.POST, request.FILES, instance=account)
+		if form.is_valid():
+			form.save()
+			return redirect('profile', user_id=account.id)
+
+	context = {
+		'form': form,
+	}
+
+	return render(request, 'account/edit_profile.html', context)
+
 
 
 def set_warrior(user):

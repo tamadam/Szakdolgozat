@@ -45,7 +45,7 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('search/', users_search_view, name='search'),
     path('profile/<user_id>/', profile_view, name='profile'),
-
+    path('profile/', include('account.urls', namespace='account')),
 
     # other urls inside account app
     #path('account/', include('account.urls'))

@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth import get_user_model
 
 
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver	
 
 class CustomAccountManager(BaseUserManager):
@@ -45,7 +45,7 @@ class CustomAccountManager(BaseUserManager):
 
 
 
-def profile_image_path(self): #self, filename
+def profile_image_path(self, filename): #self, filename
 	return f'profile_images/{self.pk}/{"profile_image.png"}'
 
 
@@ -61,7 +61,7 @@ class Account(AbstractBaseUser):
 	date_joined		= models.DateTimeField(verbose_name = 'date joined', auto_now_add = True)
 	last_login		= models.DateTimeField(verbose_name = 'last login', auto_now = True)
 
-	#profile_image
+
 	#hide_email
 
 	# override the default behaviour since we inherit from AbstractBaseUser
@@ -100,8 +100,7 @@ class Account(AbstractBaseUser):
 
 	#save uploaded profile pic mas neven
 	def get_profile_image_filename(self):
-		return str(self.profile_image)[str(self.profile_image).index(f'profile_images/{self.pk}/'):]
-
+		return str(self.profile_image)[str(self.profile_image).index(f'profile_images/{self.pk}/'):],
 
 
 
@@ -160,6 +159,18 @@ def create_account(sender, instance, created, **kwargs):
 
 		profile 		= Character.objects.create(account=instance)
 		profile_history = CharacterHistory.objects.create(account=instance)
+
+
+
+# https://stackoverflow.com/questions/19287719/remove-previous-image-from-media-folder-when-imagefiled-entry-modified-in-django
+#https://docs.djangoproject.com/en/4.0/ref/models/fields/
+@receiver(pre_save, sender=Account)
+def delete_old_profile_image(sender, instance, **kwargs):
+	if instance.id:
+		account = Account.objects.get(id=instance.id)
+		if instance.profile_image and account.profile_image != instance.profile_image:
+			account.profile_image.delete(False)
+
 
 """
 

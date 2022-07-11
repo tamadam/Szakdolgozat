@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'core',
     'account',
     'public_chat',
+    'private_chat',
 
     # third party apps
 ]
