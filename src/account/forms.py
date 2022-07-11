@@ -20,7 +20,7 @@ class AccountEditForm(forms.ModelForm):
 		fields = ['username', 'email', 'profile_image']
 
 
-	def clean_username(self):
+	def check_username_availability(self):
 		username = self.cleaned_data['username'].lower()
 		try:
 			account = Account.objects.exclude(id=self.instance.id).get(username=username)

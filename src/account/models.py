@@ -6,6 +6,8 @@ from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver	
 
+from core.constants import *
+
 class CustomAccountManager(BaseUserManager):
 	# what happens when we create a new user
 	def create_user(self, username, email, password, **other_fields):
@@ -48,10 +50,10 @@ class CustomAccountManager(BaseUserManager):
 def profile_image_path(self, filename): #self, filename
 	return f'profile_images/{self.pk}/{"profile_image.png"}'
 
-
+"""
 def default_profile_image():
-	return 'images/logo_1080_1080.png'
-
+	return 'images/blank_profile_image.png'
+"""
 
 
 class Account(AbstractBaseUser):
@@ -76,7 +78,7 @@ class Account(AbstractBaseUser):
 	#is_warrior   	= models.BooleanField(default=False)
 	#is_mage 	 	= models.BooleanField(default=False)
 	#is_scout 		= models.BooleanField(default=False)
-	profile_image		= models.ImageField(null=True, blank=True, upload_to=profile_image_path, default=default_profile_image)
+	profile_image		= models.ImageField(null=True, blank=True, upload_to=profile_image_path)
 
 
 	# defining our CustomAccountManager
@@ -98,7 +100,7 @@ class Account(AbstractBaseUser):
 		return True
 
 
-	#save uploaded profile pic mas neven
+	#az adott profilkep elérési utja
 	def get_profile_image_filename(self):
 		print('get_profile_image_filename')
 		return str(self.profile_image)[str(self.profile_image).index(f'profile_images/{self.pk}/'):]
@@ -181,7 +183,11 @@ def delete_old_profile_image(sender, instance, **kwargs):
 		if instance.profile_image and account.profile_image != instance.profile_image:
 			account.profile_image.delete(False)
 		if not instance.profile_image and account.profile_image:
-			account.profile_image.delete(False) 
+			account.profile_image.delete(False)
+
+			
+
+
 
 """
 

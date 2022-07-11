@@ -3,8 +3,14 @@
 {% block content %}
 <div class="main">
 	{% for character in characters %}
-		<p>{{character}}</p>
+		<p id="all-user-list">{{character}}-{{character.account.id}}</p>
+		
 	{% endfor %}
 </div>
 
+
+<script type="text/javascript">
+
+
+</script>
 {% endblock %}

@@ -13,11 +13,10 @@
 
 <!--
 	{% if request.user.profile_image %}
-		<img src="{{ request.user.profile_image.url }}">
+		<img src="{{ profile_image }}">
 	{% else %}
-		<img src="{% static 'images/dummy_image.png' %}">
-	{% endif %}
--->
+		<img src="{% static 'images/blank_profile_image.png' %}">
+	{% endif %}-->
 	<img src="{{ profile_image }}">
 
 	{% if is_owner %}

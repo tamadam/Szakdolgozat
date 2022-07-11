@@ -15,7 +15,8 @@ from django.http import HttpResponse
 from django.contrib import messages
 
 from core.constants import STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
-
+from django.conf import settings 
+import os
 
 @anonymous_user
 def register_page_view(request):
@@ -97,13 +98,12 @@ def profile_view(request, *args, **kwargs):
 		'is_owner': owner_of_the_profile,
 	}
 
-
-	if request.user.profile_image:
+	# ha az adott felhasználói profilnak van profilképe állítsa be amúgy az alap
+	if account.profile_image:
 		context['profile_image'] = account.profile_image.url
-		print("van")
+		print(account.get_profile_image_filename())
 	else:
 		context['profile_image'] = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
-		print("nincs")
 
 
 

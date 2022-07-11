@@ -26,7 +26,7 @@ def users_search_view(request):
 
 	#characters = sorted(characters, key=lambda character: character.level, reverse=True)
 	# docs : https://wiki.python.org/moin/HowTo/Sorting#Sortingbykeys
-	characters = sorted(characters, key=attrgetter('level','honor','account.username'), reverse=True)
+	characters = sorted(characters, key=attrgetter('honor','level','account.username'), reverse=True)
 	#for character in characters:
 	#	print(character.level)
 
