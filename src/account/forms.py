@@ -20,14 +20,14 @@ class AccountEditForm(forms.ModelForm):
 		fields = ['username', 'email', 'profile_image']
 
 
-	def check_username_availability(self):
+	def clean_username(self):
 		username = self.cleaned_data['username'].lower()
 		try:
 			account = Account.objects.exclude(id=self.instance.id).get(username=username)
 		except Account.DoesNotExist:
 			return username
 		raise forms.ValidationError(f'{username} is already in use')
-
+		
 
 	def check_email_availability(self):
 		email = self.cleaned_data['email'].lower() # ##email az a htmlben az input neve##
@@ -36,5 +36,4 @@ class AccountEditForm(forms.ModelForm):
 		except Account.DoesNotExist:
 			return email
 		raise forms.ValidationError(f'{email} is already in use')
-
 

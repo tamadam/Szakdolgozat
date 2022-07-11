@@ -11,6 +11,13 @@
 	{{ strength }}<br>
 	{{level}}<br>
 
+<!--
+	{% if request.user.profile_image %}
+		<img src="{{ request.user.profile_image.url }}">
+	{% else %}
+		<img src="{% static 'images/dummy_image.png' %}">
+	{% endif %}
+-->
 	<img src="{{ profile_image }}">
 
 	{% if is_owner %}

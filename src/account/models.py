@@ -100,7 +100,9 @@ class Account(AbstractBaseUser):
 
 	#save uploaded profile pic mas neven
 	def get_profile_image_filename(self):
-		return str(self.profile_image)[str(self.profile_image).index(f'profile_images/{self.pk}/'):],
+		print('get_profile_image_filename')
+		return str(self.profile_image)[str(self.profile_image).index(f'profile_images/{self.pk}/'):]
+
 
 
 
@@ -166,11 +168,20 @@ def create_account(sender, instance, created, **kwargs):
 #https://docs.djangoproject.com/en/4.0/ref/models/fields/
 @receiver(pre_save, sender=Account)
 def delete_old_profile_image(sender, instance, **kwargs):
+	print(instance.profile_image)
+	"""
+	instance.profile_image : az aktuálisan feltöltött profilkép
+	account.profile_image  : a régebbi profilkép
+	Megnézzük először hogyha van új feltölteni kívánt profilkép, akkor a régit törölje ki
+	Ha nincs új feltölteni kívánt profilkép(azaz törölve lett a régi), akkor töröljük a mappából is
+	"""
 	if instance.id:
 		account = Account.objects.get(id=instance.id)
+		#print('instanceprof: ', instance.profile_image, 'accountprof ', account.profile_image)
 		if instance.profile_image and account.profile_image != instance.profile_image:
 			account.profile_image.delete(False)
-
+		if not instance.profile_image and account.profile_image:
+			account.profile_image.delete(False) 
 
 """
 

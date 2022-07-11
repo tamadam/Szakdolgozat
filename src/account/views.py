@@ -14,6 +14,8 @@ import json
 from django.http import HttpResponse
 from django.contrib import messages
 
+from core.constants import STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
+
 
 @anonymous_user
 def register_page_view(request):
@@ -85,16 +87,25 @@ def profile_view(request, *args, **kwargs):
 	if request.user.id == account.id: 
 		owner_of_the_profile = True
 
-
 	context = {
 		'username': account.username,
 		'user_id': account.id,
 		'level': account.character.level,
 		'strength': account.character.strength,
-		'profile_image': account.profile_image.url,
+		#'profile_image': account.profile_image.url,
 		'character_type': account.character.character_type,
 		'is_owner': owner_of_the_profile,
 	}
+
+
+	if request.user.profile_image:
+		context['profile_image'] = account.profile_image.url
+		print("van")
+	else:
+		context['profile_image'] = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
+		print("nincs")
+
+
 
 
 	
@@ -118,7 +129,7 @@ def edit_profile_view(request, *args, **kwargs):
 
 
 	# itt már biztosan mi akarjuk szerkeszteni a profilunkat
-
+	
 	form = AccountEditForm(instance=account)
 
 	if request.method == 'POST':

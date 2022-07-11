@@ -4,7 +4,7 @@ import json
 from django.conf import settings # import get_user_model-el hasonlo
 
 from .exceptions import ClientError, get_chat_room, handle_client_error
-from .constants import *
+from core.constants import *
 
 from .models import PublicChatRoom, PublicChatRoomMessage
 
@@ -120,13 +120,21 @@ class PublicChatRoomConsumer(AsyncJsonWebsocketConsumer):
 		# üzenet mentése az adatbázisba
 		await save_public_chat_room_message(user, room, message)
 
+		# ez a try except azért kell, hogyha nincs valakinek profilképe, akkor a default helyen lévőt állítsa be hozzá
+		try:
+			profile_image = self.scope['user'].profile_image.url
+		except Exception as e:
+			profile_image = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
+
+
 		await self.channel_layer.group_send(
 			room.group_name,
 			{
 				'type': 'chat.message', # chat_message
 				'user_id': self.scope['user'].id,
 				'username': self.scope['user'].username,
-				'profile_image': self.scope['user'].profile_image.url,
+				#'profile_image': self.scope['user'].profile_image.url,
+				'profile_image'	: profile_image,
 				'message': message
 			}
 		)
@@ -425,13 +433,20 @@ class EncodePublicChatRoomMessage(Serializer):
 		Függvény egy override
 		"""
 
+		# ez a try except azért kell, hogyha nincs valakinek profilképe, akkor a default helyen lévőt állítsa be hozzá
+		try:
+			profile_image = str(object.user.profile_image.url)
+		except Exception as e:
+			profile_image = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
+
 		message_obj = {
 			'message_id'	: 	str(object.id),
 			'message_type'	:	MESSAGE_TYPE_MESSAGE,
 			'message'		:	str(object.content),
 			'user_id'		:	str(object.user.id),
 			'username'		:	str(object.user.username),
-			'profile_image'	:  	str(object.user.profile_image.url),
+			#'profile_image'	:  	str(object.user.profile_image.url),
+			'profile_image'	:	profile_image,
 			'sending_time'	:	create_sending_time(object.sending_time),
 		}
 
