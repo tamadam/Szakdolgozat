@@ -37,3 +37,4 @@ class AccountEditForm(forms.ModelForm):
 			return email
 		raise forms.ValidationError(f'{email} is already in use')
 
+

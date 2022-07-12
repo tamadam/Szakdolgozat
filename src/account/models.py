@@ -168,15 +168,12 @@ def create_account(sender, instance, created, **kwargs):
 
 # https://stackoverflow.com/questions/19287719/remove-previous-image-from-media-folder-when-imagefiled-entry-modified-in-django
 #https://docs.djangoproject.com/en/4.0/ref/models/fields/
+
+instance_profpic = ""
+account_profpic = ""
+
 @receiver(pre_save, sender=Account)
-def delete_old_profile_image(sender, instance, **kwargs):
-	print(instance.profile_image)
-	"""
-	instance.profile_image : az aktuálisan feltöltött profilkép
-	account.profile_image  : a régebbi profilkép
-	Megnézzük először hogyha van új feltölteni kívánt profilkép, akkor a régit törölje ki
-	Ha nincs új feltölteni kívánt profilkép(azaz törölve lett a régi), akkor töröljük a mappából is
-	"""
+def pre_save_image(sender, instance, *args, **kwargs):
 	if instance.id:
 		account = Account.objects.get(id=instance.id)
 		#print('instanceprof: ', instance.profile_image, 'accountprof ', account.profile_image)
@@ -185,11 +182,24 @@ def delete_old_profile_image(sender, instance, **kwargs):
 		if not instance.profile_image and account.profile_image:
 			account.profile_image.delete(False)
 
-			
 
+	#instance.profile_image : az aktuálisan feltöltött profilkép
+	#account.profile_image  : a régebbi profilkép
+	#Megnézzük először hogyha van új feltölteni kívánt profilkép, akkor a régit törölje ki
+	#Ha nincs új feltölteni kívánt profilkép(azaz törölve lett a régi), akkor töröljük a mappából is
+	
+	#if instance.id:
+	#	account = Account.objects.get(id=instance.id)
+	#	#print('instanceprof: ', instance.profile_image, 'accountprof ', account.profile_image)
+	#	if instance.profile_image and account.profile_image != instance.profile_image:
+	#		account.profile_image.delete(False)
+	#	if not instance.profile_image and account.profile_image:
+	#		account.profile_image.delete(False)
 
 
 """
+
+
 
 @receiver(post_save, sender=Account)
 def update_account(sender, instance, created, **kwargs):

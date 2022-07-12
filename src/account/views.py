@@ -101,7 +101,7 @@ def profile_view(request, *args, **kwargs):
 	# ha az adott felhasználói profilnak van profilképe állítsa be amúgy az alap
 	if account.profile_image:
 		context['profile_image'] = account.profile_image.url
-		print(account.get_profile_image_filename())
+		#print(account.get_profile_image_filename())
 	else:
 		context['profile_image'] = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
 

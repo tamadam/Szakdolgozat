@@ -3,6 +3,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
 from django.urls import path
 from public_chat.consumers import PublicChatRoomConsumer
+from private_chat.consumers import PrivateChatRoomConsumer
 
 """
 ###   Django channels kapcsolódó dokumentáció: https://channels.readthedocs.io/en/latest/topics/routing.html#   ###
@@ -28,6 +29,7 @@ application = ProtocolTypeRouter({
 		AuthMiddlewareStack( 
 			URLRouter([
 				path('public_chat/<room_id>/', PublicChatRoomConsumer.as_asgi()),
+				path('private_chat/<room_id>/', PrivateChatRoomConsumer.as_asgi()),
 				]) 
 			)
 		),

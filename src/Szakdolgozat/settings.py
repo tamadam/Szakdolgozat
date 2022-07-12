@@ -153,7 +153,7 @@ USE_TZ = False # amúgy 2 órával hamarabbi időt mutat
 
 STATIC_URL = '/static/'
 
-MEDIA_URL = '/media/'
+MEDIA_URL = '/media_cdn/'
 
 STATICFILES_DIRS = [ # base directory to the static folder
     #BASE_DIR / 'static', # os.path.join(BASE_DIR, 'static')

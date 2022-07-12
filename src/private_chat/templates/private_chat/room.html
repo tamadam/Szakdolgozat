@@ -1,0 +1,344 @@
+<!-- PrivateChatRoom -->
+<!-- Chat room for 1 on 1 conversations -->
+<!-- TODO: ÁTDOLGOZNI AZ EGÉSZET-->
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- AJAXHOZ KELL JQUERY IMPORT -->
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+
+<style type="text/css">
+	.chat-log {
+		height: 500px;
+		overflow-x: hidden;
+		overflow-y: auto;
+		padding: 10px;
+		background-color: #fff;
+		font-size: 0.9em;
+		flex-direction: column-reverse;
+	}
+	.chat-message-input-container{
+		outline: none;
+		box-shadow: none;
+	}
+	.chat-message-input{
+		outline: none;
+		border: 1px solid #fff;
+		border-top: 2px solid var(--main-background-color);
+		
+	}
+	.message-container{
+		margin-top: 10px;
+		justify-content: start;
+	}
+	.username-span{
+		font-weight: 600;
+		margin-top: 0px;
+		margin-bottom: auto;
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+	.friend-message-span{
+		font-weight: 380;
+		margin-top: 0px;
+		margin-bottom: auto;
+		margin-left: 5px;
+		margin-right: 5px;
+		font-size: 0.6em;
+		color: var(--light-primary-text-color);
+	}
+	.timestamp-span{
+		font-weight: 400;
+		font-size: 0.8em;
+		color: var(--secondary-text-color);
+	}
+	.timestamp-span:hover{
+		cursor: pointer;
+	}
+	.msg-p{
+		font-weight: 450;
+		margin-top: 5px;
+		margin-bottom: auto;
+		margin-left: 5px;
+		margin-right: 5px;
+		white-space: normal;
+		-ms-word-break: break-all;
+		word-break: break-all;
+	}
+	.profile-image{
+		width: 33px;
+		height: 33px;
+		margin-top: 0px;
+		margin-bottom: auto;
+	}
+	.profile-image-small{
+		width: 25px;
+		height: 25px;
+		margin-top: 0px;
+		margin-bottom: auto;
+		margin-right: 5px;
+	}
+	.profile-image:hover{
+		cursor: pointer;
+	}
+	.profile-image-small:hover{
+		cursor: pointer;
+	}
+	.username-span:hover{
+		cursor: pointer;
+	}
+	.material-icons:hover{
+		cursor: pointer;
+	}
+	.card {
+		border-radius: 12px;
+	}
+	
+	#id_chatroom_loading_spinner{
+		position: absolute;
+	}
+	.friend-container:hover{
+		background: var(--main-background-color);
+		cursor: pointer;
+	}
+	.friends-list-container{
+		max-height: 500px;
+		overflow-y: scroll;
+	}
+</style>
+
+
+
+<div class="container">
+	<div class="row">
+		<div class="col-sm-9 m-0 p-2">
+			<div class="card" id="id_chatroom_card">
+				<div class="d-flex flex-row align-items-center card-header" id="id_room_title">
+				<a class="d-flex flex-row" id="id_user_info_container">
+				<!--	<img class="profile-image rounded-circle img-fluid" id="id_other_profile_image" src="{{message_and_user.profile_image}}">-->
+					<h3 class="ml-2" id="id_other_username"></h3>
+				</a>
+				
+				</div>
+				<div class="card-body p-1">
+					<div class="d-flex flex-column" id="id_chat_log_container">
+					
+						<div class="d-flex flex-row justify-content-center" id="id_chatroom_loading_spinner_container">
+							<div class="spinner-border text-primary"  id="id_chatroom_loading_spinner" role="status"  style="display: none; ">
+								<span class="sr-only">Loading...</span>
+							</div>
+						</div>
+						<div class="d-flex chat-log" id="id_chat_log">
+							
+						</div>
+						<span class="{% if not debug %}d-none{% endif %} page-number" id="id_page_number">1</span>
+						
+						<div class="d-flex flex-row chat-message-input-container">
+							<textarea class="flex-grow-1 chat-message-input" id="id_chat_message_input"></textarea>
+							<button class="btn btn-primary chat-message-submit-button">
+								<span id="id_chat_message_submit" class="material-icons">send
+								</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-sm-3 m-0 p-2">
+			<div class="card">
+				<div class="d-flex flex-row align-items-center card-header">
+					<h3 >Friends</h3>
+				</div>
+				<div class="card-body p-1">	
+					<div class="d-flex flex-column friends-list-container ">
+						{% for message_and_user in messages_and_users %}
+						<div class="d-flex flex-row p-2 friend-container flex-grow-1" onclick="onSelectFriend('{{message_and_user.other_user.id}}')" id="id_friend_container_{{message_and_user.other_user.id}}">
+							<img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{message_and_user.other_user.id}}" src="{{message_and_user.profile_image}}" >
+							<div class="d-flex flex-column">
+								<span class="username-span">{{message_and_user.other_user.username}}</span>
+								<span class="friend-message-span">{{message_and_user.message|truncatechars:20}}</span>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Client Error MODAL -->
+
+<script type="text/javascript">
+
+	// kinullázzuk minden egyes alkalommal, mivel váltogatunk a chatek között
+	var privateChatRoomSocket = null;
+	var roomId = null;
+
+	onStart()
+
+	function onStart(){
+		{% if messages_and_users %}
+			onSelectFriend("{{messages_and_users.0.other_user.id}}")
+		{% endif %}
+	}
+
+
+	function onSelectFriend(userId){
+		createOrReturnPrivateChat(userId)
+	}
+
+
+	function closeWebsocket(){
+		if(privateChatRoomSocket != null){
+			privateChatRoomSocket.close()
+			privateChatRoomSocket = null
+		}
+	}
+
+
+	function setupWebsocket(room_id){
+		console.log('open WebSocket ' + room_id)
+
+		roomId = room_id
+
+		closeWebsocket()
+		// WEBSOCKET BEÁLLÍTÁS FOLYAMATA KEZDETE //
+
+		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+
+		if ("{{ debug_mode }}")
+			var ws_path = ws_scheme + "://" + window.location.host + "/private_chat/" + roomId + "/"; // fejlesztéshez
+		else
+			var ws_path = ws_scheme + "://" + window.location.host + ":8001/private_chat/" + roomId + "/"; // élesben
+
+		// websocket beállítás
+		privateChatRoomSocket = new WebSocket(ws_path)
+
+		// websocket megnyitása
+		privateChatRoomSocket.onopen = function(event) {
+			console.log("Connection successfully created");
+
+		};
+
+		// felhasználó beléptetése az adott szobába miután a socket kapcsolat létrejött
+		privateChatRoomSocket.addEventListener("open", function(event) {
+			if ("{{request.user.is_authenticated}}"){
+				privateChatRoomSocket.send(JSON.stringify({
+					"command": "join",
+					"room_id": roomId,
+				}))
+			}
+		})
+
+		// bejövő üzeneket kezelése a consumertől
+		privateChatRoomSocket.onmessage = function(event) {
+			console.log("Data received from the server: ", event.data);
+			var data = JSON.parse(event.data)
+
+
+			// üzenet típus ellenőrzése
+
+			if (data.error){ // az error a consumerstől jön ha üres az üzenet
+				console.log(data.message)
+			}
+
+			if (data.join){
+				console.log(data.username, " joined the room")
+				// mikor a felhasználó csatlakozik a szobába, kapja meg a másik felhasználóról az adatok
+				getUserInformation()
+			}
+
+			if (data.leave){
+				console.log(data.username, " leaved the room")
+			}
+
+			// mikor a consumers.py-ban a send_info_about_user_payload beérkezik ez fut le
+			if (data.user_information){
+				handleSendInfoAboutUserPayload(data.user_information)
+			}
+		
+		};
+
+
+		// hibaüzenetek kiírása
+		privateChatRoomSocket.onerror = function(event) {
+			console.log("Error: ", event.message);
+		};
+
+
+		// websocket bezárása
+		privateChatRoomSocket.onclose = function(event) {
+			if (event.wasClean){
+				console.log("Connection closed");
+			}
+			else {
+				console.log("Connection died.");
+			}
+		};
+	}
+
+	// MÁSIK FELHASZNÁLÓ VÁLASZTÁSÁNÁL FELHASZNÁLÓI INFORMÁCIÓK LEKÉRDEZÉS ÉS MEGJELENÍTÉS // 
+
+
+	// elküldjük a parancsot a backendnek
+	function getUserInformation(){
+		privateChatRoomSocket.send(JSON.stringify({
+			"command": "get_info_about_user",
+			"room_id": roomId,
+		}));
+	}
+
+
+	// a beérkező adatcsomagot megjelenítjük a felületen
+	function handleSendInfoAboutUserPayload(user_information){
+		console.log(user_information)
+		document.getElementById("id_other_username").innerHTML = user_information.username
+		//document.getElementById("id_other_profile_image").classList.remove("d-none") // alapból láthatatlan, megjelenítjük ezt a mezőt
+		document.getElementById("id_user_info_container").href = "{% url 'profile' user_id=31323423 %}".replace("31323423", user_information.id)
+
+
+	}
+
+
+	// <<<-------------------------------------------------->>> //
+	// <<<-------------------------------------------------->>> //
+
+
+
+
+	//ajax ; id: the user akivel beszelni akarok
+	function createOrReturnPrivateChat(id){
+		payload = {
+			"csrfmiddlewaretoken": "{{csrf_token}}",
+			"user2_id": id,
+		}
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			url: "{% url 'private_chat:create_or_return_private_chat' %}",
+			data: payload,
+			timeout: 5000,
+			success: function(data){
+				console.log("SUCCESS", data)
+				if(data.message == 'Got your private chat'){
+					setupWebsocket(data.private_chat_room_id)
+				}
+				else if(data.message != null){
+					alert(data.message)
+				}
+			},
+			error: function(data){
+				console.log('Error')
+			},
+		})
+	}
+
+</script>
+
+{% endblock content %}

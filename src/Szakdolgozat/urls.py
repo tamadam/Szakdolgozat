@@ -31,6 +31,8 @@ from account.views import (
     profile_view,
     )
 
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 
@@ -49,6 +51,9 @@ urlpatterns = [
 
     # other urls inside account app
     #path('account/', include('account.urls'))
+
+    # private_chat app urls
+    path('messages/', include('private_chat.urls', namespace='private_chat')),
 ]
 
 # tell django where these staticfiles exists; urls host those resources

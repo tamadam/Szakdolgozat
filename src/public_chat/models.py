@@ -45,12 +45,12 @@ class PublicChatRoom(models.Model):
 		Group: channeleknek a kollekciója; channelek: maguk a userek 
 		Visszatérési értéke egy név, amelyre tudnak csatlakozni, ezáltal megkapják az elküldött üzeneteket
 		"""
-		return f"MainRoom_ID_{self.id}"
+		return f'MainRoom_ID_{self.id}'
 
 
 
 class PublicChatRoomMessageManager(models.Manager):
-	def by_room(self, room):
+	def get_chat_messages_by_room(self, room):
 		"""
 		Adott szobában lévő összes chat üzenet lekérdezése
 		"""

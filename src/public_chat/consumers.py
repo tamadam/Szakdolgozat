@@ -21,7 +21,6 @@ from django.core.paginator import Paginator
 from django.core.serializers import serialize
 
 
-USER = settings.AUTH_USER_MODEL
 
 # Docs : https://github.com/django/channels/blob/main/channels/generic/websocket.py
 
@@ -419,7 +418,7 @@ def get_public_chat_room_messages(room, page_number):
 
 	"""
 	try:
-		p = Paginator(PublicChatRoomMessage.objects.by_room(room), PUBLIC_CHAT_ROOM_MESSAGE_PAGE_SIZE)
+		p = Paginator(PublicChatRoomMessage.objects.get_chat_messages_by_room(room), PUBLIC_CHAT_ROOM_MESSAGE_PAGE_SIZE)
 
 		message = {}
 
@@ -445,7 +444,7 @@ def get_public_chat_room_messages(room, page_number):
 
 
 class EncodePublicChatRoomMessage(Serializer):
-	def get_dump_object(self, object):
+	def get_dump_object(self, obj):
 		"""
 		PublicChatRoomMessage object szerializálása, mikor payload-ként küldjük a view-hoz
 		JSON formátumra alakítjuk
@@ -454,19 +453,19 @@ class EncodePublicChatRoomMessage(Serializer):
 
 		# ez a try except azért kell, hogyha nincs valakinek profilképe, akkor a default helyen lévőt állítsa be hozzá
 		try:
-			profile_image = str(object.user.profile_image.url)
+			profile_image = str(obj.user.profile_image.url)
 		except Exception as e:
 			profile_image = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
 
 		message_obj = {
-			'message_id'	: 	str(object.id),
+			'message_id'	: 	str(obj.id),
 			'message_type'	:	MESSAGE_TYPE_MESSAGE,
-			'message'		:	str(object.content),
-			'user_id'		:	str(object.user.id),
-			'username'		:	str(object.user.username),
+			'message'		:	str(obj.content),
+			'user_id'		:	str(obj.user.id),
+			'username'		:	str(obj.user.username),
 			#'profile_image'	:  	str(object.user.profile_image.url),
 			'profile_image'	:	profile_image,
-			'sending_time'	:	create_sending_time(object.sending_time),
+			'sending_time'	:	create_sending_time(obj.sending_time),
 		}
 
 		return message_obj
