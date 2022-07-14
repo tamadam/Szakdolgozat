@@ -18,6 +18,19 @@ from django.http import HttpResponse
 def private_chat_page_view(request, *args, **kwargs):
 
 	user = request.user
+	room_id = request.GET.get('room_id')
+
+	context = {}
+
+	if room_id:
+		try:
+			room = PrivateChatRoom.objects.get(id=room_id)
+			print('BELLÜL VAGYOK')
+			context['room'] = room
+		except PrivateChatRoom.DoesNotExist:
+			print('PrivChatroomDoesNotExists')
+			pass
+	print('TULJOTTEM')
 
 	# Összes szoba amiben a felhasználó benne van
 	rooms_parameter_user1 = PrivateChatRoom.objects.filter(user1=user)
@@ -46,12 +59,15 @@ def private_chat_page_view(request, *args, **kwargs):
 				'profile_image': profile_image,
 			})
 
-
+	"""
 	context = {
 		'debug_mode': settings.DEBUG,
 		'messages_and_users': messages_and_users,
 	}
+	"""
 
+	context['debug_mode'] = settings.DEBUG
+	context['messages_and_users'] = messages_and_users
 
 	return render(request, 'private_chat/room.html', context)
 

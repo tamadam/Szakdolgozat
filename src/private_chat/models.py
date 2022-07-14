@@ -10,8 +10,8 @@ class PrivateChatRoom(models.Model):
 	user1			= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user1')
 	user2			= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user2')
 
-	def __str__(self):
-		return f'Private chat between {self.user1} and {self.user2}'
+	#def __str__(self):
+	#	return f'Private chat between {self.user1} and {self.user2}'
 
 
 	@property
@@ -22,6 +22,8 @@ class PrivateChatRoom(models.Model):
 class PrivateChatRoomMessageManager(models.Manager):
 	def get_chat_messages_by_room(self, room):
 		qs = PrivateChatRoomMessage.objects.filter(room=room).order_by('-sending_time')
+		
+		return qs
 
 
 class PrivateChatRoomMessage(models.Model):

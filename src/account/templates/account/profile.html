@@ -24,8 +24,13 @@
 		<a href="{% url 'account:edit' user_id=user_id%}">Módosítás</a>
 	{% else %}
 		<p>Nem tulajdonos</p>
+		<div class="d-flex flex-row align-items-center btn btn-primary m-2 px-4" onclick="createOrReturnPrivateChat('{{user_id}}')">
+			<span class="message-btn-text">Message</span>
+		</div>
 	{% endif %}
 	{{character_type}}
 </div>
+
+{% include 'private_chat/snippets/create_or_return_private_chat_room.html' %}
 
 {% endblock %}

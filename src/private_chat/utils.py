@@ -65,9 +65,9 @@ def format_older_messages_sending_time(sending_time):
 def format_today_messages_sending_time(sending_time):
 	current_time = timezone.now()
 	#sending_time = datetime.datetime(sending_time)
-	print(sending_time)
+	#print(sending_time)
 	elapsed_time = str((current_time-sending_time)).split(':')
-	print('ELAPSED TIME',elapsed_time)
+	#print('ELAPSED TIME',elapsed_time)
 	hour = int(elapsed_time[0])
 
 	minute = elapsed_time[1]
@@ -117,4 +117,5 @@ def create_sending_time(sending_time):
 	else:
 		message_time = format_older_messages_sending_time(sending_time)
 
+	#print(message_time)
 	return message_time

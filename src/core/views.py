@@ -4,6 +4,7 @@ from account.models import *
 from operator import attrgetter
 from django.conf import settings
 
+
 PUBLIC_CHAT_ROOM_ID = 1 # statikusan létrehozott ID, mivel ebből a szobából fixen 1 van
 
 
