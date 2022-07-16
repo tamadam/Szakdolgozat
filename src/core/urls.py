@@ -1,11 +1,11 @@
 from django.urls import path
 
 from core.views import (
-	# views
+	#list_accounts,
 	)
 
 app_name = 'core'
 
 urlpatterns = [
-	#path()
+	#path('list_accounts', list_accounts, name='list_accounts'),
 ]

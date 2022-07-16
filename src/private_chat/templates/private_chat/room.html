@@ -157,11 +157,12 @@
 				<div class="card-body p-1">	
 					<div class="d-flex flex-column friends-list-container ">
 						{% for message_and_user in messages_and_users %}
-						<div class="d-flex flex-row p-2 friend-container flex-grow-1" onclick="onSelectFriend('{{message_and_user.other_user.id}}')" id="id_friend_container_{{message_and_user.other_user.id}}">
+						<div class="d-flex flex-row p-2 friend-container flex-grow-1" onclick="selectUserChatRoom('{{message_and_user.other_user.id}}')" id="id_friend_container_{{message_and_user.other_user.id}}">
 							<img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{message_and_user.other_user.id}}" src="{{message_and_user.profile_image}}" >
 							<div class="d-flex flex-column">
 								<span class="username-span">{{message_and_user.other_user.username}}</span>
-								<span class="friend-message-span">{{message_and_user.message|truncatechars:20}}</span>
+								<!--<span class="friend-message-span">{{message_and_user.message|truncatechars:10}}</span>-->
+								<span>{{message_and_user.message|truncatechars:30}}</span>
 							</div>
 						</div>
 						{% endfor %}
@@ -190,24 +191,26 @@
 			console.log('TRUEEEE')
 			var room = "{{room}}"
 			if("{{room.user1}}" == "{{request.user}}") //ha a user az adott bejelentkezett felhasznalo
-				onSelectFriend("{{room.user2.id}}") //akkor a masik felt valasztom ki a szobabol
+				selectUserChatRoom("{{room.user2.id}}") //akkor a masik felt valasztom ki a szobabol
 			else
-				onSelectFriend("{{room.user1.id}}")
+				selectUserChatRoom("{{room.user1.id}}")
 			console.log("{{room.user1.id}}")
 			console.log("{{room.user2.id}}")
 		{% else %}
 			console.log("ELSE IS LEFUT")
 			{% if messages_and_users %}
-				onSelectFriend("{{messages_and_users.0.other_user.id}}")
+				selectUserChatRoom("{{messages_and_users.0.other_user.id}}")
 			{% endif %}
 		{% endif %}
+
+
 
 
 
 	}
 
 
-	function onSelectFriend(userId){
+	function selectUserChatRoom(userId){
 		createOrReturnPrivateChat(userId)
 	}
 
@@ -218,7 +221,7 @@
 			privateChatRoomSocket = null
 			clearChatMessage()
 			setPageNumber("1")
-			disableChatLogScrollListener()
+			disableChatMessageScrollListener()
 		}
 	}
 
@@ -274,7 +277,7 @@
 				// mikor a felhasználó csatlakozik a szobába, kapja meg a másik felhasználóról az adatok
 				getUserInformation()
 				getPrivateChatRoomMessages()
-				enableChatLogScrollListener()
+				enableChatMessageScrollListener()
 			}
 
 			if (data.leave){
@@ -288,6 +291,7 @@
 
 			if (data.message_type == 0){
 				appendChatMessage(data, false, true)
+
 			}
 			else if (data.message_type == 3 || data.message_type == 4){
 				showUserIsOnline(data)
@@ -359,8 +363,8 @@
 			data: payload,
 			timeout: 5000,
 			success: function(data){
-				console.log("SUCCESS", data)
-				if(data.message == 'Got your private chat'){
+				console.log("SUCCESS (IN ROOM.HTML)", data)
+				if(data.message == 'Got your private chat'){ // SUCCESS_MESSAGE_ON_FINDING_PRIVATE_CHAT
 					setupWebsocket(data.private_chat_room_id)
 				}
 				else if(data.message != null){
@@ -467,9 +471,9 @@
 	}
 
 
-	function chatLogScrollListener(e) {
-		var chatLog = document.getElementById("chat_messages_id")
-		if ((Math.abs(chatLog.scrollTop) + 2) >= (chatLog.scrollHeight - chatLog.offsetHeight)) {
+	function chatMessageScrollListener(e) {
+		var chatMessage = document.getElementById("chat_messages_id")
+		if ((Math.abs(chatMessage.scrollTop) + 2) >= (chatMessage.scrollHeight - chatMessage.offsetHeight)) {
 			getPrivateChatRoomMessages()
 		}
 	}
@@ -477,15 +481,15 @@
 	/*
 		Enable the function "chatLogScrollListener"
 	*/
-	function enableChatLogScrollListener(){
-		document.getElementById("chat_messages_id").addEventListener("scroll", chatLogScrollListener);
+	function enableChatMessageScrollListener(){
+		document.getElementById("chat_messages_id").addEventListener("scroll", chatMessageScrollListener);
 	}
 	
 	/*
 		Disable the function "chatLogScrollListener"
 	*/
-	function disableChatLogScrollListener(){
-		document.getElementById("chat_messages_id").removeEventListener("scroll", chatLogScrollListener)
+	function disableChatMessageScrollListener(){
+		document.getElementById("chat_messages_id").removeEventListener("scroll", chatMessageScrollListener)
 	}
 
 

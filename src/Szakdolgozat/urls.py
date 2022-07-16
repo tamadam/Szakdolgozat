@@ -54,6 +54,9 @@ urlpatterns = [
 
     # private_chat app urls
     path('messages/', include('private_chat.urls', namespace='private_chat')),
+
+    # core app urls
+    #path('core/', include('core.urls', namespace='core')),
 ]
 
 # tell django where these staticfiles exists; urls host those resources

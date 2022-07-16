@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 MESSAGE_TYPE_MESSAGE = 0 # NORMÁL ÜZENET
 
 MESSAGE_TYPE_JOIN = 3 # felhasználó belép a szobába
@@ -13,3 +16,6 @@ STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET = '/static/images/blank_profile_image.png'
 
 
 SUCCESS_MESSAGE_ON_FINDING_PRIVATE_CHAT = 'Got your private chat'
+
+
+DEFAULT_SENDING_TIME = datetime.strptime('Jan 1 1970  1:00AM', '%b %d %Y %I:%M%p')

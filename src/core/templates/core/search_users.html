@@ -1,16 +1,60 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+<style type="text/css">
+
+.characters_list {
+	height: 500px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	padding: 10px;
+	background-color: #fff;
+	font-size: 0.9em;
+	flex-direction: column-reverse;
+}	
+
+#characters_list p{
+	font-size: 20px;
+	display: inline-block;
+
+}
+
+
+
+#user-under-investigation:hover{
+	color: red;
+	cursor: pointer;
+
+}
+
+
+</style>
+
+
 <div class="main">
-	{% for character in characters %}
-		<p id="all-user-list">{{character}}-{{character.account.id}}</p>
+	<div id="characters_list">
+		<h1>Characters</h1>
+		<h3>Név, ID, Szint, Becsületpont</h3>
+		{% for character in characters %}
+		<!--user_id mivel a viewban azt varjuk-->
+		<p id="user-under-investigation" onclick="selectUser('{{character.account.id}}')">{{character}}-{{character.account.id}}
+		{{character.level}}-{{character.honor}}</p><br>
 		
-	{% endfor %}
+		{% endfor %}
+	</div>
 </div>
 
 
 <script type="text/javascript">
 
+	function selectUser(userId){
+	var url = "{% url 'profile' user_id=7347328438423 %}".replace("7347328438423", userId);
+	var win = window.open(url, "_self")
+	win.focus()
+	}
 
 </script>
+
+
 {% endblock %}

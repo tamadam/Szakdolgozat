@@ -22,7 +22,6 @@ class PrivateChatRoom(models.Model):
 class PrivateChatRoomMessageManager(models.Manager):
 	def get_chat_messages_by_room(self, room):
 		qs = PrivateChatRoomMessage.objects.filter(room=room).order_by('-sending_time')
-		
 		return qs
 
 
@@ -41,3 +40,7 @@ class PrivateChatRoomMessage(models.Model):
 
 	def __str__(self):
 		return self.content
+
+
+	def get_sending_time(self):
+		return self.sending_time

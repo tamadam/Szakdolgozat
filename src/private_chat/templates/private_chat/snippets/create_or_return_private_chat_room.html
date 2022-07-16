@@ -13,7 +13,9 @@
 			data: info_packet,
 			timeout: 5000,
 			success: function (data) {
-				if (data.message == "Got your private chat") //data.response
+				console.log("SUCCESS (IN FUNC.HTML)", data)
+
+				if (data.message == "Got your private chat") //data.response; SUCCESS_MESSAGE_ON_FINDING_PRIVATE_CHAT
 				{
 					privateChatRoomId = data.private_chat_room_id
 					onCreateOrGetPrivateChatRoomSuccess(privateChatRoomId)
