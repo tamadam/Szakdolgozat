@@ -11,7 +11,7 @@ from .decorators import anonymous_user
 from django.views.generic import ListView
 import json
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 
 from core.constants import STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
@@ -96,6 +96,7 @@ def profile_view(request, *args, **kwargs):
 		#'profile_image': account.profile_image.url,
 		'character_type': account.character.character_type,
 		'is_owner': owner_of_the_profile,
+		'gold': account.character.gold,
 	}
 
 	# ha az adott felhasználói profilnak van profilképe állítsa be amúgy az alap
@@ -143,6 +144,9 @@ def edit_profile_view(request, *args, **kwargs):
 	}
 
 	return render(request, 'account/edit_profile.html', context)
+
+
+
 
 
 

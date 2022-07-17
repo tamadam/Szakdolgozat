@@ -19,3 +19,8 @@ SUCCESS_MESSAGE_ON_FINDING_PRIVATE_CHAT = 'Got your private chat'
 
 
 DEFAULT_SENDING_TIME = datetime.strptime('Jan 1 1970  1:00AM', '%b %d %Y %I:%M%p')
+
+
+
+
+DEFAULT_ATTRIBUTE_INCREASE_VALUE = 4

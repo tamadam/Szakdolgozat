@@ -20,7 +20,7 @@ from datetime import datetime
 
 @login_required(login_url='login')
 def private_chat_page_view(request, *args, **kwargs):
-
+	print(request.GET.get('room_id'))
 	user = request.user
 	room_id = request.GET.get('room_id')
 

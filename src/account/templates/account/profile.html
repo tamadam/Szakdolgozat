@@ -3,6 +3,11 @@
 {% load static %}
 
 {% block content %}
+
+<!-- AJAXHOZ KELL JQUERY IMPORT -->
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+
 <div class="main">
 
 	<p>Profile</p>
@@ -10,6 +15,7 @@
 	{{ user_id }} <br>
 	{{ strength }}<br>
 	{{level}}<br>
+	{{gold}}<br>
 
 <!--
 	{% if request.user.profile_image %}
@@ -30,6 +36,8 @@
 	{% endif %}
 	{{character_type}}
 </div>
+
+
 
 {% include 'private_chat/snippets/create_or_return_private_chat_room.html' %}
 

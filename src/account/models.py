@@ -136,6 +136,9 @@ class Character(models.Model):
 	honor			= models.DecimalField(verbose_name='honor', max_digits=19, decimal_places=0, default = 1) #becsuletpont
 	#team
 
+	gold 			= models.DecimalField(verbose_name='gold', max_digits=20, decimal_places=0, default=100)
+	
+
 
 
 	def __str__ (self):

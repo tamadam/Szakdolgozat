@@ -47,7 +47,7 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('search/', users_search_view, name='search'),
     path('profile/<user_id>/', profile_view, name='profile'),
-    path('profile/', include('account.urls', namespace='account')),
+
 
     # other urls inside account app
     #path('account/', include('account.urls'))
@@ -56,7 +56,12 @@ urlpatterns = [
     path('messages/', include('private_chat.urls', namespace='private_chat')),
 
     # core app urls
-    #path('core/', include('core.urls', namespace='core')),
+    path('core/', include('core.urls', namespace='core')),
+
+    # account app urls
+    path('profile/', include('account.urls', namespace='account')),
+
+
 ]
 
 # tell django where these staticfiles exists; urls host those resources
