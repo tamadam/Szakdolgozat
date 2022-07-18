@@ -1,6 +1,16 @@
 from django.contrib import admin
 from account.models import Account
-from .models import Team
+from .models import Team, Membership
 
 
-admin.site.register(Team)
+class MembershipConfig(admin.TabularInline):
+	model = Membership
+	extra = 0
+
+class TeamAdmin(admin.ModelAdmin):
+	list_display = ['name', 'description']
+	inlines = [MembershipConfig]
+
+
+admin.site.register(Team, TeamAdmin)
+admin.site.register(Membership)
