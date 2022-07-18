@@ -61,6 +61,9 @@ urlpatterns = [
     # account app urls
     path('profile/', include('account.urls', namespace='account')),
 
+    # team app urls
+    path('team/', include('team.urls', namespace='team')),
+
 
 ]
 

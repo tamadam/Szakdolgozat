@@ -149,13 +149,13 @@
 			</div>
 		</div>
 
-		<div class="col-sm-3 m-0 p-2">
+		<div class="col-sm-3 m-0 p-2" id="recent-chat-with-users">
 			<div class="card">
 				<div class="d-flex flex-row align-items-center card-header">
 					<h3 >Friends</h3>
 				</div>
 				<div class="card-body p-1">	
-					<div class="d-flex flex-column friends-list-container ">
+					<div class="d-flex flex-column friends-list-container " id="refresh-me">
 						{% for message_and_user in messages_and_users %}
 						<div class="d-flex flex-row p-2 friend-container flex-grow-1" onclick="selectUserChatRoom('{{message_and_user.other_user.id}}')" id="id_friend_container_{{message_and_user.other_user.id}}">
 							<img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{message_and_user.other_user.id}}" src="{{message_and_user.profile_image}}" >
@@ -291,6 +291,8 @@
 
 			if (data.message_type == 0){
 				appendChatMessage(data, false, true)
+				refresh_page_part()
+				message_page_part()
 
 			}
 			else if (data.message_type == 3 || data.message_type == 4){
@@ -319,6 +321,37 @@
 				console.log("Connection died.");
 			}
 		};
+	}
+
+
+
+
+	// https://stackoverflow.com/questions/44541421/refreshing-div-using-ajax-in-a-django-template
+	function refresh_page_part(){
+		$.get(window.location.href,{},function(response){
+		var new_version = $('<div></div>').append(response);
+		var new_result = new_version.find('#refresh-me');
+		if(new_result.length){
+			$('#refresh-me').html( new_result.html() );
+			console.log('update');
+		}else{
+			console.log('something wrong');
+		}
+            });
+
+		setTimeout(refresh_page_part, 2000)
+/*
+		$.ajax({
+
+			url: "{% url 'private_chat:private_chat_page_view' %}",
+			success: function(data) {
+				console.log("REGRESG")
+  				$('#refresh-me').load('#refresh-me');
+
+                console.log('kesz')
+			}
+		});
+	*/
 	}
 
 	// MÁSIK FELHASZNÁLÓ VÁLASZTÁSÁNÁL FELHASZNÁLÓI INFORMÁCIÓK LEKÉRDEZÉS ÉS MEGJELENÍTÉS // 

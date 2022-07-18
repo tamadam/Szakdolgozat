@@ -8,6 +8,8 @@ from django.dispatch import receiver
 
 from core.constants import *
 
+from team.models import Team
+
 class CustomAccountManager(BaseUserManager):
 	# what happens when we create a new user
 	def create_user(self, username, email, password, **other_fields):
@@ -78,8 +80,9 @@ class Account(AbstractBaseUser):
 	#is_warrior   	= models.BooleanField(default=False)
 	#is_mage 	 	= models.BooleanField(default=False)
 	#is_scout 		= models.BooleanField(default=False)
-	profile_image		= models.ImageField(null=True, blank=True, upload_to=profile_image_path)
+	profile_image	= models.ImageField(null=True, blank=True, upload_to=profile_image_path)
 
+	team  	        = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, related_name='user_team')
 
 	# defining our CustomAccountManager
 	objects = CustomAccountManager()
@@ -134,7 +137,7 @@ class Character(models.Model):
 
 	rank			= models.DecimalField(verbose_name='rank', max_digits=19, decimal_places=0, blank = True, null = True) #helyezes
 	honor			= models.DecimalField(verbose_name='honor', max_digits=19, decimal_places=0, default = 1) #becsuletpont
-	#team
+	#team  	        = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, related_name='user_team')
 
 	gold 			= models.DecimalField(verbose_name='gold', max_digits=20, decimal_places=0, default=100)
 	

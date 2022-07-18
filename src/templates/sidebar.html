@@ -3,6 +3,7 @@
   Side navigation from w3schools
 -->
 <div class="sidenav">
+  <a href="{% url 'home_page' %}">Home</a>
   <a href="#">Fogadó</a>
   <a href="#">Aréna</a>
   <a href="#">Fegyverbolt</a>
@@ -11,6 +12,7 @@
   <a href="{% url 'public_chat' %}">Chat</a>
   <a href="{% url 'search' %}">Hall of Heroes</a>
   <a href="{% url 'private_chat:private_chat_room' %}">Levelek</a>
+  <a href="{% url 'team:user_team_view' %}">Csapat</a>
   <a href="{% url 'logout' %}">Logout</a>
 </div>
 

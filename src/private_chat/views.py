@@ -114,3 +114,71 @@ def create_or_return_private_chat(request, *args, **kwargs):
 		payload['message']: 'Authentication failure'
 
 	return HttpResponse(json.dumps(context), content_type='application/json')
+
+
+
+def refresh_page_part_view(request):
+	
+	user = request.user
+
+
+	context = {}
+
+	# Összes szoba amiben a felhasználó benne van
+	rooms_parameter_user1 = PrivateChatRoom.objects.filter(user1=user)
+	rooms_parameter_user2 = PrivateChatRoom.objects.filter(user2=user)
+
+	rooms = list(chain(rooms_parameter_user1, rooms_parameter_user2)) # mergeli és eltávolítja a duplikált elemeket
+
+	#[{'message:' 'mizu', 'user': 'tamadam'}, {'message:' 'semmi kul', 'user': 'harcos'}]
+	messages_and_users = []
+	users = []
+	for room in rooms:
+		if room.user1 == user:
+			other_user = room.user2
+		else:
+			other_user = room.user1
+
+		try:
+			profile_image = other_user.profile_image.url
+		except Exception as e:
+			profile_image = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
+
+		try:
+			recent_message = PrivateChatRoomMessage.objects.filter(room=room).order_by('-sending_time')[0]
+		except:
+			recent_message = (f'{room.user1} létrehozta a szobát')
+		"""
+		strhez a sending timeot is hozza kell adni
+		print('heh')
+		recent_message_list = str(recent_message).split()
+		recent_message = recent_message_list[0] # csak a message
+		date_string = recent_message_list[1] + " " + recent_message_list[2] # a dátum
+		print(date_string)
+		print('heh vege')
+		#print(PrivateChatRoomMessage.objects.filter(room=room).order_by('-sending_time')[0])
+		"""
+		try:
+			recent_message_sending_time = PrivateChatRoomMessage.objects.filter(room=room).order_by('-sending_time')[0].get_sending_time() # megkaptuk a legutolso uzenet kuldesi datumat
+		except:
+			# abban az esetben ha még nincs üzenet a szobában, küldési idő sem lehet, default érték
+			recent_message_sending_time = DEFAULT_SENDING_TIME
+
+		messages_and_users.append({
+				'message': recent_message,
+				'recent_message_sending_time': recent_message_sending_time,
+				'other_user': other_user,
+				'profile_image': profile_image,
+			})
+
+
+
+
+	messages_and_users = sorted(messages_and_users, key=lambda x: x['recent_message_sending_time'], reverse=True)
+
+
+
+	context['debug_mode'] = settings.DEBUG
+	context['messages_and_users'] = messages_and_users
+
+	return HttpResponse(context)
