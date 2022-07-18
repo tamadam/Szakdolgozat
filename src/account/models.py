@@ -8,7 +8,7 @@ from django.dispatch import receiver
 
 from core.constants import *
 
-from team.models import Team
+
 
 class CustomAccountManager(BaseUserManager):
 	# what happens when we create a new user
@@ -82,7 +82,7 @@ class Account(AbstractBaseUser):
 	#is_scout 		= models.BooleanField(default=False)
 	profile_image	= models.ImageField(null=True, blank=True, upload_to=profile_image_path)
 
-	team  	        = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, related_name='user_team')
+	#team  	        = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True, related_name='user_team')
 
 	# defining our CustomAccountManager
 	objects = CustomAccountManager()

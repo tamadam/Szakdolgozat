@@ -20,10 +20,6 @@ def home_page_view(request):
 	context = {} 
 
 	user = Character.objects.get(account=request.user)
-	#team_name = user.account.team
-
-	#if not team_name: # ha nincs értéke None
-	#	team_name = 'nincs csapatod'
 
 	context = {
 		'user_id': user.account.id,
@@ -34,7 +30,7 @@ def home_page_view(request):
 		'health_point': user.health_point,
 		'fortune': user.fortune,
 		'gold': user.gold,
-		#'team': team_name
+
 	}
 
 	return render(request, 'core/home_page.html', context)

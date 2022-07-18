@@ -9,6 +9,9 @@ class AccountAdminConfig(UserAdmin):
 	search_fields = ('username', 'email') # ezek alapjan lehet keresni az adminban
 	readonly_fields = ('id', 'date_joined', 'last_login')
 
+
+	
+	
 	#ezek hogy ne dobjon hibat
 	filter_horizontal = ()
 	list_filter = () #itt meg lehetne adni username email stb es az alapjan filterel
@@ -49,3 +52,5 @@ class CharacterHistoryConfig(admin.ModelAdmin):
 	readonly_fields = ['account']
 
 admin.site.register(CharacterHistory, CharacterHistoryConfig)
+
+
