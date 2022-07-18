@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'account',
     'public_chat',
     'private_chat',
+    'team',
     # third party apps
 ]
 
