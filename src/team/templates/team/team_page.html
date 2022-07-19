@@ -1,9 +1,105 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+<!-- AJAXHOZ KELL JQUERY IMPORT -->
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+
+<style>
+
+#initial {
+	display: block	;
+}
+
+#after-initial {
+	display: none;
+}
+
+#error-message {
+	display: block;
+}
+
+</style>
+
+
+
 <div class="main">
-	
-	<p>csapat</p>
+	{% if has_team %}
+		<h1>{{team_name}}</h1>
+		<h4>{{team_description}}</h4>
+		<p>Csapattagok: 
+			{% for member in team_members %}
+				{{member.username}}
+			{% endfor %}
+		</p>
+		<h5>{{user_id}}</h5>
+
+		<button onclick="leaveTeam('{{user_id}}')">Csapat elhagyása</button>
+	{% else %}
+		<div id="initial">
+		<h2>Jelenleg nincs csapatod</h2>
+
+		<button name="create-team-button" onclick="showCreateTeamForm()">Csapat létrehozása</button>
+		<button name="join-team-button" onclick="joinTeam()">Csatlakozás egy csapathoz</button>
+		</div>
+		<div id="after-initial">
+			<br>
+			<!-- Csak akkor jelenjen meg, hogyha rányomtunk egy gombra --> 
+			<form method="POST" action="" id="create-form">
+				{%csrf_token%}
+				{{form.as_p}}
+		 		<button type="submit" value="Add team">Csapat létrehozása</button>
+			</form>
+		</div>
+		<div id="error-message">
+		{% if not is_valid %}
+			<p>Hiba! Próbálj meg egy másik csapatnevet! </p>
+		{% endif %}
+		</div>
+	{% endif %}
 </div>
+
+
+<script type="text/javascript">
+	
+	function showCreateTeamForm() {
+		console.log('createTeamForm...')
+		var divTeamInitial = document.getElementById("initial")
+		divTeamInitial.style.display = "none"
+		var divTeamCreate = document.getElementById("after-initial")
+		divTeamCreate.style.display = "block"
+		var error = document.getElementById("error-message")
+		error.style.display = "none"
+
+	}
+
+	function leaveTeam(userId){
+		console.log('leaving team...')
+		payload = {
+			"csrfmiddlewaretoken": "{{csrf_token}}",
+			"user_id": userId,
+		}
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			url: "{% url 'team:leave_team' %}",
+			data: payload,
+			timeout: 5000,
+			success: function(response){
+				console.log('success')
+				location.reload()
+			},	
+			error: function(response){
+				console.log('error at ajax team_page')
+			},
+
+		})
+	}
+
+
+
+
+</script>
 
 {% endblock %}

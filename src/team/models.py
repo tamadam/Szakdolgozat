@@ -6,7 +6,8 @@ from django.conf import settings
 class Team(models.Model):
 	name 			= models.CharField(max_length=60, unique=True, blank=False)
 	description		= models.TextField(max_length=200, unique=False, blank=True, default="Leírás")
-	users 			= models.ManyToManyField(settings.AUTH_USER_MODEL, through='Membership', related_name='users')
+	date_created 	= models.DateTimeField(verbose_name = 'date created', auto_now_add = True, null=True)
+	users 			= models.ManyToManyField(settings.AUTH_USER_MODEL, through='Membership')
 
 
 	def __str__(self):
@@ -16,7 +17,7 @@ class Team(models.Model):
 class Membership(models.Model):
 	user 			= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 	team 			= models.ForeignKey(Team, on_delete=models.CASCADE)
-	date_joined 	= models.DateField()
+	date_joined 	= models.DateTimeField(verbose_name = 'date joined', auto_now_add = True, null=True)
 
 
 	class Meta:

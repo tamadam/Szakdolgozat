@@ -3,7 +3,7 @@ from account.models import Account
 from .models import Team, Membership
 
 
-class MembershipConfig(admin.TabularInline):
+class MembershipConfigInline(admin.TabularInline):
 	model = Membership
 	fields = ['user', 'date_joined']
 	readonly_fields = fields
@@ -18,10 +18,14 @@ class MembershipConfig(admin.TabularInline):
 
 
 class TeamAdmin(admin.ModelAdmin):
-	list_display = ['name', 'description']
-	inlines = [MembershipConfig]
+	list_display = ['name', 'description', 'date_created']
+	inlines = [MembershipConfigInline]
+
+
+class MembershipConfig(admin.ModelAdmin):
+	list_display = ['user', 'team', 'date_joined']
 
 
 
 admin.site.register(Team, TeamAdmin)
-admin.site.register(Membership)
+admin.site.register(Membership, MembershipConfig)
