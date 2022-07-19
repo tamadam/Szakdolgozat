@@ -1,9 +1,26 @@
 from django.contrib import admin
 from .models import Account, Character, CharacterHistory
 from django.contrib.auth.admin import UserAdmin
+from team.models import Team, Membership
+
+
+class TeamMembershipInLine(admin.TabularInline):
+	model = Membership
+	fields = ['team', 'date_joined']
+	readonly_fields = fields
+	extra = 0
+	max_num=0 # account modellből ne lehessen csapatot hozzáadni
+
+	# https://books.agiliq.com/projects/django-admin-cookbook/en/latest/remove_add_delete.html
+
+	def has_delete_permission(self, request, obj=None): # ne lehessen csapatot törölni account modellből
+		# Disable delete
+		return False
+
 
 # config how the admin panel should look like
 class AccountAdminConfig(UserAdmin):
+	inlines = [TeamMembershipInLine]
 	list_display = ('username', 'email', 'date_joined', 'is_admin')  #, 'is_warrior', 'is_mage', 'is_scout', 'is_admin') #kilistazza mi latszodjon
 	ordering = ('-date_joined', ) # ordering ascending/descending
 	search_fields = ('username', 'email') # ezek alapjan lehet keresni az adminban
