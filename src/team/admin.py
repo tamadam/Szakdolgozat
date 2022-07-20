@@ -20,6 +20,7 @@ class MembershipConfigInline(admin.TabularInline):
 class TeamAdmin(admin.ModelAdmin):
 	list_display = ['name', 'description', 'date_created']
 	inlines = [MembershipConfigInline]
+	readonly_fields = ['id']
 
 
 class MembershipConfig(admin.ModelAdmin):

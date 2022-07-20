@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<div class="main">
+	<div id="team-details">
+	Id {{team.id}}
+	<h1>{{team.name}}</h1>
+	<h3>{{team.description}}</h3>
+	Csapattagok: 
+	{% for member in team_members %}
+		{{member.username}} 
+	{% endfor %}
+	</div>
+	<div id="join-or-leave-section">
+		{% if is_own_team %}
+			<button onclick="leaveTeam('{{user_id}}')">Csapat elhagyása</button>
+		{% endif %}
+
+	</div>
+</div>
+
+<script type="text/javascript">
+
+	function leaveTeam(userId){
+	console.log('leaving team...')
+	payload = {
+		"csrfmiddlewaretoken": "{{csrf_token}}",
+		"user_id": userId,
+	}
+	$.ajax({
+		type: "POST",
+		dataType: "json",
+		url: "{% url 'team:leave_team' %}",
+		data: payload,
+		timeout: 5000,
+		success: function(response){
+			console.log('success')
+			if (response.team_is_deleted)
+				location.href = "{% url 'team:user_team_view' %}"
+			else{
+				location.reload()
+			}
+		},	
+		error: function(response){
+			console.log('error at ajax team_page')
+		},
+
+	})
+}
+
+
+
+</script>
+
+
+{% endblock %}

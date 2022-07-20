@@ -4,20 +4,22 @@
 
 <style type="text/css">
 
-.characters_list {
-	height: 500px;
-	overflow-x: hidden;
-	overflow-y: auto;
-	padding: 10px;
-	background-color: #fff;
-	font-size: 0.9em;
-	flex-direction: column-reverse;
+#characters-list {
+	display: block;
 }	
 
-#characters_list p{
+#characters-list p{
 	font-size: 20px;
 	display: inline-block;
 
+}
+
+#teams-list {
+	display: none;
+}
+
+#teams-list p{
+	display: inline-block;
 }
 
 
@@ -29,11 +31,19 @@
 }
 
 
+#team-paragh:hover{
+	color: red;
+	cursor: pointer;
+}
+
+
 </style>
 
 
 <div class="main">
-	<div id="characters_list">
+	<button id="characters-button" onclick="hideAndUnhide('showCharacters')">Karakterek</button>
+	<button id="teams-button" onclick="hideAndUnhide('showTeams')">Csapatok</button>
+	<div id="characters-list">
 		<h1>Characters</h1>
 		<h3>Név, ID, Szint, Becsületpont</h3>
 		{% for character in characters %}
@@ -43,10 +53,36 @@
 		
 		{% endfor %}
 	</div>
+	<div id="teams-list">
+
+		<p>Csapatok</p>
+		{% for team in teams %}
+			<h3><p id="team-paragh" onclick="selectTeam('{{team.id}}')">{{team.name}}</p></h3>
+		{% endfor %}
+	</div>
 </div>
 
 
 <script type="text/javascript">
+
+	function hideAndUnhide(buttonType){
+		var charactersDiv = document.getElementById("characters-list")
+		var teamsDiv = document.getElementById("teams-list")
+		if (buttonType == 'showCharacters'){
+			charactersDiv.style.display = 'block'
+			teamsDiv.style.display = 'none'
+		}
+		else if(buttonType == 'showTeams'){
+			charactersDiv.style.display = 'none'
+			teamsDiv.style.display = 'block'
+		}
+	}
+
+	function selectTeam(teamId){
+		var url = "{% url 'team:individual_team_view' team_id=7347328438423 %}".replace("7347328438423", teamId);
+		var win = window.open(url, "_self")
+		win.focus()
+	}
 
 	function selectUser(userId){
 	var url = "{% url 'profile' user_id=7347328438423 %}".replace("7347328438423", userId);

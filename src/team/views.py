@@ -11,6 +11,9 @@ from django.http import HttpResponse, JsonResponse
 
 # https://docs.djangoproject.com/en/4.0/topics/db/models/#extra-fields-on-many-to-many-relationships
 
+
+
+
 @login_required(login_url='login')
 def user_team_view(request):
 	context = {}
@@ -72,6 +75,9 @@ def user_team_view(request):
 			context['user_id'] = user.id
 
 
+	teams = Team.objects.all()
+	context['teams'] = teams
+
 	return render(request, 'team/team_page.html', context)
 
 
@@ -100,7 +106,43 @@ def leave_team(request):
 	# ha a csapatnak nincs több tagja, a csapat is törlődik
 	if len(user_team.users.all()) == 0:
 		Team.objects.get(id=team_id).delete()
+		context['team_is_deleted'] = True
+	else:
+		context['team_is_deleted'] = False
 
 	context['message'] = 'siker'
 
 	return HttpResponse(json.dumps(context), content_type='application/json')
+
+
+
+def individual_team_view(request, *args, **kwargs):
+	context = {}
+
+	team_id = kwargs.get('team_id')
+
+	try: 
+		team = Team.objects.get(id=team_id)
+	except Team.DoesNotExist:
+		return HttpResponse('Team does not exists')
+
+	user = Account.objects.get(id=request.user.id)
+
+	try:
+		membership = Membership.objects.get(user=user.id, team=team.id)
+		print('csapattag')
+		is_own_team = True
+	except Membership.DoesNotExist:
+		print('nem csapattag')
+		is_own_team = False
+		pass
+
+	context = {
+		'team': team,
+		'team_members': team.users.all(),
+		'is_own_team': is_own_team,
+		'user_id': user.id,
+	}
+
+
+	return render(request, 'team/individual_team.html', context)

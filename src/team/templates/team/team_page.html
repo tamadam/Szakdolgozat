@@ -20,11 +20,31 @@
 	display: block;
 }
 
+#individual-team-page{
+	display: block;
+}
+
+#teams-list{
+	display: none;
+}
+
+
+#teams-list p{
+	display: inline-block;
+}
+
+
+#team-paragh:hover{
+	color: red;
+	cursor: pointer;
+}
+
 </style>
 
 
 
 <div class="main">
+	<div id="individual-team-page">
 	{% if has_team %}
 		<h1>{{team_name}}</h1>
 		<h4>{{team_description}}</h4>
@@ -41,7 +61,7 @@
 		<h2>Jelenleg nincs csapatod</h2>
 
 		<button name="create-team-button" onclick="showCreateTeamForm()">Csapat létrehozása</button>
-		<button name="join-team-button" onclick="joinTeam()">Csatlakozás egy csapathoz</button>
+		<button name="join-team-button" onclick="showTeams()">Csatlakozás egy csapathoz</button>
 		</div>
 		<div id="after-initial">
 			<br>
@@ -58,13 +78,44 @@
 		{% endif %}
 		</div>
 	{% endif %}
+	</div>
+
+	<!-- TEAM LIST -->
+	<div id="teams-list">
+		<p>Csapatok</p>
+		{% for team in teams %}
+			<h3><p id="team-paragh" onclick="selectTeam('{{team.id}}')">{{team.name}}</p></h3>
+		{% endfor %}
+	</div>
 </div>
 
 
 <script type="text/javascript">
+
+
+	function selectTeam(teamId){
+		var url = "{% url 'team:individual_team_view' team_id=7347328438423 %}".replace("7347328438423", teamId);
+		var win = window.open(url, "_self")
+		win.focus()
+	}
+
+
 	
+	function showTeams(){
+		console.log("showing teams...")
+		var div = document.getElementById("individual-team-page")
+		div.style.display= "none"
+		var div2 = document.getElementById("teams-list")
+		div2.style.display = "block"
+
+
+
+	}
+
+
+
 	function showCreateTeamForm() {
-		console.log('createTeamForm...')
+		console.log("createTeamForm...")
 		var divTeamInitial = document.getElementById("initial")
 		divTeamInitial.style.display = "none"
 		var divTeamCreate = document.getElementById("after-initial")
@@ -88,7 +139,11 @@
 			timeout: 5000,
 			success: function(response){
 				console.log('success')
-				location.reload()
+				if (response.team_is_deleted)
+					location.href = "{% url 'team:user_team_view' %}" // ezen a viewn mindegy lenne hogyha csak reloadolnank, mivel azonban az individual team viewon ha csak sima reloadot tolunk amikor a csapat törlésre kerül, httpresponse csapat nem talaltat fogunk kapni, hiszen a csapat oldalara vinne vissza, ami nem letezik
+				else{
+					location.reload()
+				}
 			},	
 			error: function(response){
 				console.log('error at ajax team_page')

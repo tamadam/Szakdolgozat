@@ -8,6 +8,7 @@ import json
 from django.http import HttpResponse
 
 from core.constants import *
+from team.models import Team
 
 
 PUBLIC_CHAT_ROOM_ID = 1 # statikusan létrehozott ID, mivel ebből a szobából fixen 1 van
@@ -122,7 +123,13 @@ def users_search_view(request):
 		#dates_tmp.append(character.account.date_joined)
 	#print(characters)
 
-	context = {'characters': characters}
+	teams = Team.objects.all()
+
+	context = {
+		'characters': characters,
+		'teams': teams,
+		}
+
 
 	return render(request, 'core/search_users.html', context)
 
