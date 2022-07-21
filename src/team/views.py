@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from account.models import Account, Character
-from .models import Team, Membership
+from .models import Team, Membership, TeamMessage
 from .forms import TeamCreationForm
-
+from django.conf import settings
 import json
 from django.http import HttpResponse, JsonResponse
 
@@ -77,6 +77,8 @@ def user_team_view(request):
 
 	teams = Team.objects.all()
 	context['teams'] = teams
+
+
 
 	return render(request, 'team/team_page.html', context)
 
@@ -175,6 +177,10 @@ def individual_team_view(request, *args, **kwargs):
 		'has_team': has_team,
 		'user_id': user.id,
 	}
+
+	# CHAT RÉSZ ------------------------
+
+	context['debug_mode'] = settings.DEBUG
 
 
 	return render(request, 'team/individual_team.html', context)

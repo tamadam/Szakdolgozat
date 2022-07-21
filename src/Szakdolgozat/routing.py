@@ -4,6 +4,7 @@ from channels.security.websocket import AllowedHostsOriginValidator
 from django.urls import path
 from public_chat.consumers import PublicChatRoomConsumer
 from private_chat.consumers import PrivateChatRoomConsumer
+from team.consumers import TeamConsumer
 
 """
 ###   Django channels kapcsolódó dokumentáció: https://channels.readthedocs.io/en/latest/topics/routing.html#   ###
@@ -30,6 +31,7 @@ application = ProtocolTypeRouter({
 			URLRouter([
 				path('public_chat/<room_id>/', PublicChatRoomConsumer.as_asgi()),
 				path('private_chat/<room_id>/', PrivateChatRoomConsumer.as_asgi()),
+				path('team/<room_id>/', TeamConsumer.as_asgi()),
 				]) 
 			)
 		),
