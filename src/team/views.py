@@ -138,7 +138,7 @@ def join_team(request):
 	return HttpResponse(json.dumps(context), content_type='application/json')
 
 
-
+@login_required(login_url='login')
 def individual_team_view(request, *args, **kwargs):
 	context = {}
 
@@ -148,8 +148,10 @@ def individual_team_view(request, *args, **kwargs):
 		team = Team.objects.get(id=team_id)
 	except Team.DoesNotExist:
 		return HttpResponse('Team does not exists')
-
-	user = Account.objects.get(id=request.user.id)
+	try:
+		user = Account.objects.get(id=request.user.id)
+	except Account.DoesNotExist:
+		return HttpResponse('Account does not exists')
 
 	# ellenőrizzük, hogy az adott csapatban benne van-e a user
 	# ha nincs, akkor ellenőrizzük azt, hogy van-e csapata 
