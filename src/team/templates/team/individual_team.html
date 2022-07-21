@@ -15,13 +15,54 @@
 	</div>
 	<div id="join-or-leave-section">
 		{% if is_own_team %}
-			<button onclick="leaveTeam('{{user_id}}')">Csapat elhagyása</button>
-		{% endif %}
+			<button id="leave-team-button" onclick="leaveTeam('{{user_id}}')">Csapat elhagyása</button>
+		{% else %}
+			<button id="join-team-button" onclick="joinTeam('{{user_id}}', '{{team.id}}')">Csatlakozás</button>
 
+		{% endif %}
+		<div id="error-field">
+
+		</div>
 	</div>
 </div>
 
 <script type="text/javascript">
+
+
+	function joinTeam(userId, teamId){
+		console.log("joining team...")
+		if ('{{has_team}}' == 'True'){
+			console.log("amíg csapatod van nem csatlakozhatsz")
+			var divError = document.getElementById("error-field")
+			divError.innerHTML = "Nem csatlakozhatsz amíg másik csapat tagja vagy"
+		}
+		else{
+			console.log("JOIN TEAM")
+			payload = {
+				"csrfmiddlewaretoken": "{{csrf_token}}",
+				"user_id": userId,
+				"team_id": teamId,
+			}
+			$.ajax({
+				type: "POST",
+				dataType: "json",
+				url: "{% url 'team:join_team' %}",
+				data: payload,
+				timeout: 5000,
+				success: function(response) {
+					console.log('success')
+					location.reload()
+
+				},
+				error: function(response) {
+					console.log('error')
+				},
+			})
+		}
+	}
+
+
+
 
 	function leaveTeam(userId){
 	console.log('leaving team...')

@@ -115,6 +115,27 @@ def leave_team(request):
 	return HttpResponse(json.dumps(context), content_type='application/json')
 
 
+def join_team(request):
+	context = {}
+
+	user_id = request.POST.get('user_id')
+	print('user_id ' + user_id)
+	user = Account.objects.get(id=user_id)
+	print('felhasznalo ' + user.username)
+
+	team_id = request.POST.get('team_id')
+	print('team_id ' + team_id)
+	team = Team.objects.get(id=team_id)
+	print('csapat ' + team.name)
+
+
+	Membership.objects.create(user=user, team=team)
+
+	context['message'] = 'siker'
+
+	return HttpResponse(json.dumps(context), content_type='application/json')
+
+
 
 def individual_team_view(request, *args, **kwargs):
 	context = {}
@@ -128,19 +149,30 @@ def individual_team_view(request, *args, **kwargs):
 
 	user = Account.objects.get(id=request.user.id)
 
+	# ellenőrizzük, hogy az adott csapatban benne van-e a user
+	# ha nincs, akkor ellenőrizzük azt, hogy van-e csapata 
+	has_team = True
+	is_own_team = True
 	try:
-		membership = Membership.objects.get(user=user.id, team=team.id)
+		team_membership = Membership.objects.get(user=user.id, team=team.id)
 		print('csapattag')
-		is_own_team = True
 	except Membership.DoesNotExist:
 		print('nem csapattag')
 		is_own_team = False
-		pass
+		try:
+			membership = Membership.objects.get(user=user.id)
+			print('van csapata')
+		except Membership.DoesNotExist:
+			print('nincs csapata')
+			has_team = False
+
+
 
 	context = {
 		'team': team,
 		'team_members': team.users.all(),
 		'is_own_team': is_own_team,
+		'has_team': has_team,
 		'user_id': user.id,
 	}
 
