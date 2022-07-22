@@ -227,7 +227,8 @@
 			if (response.team_is_deleted)
 				location.href = "{% url 'team:user_team_view' %}"
 			else{
-				location.reload()
+				//location.reload()
+				location.href = "{% url 'team:user_team_view' %}"
 			}
 		},	
 		error: function(response){
