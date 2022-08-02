@@ -21,7 +21,6 @@ from django.conf import settings
 from core.views import (
     home_page_view,
     users_search_view,
-    public_chat_page_view,
     )
 
 from account.views import (
@@ -31,6 +30,12 @@ from account.views import (
     profile_view,
     )
 
+from public_chat.views import (
+    public_chat_page_view,
+    )
+
+
+
 
 
 urlpatterns = [
@@ -38,31 +43,32 @@ urlpatterns = [
 
     # core app urls
     path('', home_page_view, name='home_page'),
-    path('chat/', public_chat_page_view, name='public_chat'),
 
 
     # account app urls
-    path('register/', register_page_view, name='register'),
-    path('login/', login_page_view, name='login'),
-    path('logout/', logout_view, name='logout'),
-    path('search/', users_search_view, name='search'),
-    path('profile/<user_id>/', profile_view, name='profile'),
+    path('regisztracio/', register_page_view, name='register'),
+    path('bejelentkezes/', login_page_view, name='login'),
+    path('kilepes/', logout_view, name='logout'),
+    path('kereses/', users_search_view, name='search'),
+    path('profil/<user_id>/', profile_view, name='profile'),
 
 
     # other urls inside account app
     #path('account/', include('account.urls'))
 
     # private_chat app urls
-    path('messages/', include('private_chat.urls', namespace='private_chat')),
+    path('uzenetek/', include('private_chat.urls', namespace='private_chat')),
+
+    path('kozosseg/', public_chat_page_view, name='public_chat'),
 
     # core app urls
     path('core/', include('core.urls', namespace='core')),
 
     # account app urls
-    path('profile/', include('account.urls', namespace='account')),
+    path('profil/', include('account.urls', namespace='account')),
 
     # team app urls
-    path('team/', include('team.urls', namespace='team')),
+    path('csapat/', include('team.urls', namespace='team')),
 
 
 ]

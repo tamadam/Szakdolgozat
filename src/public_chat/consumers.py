@@ -1,38 +1,46 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
-import json
-from django.conf import settings # import get_user_model-el hasonlo
 
-from .exceptions import ClientError, get_chat_room, handle_client_error
+import json
+
+# Az exception kezelő osztály és függvény
+from .exceptions import ClientError, handle_client_error
+
+# Gyakran használt konstansok
 from core.constants import *
 
+# Modellek
 from .models import PublicChatRoom, PublicChatRoomMessage
 
-
-
-# küldési időhöz
-from django.contrib.humanize.templatetags.humanize import naturalday
+# Küldési idő kalkulálása
+from .utils import *
 from django.utils import timezone
-from datetime import datetime, date
 
-# chat üzenetek betöltése (pagination)
+
+# Chat üzenetek betöltése (pagination)
 from django.core.serializers.python import Serializer
 from django.core.paginator import Paginator
 from django.core.serializers import serialize
 
-
-
-# Docs : https://github.com/django/channels/blob/main/channels/generic/websocket.py
-
+"""
+Documentation used:
+ 	https://github.com/django/channels/blob/main/channels/generic/websocket.py
+	https://channels.readthedocs.io/en/stable/topics/consumers.html    	
+"""	
 
 class PublicChatRoomConsumer(AsyncJsonWebsocketConsumer):
 	async def connect(self):
 		"""
 		Csatlakozáskor használjuk, a kezdeti fázisban mikor a szerver és a kliens websocket kapcsolatra vált
+		Mindenkit hagyunk csatlakozni a websockethez, a jogot a chateléshez egy későbbi szakaszban ellenőrizzük
 		"""
-		print('PCRConsumer: ' + str(self.scope['user']) + ' connected') 
+
+		print('PublicChatConsumer: ' + str(self.scope['user']) + ' connected') 
+
+		# csatlakozás elfogadása
 		await self.accept()
 
+		# definiáljuk a room_id változót, a későbiekkben ebben lesz eltárolva melyik szobában vagyunk
 		self.room_id = None
 
 
@@ -40,27 +48,29 @@ class PublicChatRoomConsumer(AsyncJsonWebsocketConsumer):
 		"""
 		Mikor bezáródik a websocket kapcsolat a szerver és kliens között
 		"""
-		print('PCRConsumer: ' + str(self.scope['user']) + ' disconnected') 
+
+		print('PublicChatConsumer: ' + str(self.scope['user']) + ' disconnected') 
 		
+		# ellenőrizzük, hogy a room_id vissza lett-e állítva, és ha nem meghívjuk a megfelelő függvényt
 		try:
 			if self.room_id != None:
 				await self.leave_room(self.room_id)
-		except Exception as e:
-			print('Something went wrong when leaving the room')
+		except Exception as exception:
+			print('Exception during disconnect in PublicChatConsumer' + str(exception))
 			pass
 
 
 
 	async def receive_json(self, content, **kwargs):
 		"""
-		Dekódolt JSON üzenet, meghívódik mikor egy üzenetkeret jön
+		Dekódolt JSON üzenet, akkor hívódik meg, mikor valamilyen parancs érkezik a template-től
 		"""
 
 		# https://www.w3schools.com/python/ref_dictionary_get.asp
-		command = content.get('command', None) # payloadot kaptunk a templatettől
+		command = content.get('command', None)
 		room_id = content['room_id']
 
-		print('PCRConsumer: receive_json called with command: ' + str(command))
+		print('PublicChatConsumer: receive_json called with command: ' + str(command))
 
 
 		#message = content['message'] csak akkor lesz message ha send van
@@ -68,60 +78,58 @@ class PublicChatRoomConsumer(AsyncJsonWebsocketConsumer):
 		try:
 			if command == 'send':
 				message = content['message']
-				if len(message.lstrip()) == 0:
-					raise ClientError(422, 'Empty message not allowed')
-				await self.send_chat_message_to_room(room_id, message)
+				if len(message.lstrip()) != 0:
+					await self.send_chat_message_to_room(room_id, message)
+				else:
+					raise ClientError('EMPTY MESSAGE', 'Empty message not allowed')
 			elif command == 'join':
-				await self.join_room(room_id) #ez az a resz ahol room_id az room
+				await self.join_room(room_id)
 			elif command == 'leave':
 				await self.leave_room(room_id)
 			elif command == 'get_public_chat_room_messages':
 				page_number = content['page_number']
+				info_packet = await get_public_chat_room_messages(room_id, page_number) 
 
-				#room = get_chat_room(room_id)
-
-				messages_payload = await get_public_chat_room_messages(room_id, page_number) 
-
-				if messages_payload != None:
+				if info_packet != None:
 					# JSON formátum átalakítása python szótárrá
+					info_packet = json.loads(info_packet)
 
-					messages_payload = json.loads(messages_payload)
-
-					await self.load_messages_payload(messages_payload['messages'], messages_payload['load_page_number'])
+					await self.send_previous_messages_payload(info_packet['messages'], info_packet['load_page_number'])
 				else:
-					raise ClientError(204, 'Something went wrong when getting PublicChatRoom messages')
-		except ClientError as exception: # ha valamilyen hiba van, kihagyjuk a send_chat_message-t, hogy csak az adott személy kapja meg a hibaüzenetet
+					raise ClientError('NO_MESSAGES', 'Something went wrong when getting PublicChatRoom messages')
+		except ClientError as exception:
 			error = await handle_client_error(exception)
-			print('# ' + str(error))
 			await self.send_json(error)
+			return
 
 
 
 	async def send_chat_message_to_room(self, room_id, message):
 		"""
 		receive_json függvény hívja meg, mikor valaki üzenetet küld a chatszobába
+		Ez a függvény kezdi meg azt a folyamatot, amely az üzenetet az egész csoportnak elküldi
 		"""
 		user = self.scope['user']
-		print('PCRConsumer: send_chat_message_to_room from user: ' + user.username)
+		print('PublicChatConsumer: send_chat_message_to_room from user: ' + user.username)
 
-
+		# ellenőrizzük, hogy a szobában van-e az adott felhasználó
 		if self.room_id != None:
 			if str(room_id) != str(self.room_id):
-				raise ClientError('Room access denied', 'Room access denied')
+				raise ClientError('ROOM_ACCESS_DENIED', 'You are not allowed to be in this room')
 			if not user.is_authenticated:
-				raise ClientError('Room access denied', 'Room access denied')
+				raise ClientError('ROOM_ACCESS_DENIED', 'You are not allowed to be in this room')
 		else:
 			raise ClientError('Room access denied', 'Room access denied')
 
 
-		room = await get_chat_room(room_id)
+		room = await get_public_chat_room(room_id)
 
 		# üzenet mentése az adatbázisba
 		await save_public_chat_room_message(user, room, message)
 
-		# ez a try except azért kell, hogyha nincs valakinek profilképe, akkor a default helyen lévőt állítsa be hozzá
+		# ha valakinek nincs profilképe, az alapértelmezett profilképet kapja
 		try:
-			profile_image = self.scope['user'].profile_image.url
+			profile_image = user.profile_image.url
 		except Exception as e:
 			profile_image = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
 
@@ -130,9 +138,8 @@ class PublicChatRoomConsumer(AsyncJsonWebsocketConsumer):
 			room.group_name,
 			{
 				'type': 'chat.message', # chat_message
-				'user_id': self.scope['user'].id,
-				'username': self.scope['user'].username,
-				#'profile_image': self.scope['user'].profile_image.url,
+				'user_id': user.id,
+				'username': user.username,
 				'profile_image'	: profile_image,
 				'message': message
 			}
@@ -141,11 +148,11 @@ class PublicChatRoomConsumer(AsyncJsonWebsocketConsumer):
 
 	async def chat_message(self, event):
 		"""
-		Mikor valaki üzenetet küld a chatbe
+		Akkor fut le, mikor valaki üzenetet küld a chatbe
+		Itt történik a tényleges üzenet elküldés a templatehez(a kliensnek) 
 		"""
 
-		#üzenet küldés a kliensnek (send a payload back to the template); backend stuff
-		print('PCRConsumer: chat_message from user: ' + str(event['username']))
+		print('PublicChatConsumer: chat_message from user: ' + str(event['username']))
 
 
 		sending_time = create_sending_time(timezone.now())
@@ -166,28 +173,27 @@ class PublicChatRoomConsumer(AsyncJsonWebsocketConsumer):
 		Miután létrejött a websocket kapcsolat, küldünk egy payload-ot hogy a felhasználó csatlakozzon a szobához
 		Mikor valaki join parancsot küld, akkor hívódik meg
 		"""
-		print('PCRConsumer: join_room')
-
+		print('PublicChatConsumer: join_room')
+		user = self.scope['user']
 
 		try:
-			room = await get_chat_room(room_id)
+			room = await get_public_chat_room(room_id)
 		except ClientError as exception:
 			error = await handle_client_error(exception)
-			print('# ' + str(error))
 			await self.send_json(error)
+			return
 
 
-
-
-
-		user = self.scope['user']
-		if user.is_authenticated:
-			print(f'PCRConsumer: add user {user.username} to online users in group {room.group_name} ') #ezert kellhetett a property a modellben
-			await add_user(room, user)
-
+		# tároljuk hogy a szobában vagyunk
 		self.room_id = room.id
 
-		# hogy megkapják mások is az üzenetet, hozzá kell adni őket a grouphoz a consumeren belül
+		# hozzáadjuk az adott felhasználót a jelenleg chatben lévő felhasználók közé
+		if user.is_authenticated:
+			print(f'PublicChatConsumer: add user {user.username} to online users in group {room.group_name} ') 
+			await add_user(room, user)
+
+
+		# a channel(felhasználó tulajdonképpen) hozzáadása a csoporthoz, így megkapja mindenki az adott üzenetet
 		await self.channel_layer.group_add(
 			room.group_name,
 			self.channel_name
@@ -200,16 +206,17 @@ class PublicChatRoomConsumer(AsyncJsonWebsocketConsumer):
 			})
 
 
+		# online lévő felhasználók neve és száma 
 		online_users_count = await get_number_of_users_in_room(room_id)
 		online_users_name = await get_name_of_the_users_in_room(room_id)
 
 
-
+		# elküldjük az új online lévő felhasználók számát és nevét
 		await self.channel_layer.group_send(
 				room.group_name,
 				{
-					'type': 'number.of.online.users',
-					'online_users': online_users_count,
+					'type': 'online.users',
+					'online_users_count': online_users_count,
 					'online_users_name': online_users_name,
 				}
 			)
@@ -219,70 +226,93 @@ class PublicChatRoomConsumer(AsyncJsonWebsocketConsumer):
 		"""
 		Mikor valaki leave parancsot küld, meghívódik
 		"""
-		print('PCRConsumer: leave_room')
-		try:
-			room = await get_chat_room(room_id)
-		except ClientError as exception:
-			error = await handle_client_error(exception) # ha nincs kiszervezve a függvény: self.handle..
-			print('# ' + str(error))
-			await self.send_json(error)
-
-
-
+		print('PublicChatConsumer: leave_room')
 		user = self.scope['user']
-		if user.is_authenticated:
-			print(f'PCRConsumer: remove user {user.username} from online users in group {room.group_name} ') #ezert kellhetett a property a modellben
-			await remove_user(room, user)
+
+		try:
+			room = await get_public_chat_room(room_id)
+		except ClientError as exception:
+			error = await handle_client_error(exception)
+			await self.send_json(error)
+			return
+
 
 		self.room_id = None
 
+		# felhasználó törlése a jelenleg online lévő felhasználók közül
+		if user.is_authenticated:
+			print(f'PublicChatConsumer: remove user {user.username} from online users in group {room.group_name} ')
+			await remove_user(room, user)
+
+
+		# felhasználó törlése a csoportból
 		await self.channel_layer.group_discard(
 				room.group_name,
 				self.channel_name
 			)
 
-
+		# online lévő felhasználók neve és száma 
 		online_users_count = await get_number_of_users_in_room(room_id)
 		online_users_name = await get_name_of_the_users_in_room(room_id)
 
+		# elküldjük a frissített online felhasználók számát és nevét
 		await self.channel_layer.group_send(
 				room.group_name,
 				{
-					'type': 'number.of.online.users',
-					'online_users': online_users_count,
+					'type': 'online.users',
+					'online_users_count': online_users_count,
 					'online_users_name': online_users_name,					
 				}
 			)
 
 
-	async def load_messages_payload(self, messages, load_page_number):
+	async def send_previous_messages_payload(self, messages, load_page_number):
 		"""
-		Elküldi a viewnak a következő betöltött üzeneteket
+		Elküldi a viewnak a következő adag betöltött üzeneteket
+		Csak az adott kliensnek küldi el, nem az egész csoportnak
 		"""
 
-		print('PCRConsumer: load_messages_payload')
+		print('PublicChatConsumer: send_previous_messages_payload')
 		await self.send_json({
-				'messages_payload': 'sent_messages',
+				'message_packet': 'message_packet', # itt a keyword a lényeg, az onmessage függvény a kliens oldalon így fogja tudni kezelni
 				'messages': messages,
 				'load_page_number': load_page_number,
 			})
 
 
-	async def number_of_online_users(self, event):
+	async def online_users(self, event):
 		"""
 		Elküldi a szobához jelenleg csatlakozott felhasználók számát	
 		"""
 		#print('number_of_online_users')
 		await self.send_json({
-				'message_type': MESSAGE_TYPE_NUMBER_OF_ONLINE_USERS,
-				'num_of_online_users': event['online_users'],
+				'message_type': MESSAGE_TYPE_ONLINE_USERS,
+				'num_of_online_users': event['online_users_count'],
 				'online_users_name': event['online_users_name'],
 			})
 
 
 
+
+@database_sync_to_async
+def get_public_chat_room(room_id):
+	"""
+	Publikus chatszoba lekérése a felhasználónak (ha létezik)
+	"""
+	try:
+		room = PublicChatRoom.objects.get(pk=room_id)
+	except PublicChatRoom.DoesNotExist:
+		raise ClientError('EXIST_ERROR', 'PublicChatRoom does not exist')
+
+	return room
+
+
+
 @database_sync_to_async
 def get_number_of_users_in_room(room_id):
+	"""
+	Jelenleg online felhasználók számának lekérdezése
+	"""
 	users = PublicChatRoom.objects.get(id=room_id).users
 	if users:
 		return len(users.all())
@@ -291,6 +321,9 @@ def get_number_of_users_in_room(room_id):
 
 @database_sync_to_async
 def get_name_of_the_users_in_room(room_id):
+	"""
+	Jelenleg online felhasználók nevének lekérdezése
+	"""
 	online_users_name = []
 	users = PublicChatRoom.objects.get(id=room_id).users
 	if users:
@@ -300,107 +333,6 @@ def get_name_of_the_users_in_room(room_id):
 	return online_users_name
 
 
-
-def format_older_messages_sending_time(sending_time):
-	months = {
-		1 	: 'Január',
-		2 	: 'Február',
-		3 	: 'Március',
-		4 	: 'Április',
-		5 	: 'Május',
-		6 	: 'Június',
-		7 	: 'Július',
-		8 	: 'Augusztus',
-		9 	: 'Szeptember',
-		10 	: 'Október',
-		11 	: 'November',
-		12 	: 'December',
-	}
-
-	current_day = timezone.now()
-	#print('sendingtime' ,sending_time)
-
-
-	year_month_day = str(sending_time).split()[0]
-	#print('YMD:', year_month_day)
-	year = year_month_day.split('-')[0]
-	#print('year', year)
-	month = int(year_month_day.split('-')[1].lstrip('0')) # 2022-07-07 19:17:47.314147 --> ['2022', '07', '07'] --> 7
-	#print('month', month)
-	day = year_month_day.split('-')[2]
-	#print('day', day)
-
-	#month_number = int(str(sending_time).split()[0].split('-')[1].lstrip('0')) 
-
-	month_name = list({v for k,v in months.items() if k==month})[0]
-	
-	message_age_in_days = int(str(current_day-sending_time)[0])
-
-	if message_age_in_days > 7:
-		return f'{year}. {month_name}. {day}'
-	elif message_age_in_days <= 7:
-		return f'{message_age_in_days} napja'
-	else:
-		return 'ismeretlen küldési idő'
-
-
-
-def format_today_messages_sending_time(sending_time):
-	current_time = timezone.now()
-	#sending_time = datetime.datetime(sending_time)
-	print(sending_time)
-	elapsed_time = str((current_time-sending_time)).split(':')
-	print('ELAPSED TIME',elapsed_time)
-	hour = int(elapsed_time[0])
-
-	minute = elapsed_time[1]
-	if minute != '00': # 00 -> int('')
-		minute = int(minute.lstrip('0')) # 07 -> 7
-	else:
-		minute = 0
-
-	second = elapsed_time[2].split('.')[0]
-	if second != '00': # 00 -> int('')
-		second = int(second.lstrip('0')) # 03.12345 --> 3
-	else:
-		second = 0
-
-	#print(hour, minute, second)
-
-	if hour == 0 and minute == 0 and second < 4:
-		return 'éppen most'
-	elif hour == 0 and minute == 0 and second >= 4:
-		return f'{second} másodperce'
-	elif hour == 0 and minute > 0:
-		return f'{minute} perce'
-	elif hour > 0:
-		return f'{hour} órája'
-	else:
-		return 'ismeretlen küldési idő'
-
-
-
-def create_sending_time(sending_time):
-	"""
-	Az üzenet küldési idejét számolja ki a következő módon:
-		-> küldés adott napon: eltelt órák/percek/másodpercek száma
-		-> küldés tegnap: küldési időpont
-		-> küldés régebben: - küldés 7 napon belül: eltelt napok száma 
-							- küldés 7 napnál régebben: dátum
-	"""
-
-	# example 3: https://www.programiz.com/python-programming/datetime/strftime
-
-
-	if(naturalday(sending_time) == 'today'):
-		message_time = format_today_messages_sending_time(sending_time)
-	elif(naturalday(sending_time) == 'yesterday'):
-		message_time = datetime.strftime(sending_time, '%H:%M')
-		message_time = 'tegnap ' + str(message_time)
-	else:
-		message_time = format_older_messages_sending_time(sending_time)
-
-	return message_time
 
 
 
@@ -415,7 +347,7 @@ def save_public_chat_room_message(user, room, message):
 @database_sync_to_async
 def get_public_chat_room_messages(room, page_number):
 	"""
-
+	Publikus chatszoba üzeneteinek lekérdezése, egyszerre egy megadott érték szerint
 	"""
 	try:
 		p = Paginator(PublicChatRoomMessage.objects.get_chat_messages_by_room(room), PUBLIC_CHAT_ROOM_MESSAGE_PAGE_SIZE)
@@ -427,20 +359,21 @@ def get_public_chat_room_messages(room, page_number):
 		# elértük e az utolsó oldalt
 		if load_page_number <= p.num_pages:
 			load_page_number = load_page_number + 1
+
 			s = EncodePublicChatRoomMessage()
+
 			message['messages'] = s.serialize(p.page(page_number).object_list)
 		else:
 			message['messages'] = 'None'
 		message['load_page_number'] = load_page_number
 
 		# python szótár konvertálása JSON objektummá és visszatérés az értékkel
-
 		return json.dumps(message)
 
 	except Exception as exception:
-		#print('get_chat: Something went wrong when getting PublicChatRoom messages')
-		print(exception)
-		return None
+		print('Error when getting public chat messages' + str(exception))
+	
+	return None
 
 
 class EncodePublicChatRoomMessage(Serializer):
@@ -451,10 +384,10 @@ class EncodePublicChatRoomMessage(Serializer):
 		Függvény egy override
 		"""
 
-		# ez a try except azért kell, hogyha nincs valakinek profilképe, akkor a default helyen lévőt állítsa be hozzá
+		# ha valakinek nincs profilképe, az alapértelmezett profilképet kapja
 		try:
 			profile_image = str(obj.user.profile_image.url)
-		except Exception as e:
+		except Exception as exception:
 			profile_image = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
 
 		message_obj = {
@@ -463,7 +396,6 @@ class EncodePublicChatRoomMessage(Serializer):
 			'message'		:	str(obj.content),
 			'user_id'		:	str(obj.user.id),
 			'username'		:	str(obj.user.username),
-			#'profile_image'	:  	str(object.user.profile_image.url),
 			'profile_image'	:	profile_image,
 			'sending_time'	:	create_sending_time(obj.sending_time),
 		}

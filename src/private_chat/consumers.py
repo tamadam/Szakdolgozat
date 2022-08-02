@@ -1,20 +1,26 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 
-
 import json
 
-from .models import *
-from account.utils import EncodeAccountObject
+# Az exception kezelő osztály és függvény
+from public_chat.exceptions import ClientError, handle_client_error
 
-from .utils import *
-from django.utils import timezone
-
+# Gyakran használt konstansok
 from core.constants import *
 
+# Modellek
+from .models import *
 
-from .exceptions import ClientError, handle_client_error
+# Account object szerializálása
+from account.utils import EncodeAccountObject
 
+# Küldési idő kalkulálása
+from public_chat.utils import *
+from django.utils import timezone
+
+
+# Chat üzenetek betöltése (pagination)
 from django.core.serializers.python import Serializer
 from django.core.paginator import Paginator
 from django.core.serializers import serialize
@@ -24,10 +30,15 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 	async def connect(self):
 		"""
 		Csatlakozáskor használjuk, a kezdeti fázisban mikor a szerver és a kliens websocket kapcsolatra vált
+		Mindenkit hagyunk csatlakozni a websockethez, a jogot a chateléshez egy későbbi szakaszban ellenőrizzük
 		"""
-		print('PrCRConsumer: ' + str(self.scope['user']) + ' connected') 
+
+		print('PrivateChatConsumer: ' + str(self.scope['user']) + ' connected') 
+
+		# csatlakozás elfogadása
 		await self.accept()
 
+		# definiáljuk a room_id változót, a későbiekkben ebben lesz eltárolva melyik szobában vagyunk
 		self.room_id = None
 
 
@@ -35,91 +46,98 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 		"""
 		Mikor bezáródik a websocket kapcsolat a szerver és kliens között
 		"""
-		print('PrCRConsumer: ' + str(self.scope['user']) + ' disconnected') 
+
+		print('PrivateChatConsumer: ' + str(self.scope['user']) + ' disconnected')
+
 		try:
 			if self.room_id != None:
 				await self.leave_room(self.room_id)
-		except Exception as e:
-			print('Disconnect')
+		except Exception as exception:
+			print('Exception during disconnect in PrivateChatConsumer' + str(exception))
 			pass
 
 
 
 	async def receive_json(self, content, **kwargs):
 		"""
-		Dekódolt JSON üzenet, meghívódik mikor egy üzenetkeret jön
+		Dekódolt JSON üzenet, akkor hívódik meg, mikor valamilyen parancs érkezik a template-től
 		"""
 
 		# https://www.w3schools.com/python/ref_dictionary_get.asp
-		command = content.get('command', None) # payloadot kaptunk a templatettől
+		command = content.get('command', None) 
 		room_id = content.get('room_id')
 		user = self.scope['user']
 
-		print('PrCRConsumer: receive_json called with command: ' + str(command))
+		print('PrivateChatConsumer: receive_json called with command: ' + str(command))
 
 
 		try:
 			if command == 'send':
 				message = content['message']
-				if len(message.lstrip()) == 0: # ha !=0val nezzuk es akkor kuldjuk a messaget akkor nem dob mindig errort ha empty message van
-					raise ClientError(422, 'Empty message not allowed')
-				await self.send_chat_message_to_room(room_id, message)
+				if len(message.lstrip()) != 0: 
+					await self.send_chat_message_to_room(room_id, message)
+				else:
+					raise ClientError('EMPTY_MESSAGE', 'Empty message not allowed')
 			elif command == 'join':
 				await self.join_room(room_id)
 			elif command == 'leave':
 				await self.leave_room(room_id)
 			elif command == 'get_private_chat_room_messages':
-				# szoba, uzenetek payload és küldés
 				room = await get_private_chat_room(room_id, user)
-
 				page_number = content['page_number']
-
 				info_packet = await get_private_chat_room_messages(room, page_number)
+
 				if info_packet != None:
-					info_packet = json.loads(info_packet) # decode json
+					# JSON formátum átalakítása python szótárrá
+					info_packet = json.loads(info_packet)
+
 					await self.send_previous_messages_payload(info_packet['messages'], info_packet['load_page_number'])
 				else:
-					raise ClientError('ERROR', 'Error when loading chat room messages')
+					raise ClientError('NO_MESSAGES', 'Something went wrong when getting PrivateChatRoom messages')
 			elif command == 'get_info_about_user':
 				room = await get_private_chat_room(room_id, user)
 				info_packet = await get_users(room, user)
-				#info_packet = get_user_information(room, user1, user2)
-				print('visszater')
+
 				if info_packet != None:
 					info_packet = json.loads(info_packet)
+
 					await self.send_info_about_user_payload(info_packet['user_information'])
 				else:
-					raise ClientError('ERROR', 'Error when send info about user')
-		except ClientError as e:
-			error = await handle_client_error(e)
-			print('# ' + str(error))
+					raise ClientError('INFO_ERROR', 'Error when send info about user')
+		except ClientError as exception:
+			error = await handle_client_error(exception)
 			await self.send_json(error)
+			return
 
 
 
 	async def send_chat_message_to_room(self, room_id, message):
 		"""
 		receive_json függvény hívja meg, mikor valaki üzenetet küld a chatszobába
-		Ez a függvény kezdi meg azt a folyamatot, hogy a payloadot az egész groupnak elküldje, ilyenkor 2 usernek
+		Ez a függvény kezdi meg azt a folyamatot, amely az üzenetet az egész csoportnak elküldi
+		(privát chat révén jelen esetben a másik felhasználónak)
 		"""
 		user = self.scope['user']
-		print('PrCRConsumer: send_chat_message_to_room from user: ' + user.username)
-		if self.room_id != None: # valaki benne van egy szobában
-			if str(room_id) != str(self.room_id): #
-				raise ClientError('ROOM_ACCESS_DENIED', 'Room access denied')
-		else:
-			raise ClientError('ROOM_ACCESS_DENIED', 'Room access denied')
+		print('PrivateChatConsumer: send_chat_message_to_room from user: ' + user.username)
 
-		# itt a felhasználó a megfelelő szobában van már
+		# ellenőrizzük, hogy a szobában van-e az adott felhasználó
+		if self.room_id != None:
+			if str(room_id) != str(self.room_id):
+				raise ClientError('ROOM_ACCESS_DENIED', 'You are not allowed to be in this room')
+		else:
+			raise ClientError('ROOM_ACCESS_DENIED', 'You are not allowed to be in this room')
+
+		
 		room = await get_private_chat_room(room_id, user)
 
+		# üzenet mentése az adatbázisba
+		await save_private_chat_room_message(user, room, message)
+
+		# ha valakinek nincs profilképe, az alapértelmezett profilképet kapja
 		try:
 			profile_image = user.profile_image.url
 		except Exception as e:
 			profile_image = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
-
-		await save_private_chat_room_message(user, room, message)
-
 
 
 		await self.channel_layer.group_send(
@@ -135,11 +153,11 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 
 	async def chat_message(self, event):
 		"""
-		Mikor valaki üzenetet küld a chatbe
+		Akkor fut le, mikor valaki üzenetet küld a chatbe
+		Itt történik a tényleges üzenet elküldés a templatehez(a kliensnek) 
 		"""
 
-		#üzenet küldés a kliensnek (send a payload back to the template); backend stuff
-		print('PrCRConsumer: chat_message from user: ' + str(event['username']))
+		print('PrivateChatConsumer: chat_message from user: ' + str(event['username']))
 
 		sending_time = create_sending_time(timezone.now())
 
@@ -158,19 +176,20 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 		Miután létrejött a websocket kapcsolat, küldünk egy payload-ot hogy a felhasználó csatlakozzon a szobához
 		Mikor valaki join parancsot küld, akkor hívódik meg
 		"""
-		print('PrCRConsumer: join_room')
+		print('PrivateChatConsumer: join_room')
 		user = self.scope['user']
+
 		try:
 			room = await get_private_chat_room(room_id, user)
-		except ClientError as e:
+		except ClientError as exception:
 			error = await handle_client_error(exception)
-			print('# ' + str(error))
 			await self.send_json(error)
+			return
 
 		# tároljuk hogy a szobában vagyunk
 		self.room_id = room_id
 
-		# csoporthoz hozzáadás, hogy a csoport üzeneteket megkapják
+		# a channel(felhasználó tulajdonképpen) hozzáadása a csoporthoz, így megkapja mindenki az adott üzenetet
 		await self.channel_layer.group_add(
 			room.group_name,
 			self.channel_name
@@ -198,14 +217,15 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 		"""
 		Mikor valaki leave parancsot küld, meghívódik
 		"""
-		print('PrCRConsumer: leave_room')
+		print('PrivateChatConsumer: leave_room')
 		user = self.scope['user']
+
 		try:
 			room = await get_private_chat_room(room_id, user)
-		except ClientError as e:
+		except ClientError as exception:
 			error = await handle_client_error(exception)
-			print('# ' + str(error))
 			await self.send_json(error)
+			return
 
 		await self.channel_layer.group_send(
 			room.group_name,
@@ -219,12 +239,13 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 
 		self.room_id = None
 
-		# felhasználó törlése a csoportból, hogy ne kapja meg továbbra is az üzeneteket
+		# felhasználó törlése a csoportból
 		await self.channel_layer.group_discard(
 			room.group_name,
 			self.channel_name
 			)
 
+		# klienset utasítjuk hogy véglegesítse a kilépést
 		await self.send_json({
 				'leave': str(room.id)
 			})
@@ -232,14 +253,14 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 
 	async def send_previous_messages_payload(self, messages, load_page_number):
 		"""
-		Elküldi a viewnak a következő betöltött üzeneteket
+		Elküldi a viewnak a következő adag betöltött üzeneteket
+		Csak az adott kliensnek küldi el, nem az egész csoportnak
 		"""
 
-		print('PrCRConsumer: send_loaded_messages_payload')
-		# nem akarjuk szétküldeni a csoportnak ezt az üzenetet, ez csak a kliens szemszögéből számít
-		# az adott kliens kéri le az üzeneteket, nem akarjuk, hogy a többi felhasználó is megkapja
+		print('PrivateChatConsumer: send_loaded_messages_payload')
+
 		await self.send_json({
-				'message_packet': 'message_packet', # ez az identifier, hogy az onmessage fgv tudja kezelni; a keyword a lenyeg a value csak hogy legyen
+				'message_packet': 'message_packet', # itt a keyword a lényeg, az onmessage függvény a kliens oldalon így fogja tudni kezelni
 				'messages': messages,
 				'load_page_number': load_page_number,
 			})	
@@ -249,7 +270,7 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 		"""
 		Ezzel a függvénnyel küldünk vissza a viewhoz felhasználói információt
 		"""
-		print('PrCRConsumer: send_info_about_user_payload')
+		print('PrivateChatConsumer: send_info_about_user_payload')
 
 		await self.send_json({
 				'user_information': user_information,
@@ -257,6 +278,7 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 
 
 	async def join_chat(self, event):
+
 		if event['username']:
 			await self.send_json({
 					'message_type': MESSAGE_TYPE_JOIN,
@@ -267,6 +289,7 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 
 
 	async def leave_chat(self, event):
+
 		if event['username']:
 			await self.send_json({
 					'message_type': MESSAGE_TYPE_LEAVE,
@@ -278,23 +301,27 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 @database_sync_to_async
 def get_private_chat_room(room_id, user):
 	"""
-	Privát chatszobát szerez a felhasználónak
+	Privát chatszoba lekérése a felhasználóknak (ha létezik)
 	"""
+
 	try:
 		room = PrivateChatRoom.objects.get(id=room_id)
 	except PrivateChatRoom.DoesNotExist:
-		raise ClientError('ERROR', 'Invalid error')
+		raise ClientError('EXIST_ERROR', 'PrivateChatRoom does not exist')
 
 	if user != room.user1 and user != room.user2:
-		raise ClientError('ERROR', 'Permission error')
+		raise ClientError('ROOM_ACCESS_DENIED', 'You are not allowed to be in this room')
 
 
 	return room
 
 
-# üzenetek mentése az adatbázisba
+
 @database_sync_to_async
 def save_private_chat_room_message(user, room, message):
+	"""
+	Elküldött üzenet mentése az adatbázisba
+	"""
 	return PrivateChatRoomMessage.objects.create(user=user, room=room, content=message)
 
 
@@ -302,10 +329,12 @@ def save_private_chat_room_message(user, room, message):
 @database_sync_to_async
 def get_users(room, user):
 	"""
-	user1 = room.user1
-	user2 = room.user2
-	print(f'felhasznalok: {user1} és {user2}')
-	return user1, user2
+	A szobában lévő felhasználókról információ lekérdezése
+	- megállapítja, hogy az adott user az user1 vagy user2
+	- ez alapján serializálja a megfelelő user objectet majd tér vissza ezzel az értékkel
+
+	Felhasználó információ beszerzése a másik felhasználóról
+	Visszatérési értéke: a felhasználóról az info vagy None
 	"""
 	other_user = room.user1
 	curr_user = room.user2
@@ -323,26 +352,6 @@ def get_users(room, user):
 	return json.dumps(info_packet)
 
 
-def get_user_information(room, user1, user2):
-	"""
-	Felhasználó információ beszerzése a másik felhasználóról
-	Visszatérési értéke: a felhasználóról az info vagy None
-	"""
-
-
-	try:
-		info_packet = {}
-
-		s = EncodeAccountObject() # listát ad vissza
-
-
-		info_packet['user_information'] = s.serialize([user2])[0]
-		return json.dumps(info_packet)
-
-	except Exception as e:
-		print('ERROR when getting user info')
-
-	return None
 
 
 @database_sync_to_async
@@ -353,11 +362,9 @@ def get_private_chat_room_messages(room, page_number):
 	try:	
 		p = Paginator(PrivateChatRoomMessage.objects.get_chat_messages_by_room(room), PRIVATE_CHAT_ROOM_MESSAGE_PAGE_SIZE)
 
-
 		message = {}
 
 		load_page_number = int(page_number)
-
 
 		# elértük e az utolsó oldalt
 		if load_page_number <= p.num_pages:
@@ -366,23 +373,19 @@ def get_private_chat_room_messages(room, page_number):
 			s = EncodePrivateChatRoomMessage()
 
 			message['messages'] = s.serialize(p.page(page_number).object_list)
-
 		else:
-
 			message['messages'] = 'None'
 		message['load_page_number'] = load_page_number
 
 		# python szótár konvertálása JSON objektummá és visszatérés az értékkel
-
 		return json.dumps(message)
-	except Exception as e:
-		print('ERROR WHEN GETTING CHAT MESSAGES' + str(e))
+	except Exception as exception:
+		print('Error when getting private chat messages' + str(exception))
 
 	return None
 
 
 
-# mehet majd a utilsba, ez ahhoz kell hogy lekerjuk a regebbi chat uzeneteket
 class EncodePrivateChatRoomMessage(Serializer):
 	def get_dump_object(self, obj):
 		"""
@@ -391,10 +394,10 @@ class EncodePrivateChatRoomMessage(Serializer):
 		Függvény egy override
 		"""
 
-		# ez a try except azért kell, hogyha nincs valakinek profilképe, akkor a default helyen lévőt állítsa be hozzá
+		# ha valakinek nincs profilképe, az alapértelmezett profilképet kapja
 		try:
 			profile_image = str(obj.user.profile_image.url)
-		except Exception as e:
+		except Exception as exception:
 			profile_image = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
 
 		message_obj = {
@@ -403,7 +406,6 @@ class EncodePrivateChatRoomMessage(Serializer):
 			'message'		:	str(obj.content),
 			'user_id'		:	str(obj.user.id),
 			'username'		:	str(obj.user.username),
-			#'profile_image'	:  	str(object.user.profile_image.url),
 			'profile_image'	:	profile_image,
 			'sending_time'	:	create_sending_time(obj.sending_time),
 		}

@@ -1,33 +1,43 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 
-
 import json
 
+# Az exception kezelő osztály és függvény
+from public_chat.exceptions import ClientError, handle_client_error
+
+# Gyakran használt konstansok
+from core.constants import *
+
+# Modellek
 from .models import *
 
+
+# Küldési idő kalkulálása
+from public_chat.utils import *
+from django.utils import timezone
+
+# Chat üzenetek betöltése (pagination)
 from django.core.serializers.python import Serializer
 from django.core.paginator import Paginator
 from django.core.serializers import serialize
 
-from account.utils import EncodeAccountObject
 
-from .exceptions import ClientError, handle_client_error
-
-from core.constants import *
-
-from team.utils import *
-from django.utils import timezone
 
 
 class TeamConsumer(AsyncJsonWebsocketConsumer):
 	async def connect(self):
 		"""
 		Csatlakozáskor használjuk, a kezdeti fázisban mikor a szerver és a kliens websocket kapcsolatra vált
+		Mindenkit hagyunk csatlakozni a websockethez, a jogot a chateléshez egy későbbi szakaszban ellenőrizzük
 		"""
+
 		print('TeamConsumer: ' + str(self.scope['user']) + ' connected') 
+
+		# csatlakozás elfogadása
 		await self.accept()
 
+		# definiáljuk a room_id változót, a későbiekkben ebben lesz eltárolva melyik szobában vagyunk
 		self.room_id = None
 
 
@@ -36,52 +46,54 @@ class TeamConsumer(AsyncJsonWebsocketConsumer):
 		Mikor bezáródik a websocket kapcsolat a szerver és kliens között
 		"""
 		print('TeamConsumer: ' + str(self.scope['user']) + ' disconnected') 
+
 		try:
 			if self.room_id != None:
 				await self.leave_room(self.room_id)
-		except Exception as e:
-			print('Disconnect')
+		except Exception as exception:
+			print('Exception during disconnect in TeamConsumer' + str(exception))
 			pass
 
 
 
 	async def receive_json(self, content, **kwargs):
 		"""
-		Dekódolt JSON üzenet, meghívódik mikor egy üzenetkeret jön
+		Dekódolt JSON üzenet, akkor hívódik meg, mikor valamilyen parancs érkezik a template-től
 		"""
 
-		command = content.get('command', None) #
+		command = content.get('command', None)
+		room_id = content.get('room_id')
+		user = self.scope['user']
+
 
 		print('TeamConsumer: receive_json called with command: ' + str(command))
 
-		user = self.scope['user']
-		room_id = content['room_id']
 
 		try:
 			if command == 'send':
 				message = content['message']
-				if len(message.lstrip()) == 0: # ha !=0val nezzuk es akkor kuldjuk a messaget akkor nem dob mindig errort ha empty message van
-					raise ClientError(422, 'Empty message not allowed')
-				await self.send_chat_message_to_room(room_id, message) #content_room_id mivel a jsben a teamsocket.send send commandnal is az van
+				if len(message.lstrip()) != 0:
+					await self.send_chat_message_to_room(room_id, message)
+				else:
+					raise ClientError('EMPTY_MESSAGE', 'Empty message not allowed')
 			elif command == 'join':
 				await self.join_room(room_id)
 			elif command == 'leave':
 				await self.leave_room(room_id)
 			elif command == 'get_team_messages':
-				# szoba, uzenetek payload és küldés
-				room = await get_team_room(room_id, user)
-
+				room = await get_team_chat_room(room_id, user)
 				page_number = content['page_number']
+				info_packet = await get_team_chat_room_messages(room, page_number)
 
-				info_packet = await get_team_room_messages(room, page_number)
 				if info_packet != None:
-					info_packet = json.loads(info_packet) # decode json
+					# JSON formátum átalakítása python szótárrá
+					info_packet = json.loads(info_packet)
+
 					await self.send_previous_messages_payload(info_packet['messages'], info_packet['load_page_number'])
 				else:
-					raise ClientError('ERROR', 'Error when loading chat room messages')
+					raise ClientError('NO_MESSAGES', 'Something went wrong when getting PrivateChatRoom messages')
 		except ClientError as exception:
 			error = await handle_client_error(exception)
-			print('# ' + str(error))
 			await self.send_json(error)
 			return
 
@@ -91,26 +103,29 @@ class TeamConsumer(AsyncJsonWebsocketConsumer):
 	async def send_chat_message_to_room(self, room_id, message):
 		"""
 		receive_json függvény hívja meg, mikor valaki üzenetet küld a chatszobába
-		Ez a függvény kezdi meg azt a folyamatot, hogy a payloadot az egész groupnak elküldje, ilyenkor 2 usernek
+		Ez a függvény kezdi meg azt a folyamatot, amely az üzenetet az egész csoportnak elküldi
 		"""
 		user = self.scope['user']
 		print('TeamConsumer: send_chat_message_to_room from user: ' + user.username)
-		if self.room_id != None: # valaki benne van egy szobában
+
+		# ellenőrizzük, hogy a szobában van-e az adott felhasználó
+		if self.room_id != None:
 			if str(room_id) != str(self.room_id): #
-				raise ClientError('ROOM_ACCESS_DENIED', 'Room access denied')
+				raise ClientError('ROOM_ACCESS_DENIED', 'You are not allowed to be in this room')
 		else:
-			raise ClientError('ROOM_ACCESS_DENIED', 'Room access denied')
+			raise ClientError('ROOM_ACCESS_DENIED', 'You are not allowed to be in this room')
 
-		# itt a felhasználó a megfelelő szobában van már
-		room = await get_team_room(room_id, user)
 
+		room = await get_team_chat_room(room_id, user)
+
+		# üzenet mentése az adatbázisba
+		await save_team_room_message(user, room, message)
+
+		# ha valakinek nincs profilképe, az alapértelmezett profilképet kapja
 		try:
 			profile_image = user.profile_image.url
 		except Exception as e:
 			profile_image = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
-
-		await save_team_room_message(user, room, message)
-
 
 
 		await self.channel_layer.group_send(
@@ -127,10 +142,10 @@ class TeamConsumer(AsyncJsonWebsocketConsumer):
 
 	async def chat_message(self, event):
 		"""
-		Mikor valaki üzenetet küld a chatbe
+		Akkor fut le, mikor valaki üzenetet küld a chatbe
+		Itt történik a tényleges üzenet elküldés a templatehez(a kliensnek) 
 		"""
 
-		#üzenet küldés a kliensnek (send a payload back to the template); backend stuff
 		print('TeamConsumer: chat_message from user: ' + str(event['username']))
 
 		sending_time = create_sending_time(timezone.now())
@@ -153,12 +168,12 @@ class TeamConsumer(AsyncJsonWebsocketConsumer):
 		"""
 		print('TeamConsumer: join_room')
 		user = self.scope['user']
+
 		try:
 
-			room = await get_team_room(room_id, user)
+			room = await get_team_chat_room(room_id, user)
 		except ClientError as exception:
 			error = await handle_client_error(exception)
-			print('# ' + str(error))
 			await self.send_json(error)
 			return
 
@@ -166,9 +181,9 @@ class TeamConsumer(AsyncJsonWebsocketConsumer):
 		# tároljuk hogy a szobában vagyunk
 		self.room_id = room_id
 
-		# csoporthoz hozzáadás, hogy a csoport üzeneteket megkapják
+		# a channel(felhasználó tulajdonképpen) hozzáadása a csoporthoz, így megkapja mindenki az adott üzenetet
 		await self.channel_layer.group_add(
-			room.group_name, #room.groupname property miatt lehet sztem
+			room.group_name,
 			self.channel_name
 			)
 
@@ -199,12 +214,12 @@ class TeamConsumer(AsyncJsonWebsocketConsumer):
 		"""
 		print('TeamConsumer: leave_room')
 		user = self.scope['user']
+
 		try:
 
-			room = await get_team_room(room_id, user)
+			room = await get_team_chat_room(room_id, user)
 		except ClientError as exception:
 			error = await handle_client_error(exception)
-			print('# ' + str(error))
 			await self.send_json(error)
 			return
 
@@ -221,7 +236,7 @@ class TeamConsumer(AsyncJsonWebsocketConsumer):
 
 		self.room_id = None
 
-		# felhasználó törlése a csoportból, hogy ne kapja meg továbbra is az üzeneteket
+		# felhasználó törlése a csoportból
 		await self.channel_layer.group_discard(
 			room.group_name,
 			self.channel_name
@@ -235,17 +250,20 @@ class TeamConsumer(AsyncJsonWebsocketConsumer):
 	async def send_previous_messages_payload(self, messages, load_page_number):
 		"""
 		Elküldi a viewnak a következő betöltött üzeneteket
+		Csak az adott kliensnek küldi el, nem az egész csoportnak
 		"""
 
 		print('TeamConsumer: send_loaded_messages_payload')
+
 		await self.send_json({
-				'message_packet': 'message_packet', # ez az identifier, hogy az onmessage fgv tudja kezelni; a keyword a lenyeg a value csak hogy legyen
+				'message_packet': 'message_packet', # itt a keyword a lényeg, az onmessage függvény a kliens oldalon így fogja tudni kezelni
 				'messages': messages,
 				'load_page_number': load_page_number,
 			})	
 
+
 	async def join_chat(self, event):
-		print('TeamConsumer: join_chat')
+
 		if event['username']:
 			await self.send_json({
 					'message_type': MESSAGE_TYPE_JOIN,
@@ -254,8 +272,9 @@ class TeamConsumer(AsyncJsonWebsocketConsumer):
 					'username': event['username'],
 				})
 
+
 	async def leave_chat(self, event):
-		print('TeamConsumer: leave_chat')		
+
 		if event['username']:
 			await self.send_json({
 					'message_type': MESSAGE_TYPE_LEAVE,
@@ -265,47 +284,45 @@ class TeamConsumer(AsyncJsonWebsocketConsumer):
 				})
 
 @database_sync_to_async
-def get_team_room(room_id, user):
+def get_team_chat_room(room_id, user):
 	"""
-	Privát chatszobát szerez a felhasználónak
+	Csapat chatszobát szerez a felhasználóknak (ha létezik)
 	"""
 
 	try:
-		team_room = Team.objects.get(id=room_id)
+		room = Team.objects.get(id=room_id)
 	except Team.DoesNotExist:
-		#raise ClientError('ERROR', 'Invalid error')
-		raise ClientError('ERROR','invalid room')
-	print(team_room)
-	print(user)
-	if user not in team_room.users.all():
-		print('lol')
+		raise ClientError('EXIST_ERROR', 'TeamRoom does not exist')
+
+	# ellenőrizzük, hogy a felhasználó abban a csapatban van-e amelyet épp megnyitott az oldalon
+	if user not in room.users.all():
 		raise ClientError('ERROR', 'You have to be in the same team to chat')
 
 
-	return team_room
+	return room
 
 
-# üzenetek mentése az adatbázisba
 @database_sync_to_async
 def save_team_room_message(user, room, message):
+	"""
+	Elküldött üzenet mentése az adatbázisba
+	"""
 	return TeamMessage.objects.create(user=user, room=room, content=message)
 
 
 
 
 @database_sync_to_async
-def get_team_room_messages(room, page_number):
+def get_team_chat_room_messages(room, page_number):
 	"""
-	Privát chatszoba üzeneteinek lekérdezése, egyszerre egy megadott érték szerint
+	Csapat chatszoba üzeneteinek lekérdezése, egyszerre egy megadott érték szerint
 	"""
 	try:	
 		p = Paginator(TeamMessage.objects.get_chat_messages_by_room(room), TEAM_ROOM_MESSAGE_PAGE_SIZE)
 
-
 		message = {}
 
 		load_page_number = int(page_number)
-
 
 		# elértük e az utolsó oldalt
 		if load_page_number <= p.num_pages:
@@ -314,34 +331,28 @@ def get_team_room_messages(room, page_number):
 			s = EncodeTeamMessage()
 
 			message['messages'] = s.serialize(p.page(page_number).object_list)
-
 		else:
-
 			message['messages'] = 'None'
 		message['load_page_number'] = load_page_number
 
 		# python szótár konvertálása JSON objektummá és visszatérés az értékkel
-
 		return json.dumps(message)
-	except Exception as e:
-		print('ERROR WHEN GETTING CHAT MESSAGES' + str(e))
+	except Exception as exception:
+		print('Error when getting team chat messages' + str(exception))
 
 	return None
 
 
 
-
-
-# mehet majd a utilsba, ez ahhoz kell hogy lekerjuk a regebbi chat uzeneteket
 class EncodeTeamMessage(Serializer):
 	def get_dump_object(self, obj):
 		"""
-		PrivateChatRoomMessage object szerializálása, mikor payload-ként küldjük a view-hoz
+		TeamMessage object szerializálása, mikor payload-ként küldjük a view-hoz
 		JSON formátumra alakítjuk
 		Függvény egy override
 		"""
 
-		# ez a try except azért kell, hogyha nincs valakinek profilképe, akkor a default helyen lévőt állítsa be hozzá
+		# ha valakinek nincs profilképe, az alapértelmezett profilképet kapja
 		try:
 			profile_image = str(obj.user.profile_image.url)
 		except Exception as e:
@@ -353,7 +364,6 @@ class EncodeTeamMessage(Serializer):
 			'message'		:	str(obj.content),
 			'user_id'		:	str(obj.user.id),
 			'username'		:	str(obj.user.username),
-			#'profile_image'	:  	str(object.user.profile_image.url),
 			'profile_image'	:	profile_image,
 			'sending_time'	:	create_sending_time(obj.sending_time),
 		}

@@ -153,16 +153,16 @@ USE_TZ = False # amúgy 2 órával hamarabbi időt mutat
 
 STATIC_URL = '/static/'
 
-MEDIA_URL = '/media_cdn/'
+MEDIA_URL = '/media/'
+
 
 STATICFILES_DIRS = [ # base directory to the static folder
     #BASE_DIR / 'static', # os.path.join(BASE_DIR, 'static')
     os.path.join(BASE_DIR, 'static'),
-    os.path.join(BASE_DIR, 'media'),
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static_cdn') # content delivery network
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media_cdn')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # content delivery network
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 #TEMP - crop images
 
 

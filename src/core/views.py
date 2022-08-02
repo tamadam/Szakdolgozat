@@ -11,7 +11,6 @@ from core.constants import *
 from team.models import Team
 
 
-PUBLIC_CHAT_ROOM_ID = 1 # statikusan létrehozott ID, mivel ebből a szobából fixen 1 van
 
 
 @login_required(login_url='login')
@@ -143,11 +142,3 @@ def list_accounts(request):
 	return JsonResponse({'characters': list(characters.values())})
 """
 
-@login_required(login_url='login')
-def public_chat_page_view(request):
-	context = {
-		'debug_mode': settings.DEBUG,
-		'room_id': PUBLIC_CHAT_ROOM_ID, 
-	}
-
-	return render(request, 'core/public_chat_page.html', context)

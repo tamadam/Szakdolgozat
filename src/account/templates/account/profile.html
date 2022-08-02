@@ -4,9 +4,8 @@
 
 {% block content %}
 
-<!-- AJAXHOZ KELL JQUERY IMPORT -->
-<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 
+{% include 'private_chat/create_or_return_private_chat_room.html' %}
 
 <div class="main">
 
@@ -39,6 +38,5 @@
 
 
 
-{% include 'private_chat/snippets/create_or_return_private_chat_room.html' %}
 
 {% endblock %}

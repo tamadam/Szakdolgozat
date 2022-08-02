@@ -16,19 +16,18 @@ from django.http import HttpResponse, JsonResponse
 
 @login_required(login_url='login')
 def user_team_view(request):
+	print('USER TEAM VIEW')
 	context = {}
 	form = TeamCreationForm()
 	context['form'] = form
 	user = Account.objects.get(id=request.user.id)
-	recent_user_id = user.id
+	recent_user_id = user.id # user a későbbiekben megváltozik, ezért itt el kell menteni
 
 
 	if request.method == 'POST':
 		form = TeamCreationForm(request.POST)
 
-
 		if form.is_valid():
-			print('valid')
 			try: 
 				form.check_name_availability(request.POST.get('name')) # ellenorizzuk hogy a csapatnev nem szerepel e mar mas betukiosztasban(kis/nagy)
 				team = form.save()
@@ -40,9 +39,9 @@ def user_team_view(request):
 				
 		else:
 			context['is_valid'] = False
-			print('nem valid')
 
 	else:
+		print('else')
 		context['is_valid'] = True
 		#user = Account.objects.get(id=request.user.id)
 		try:
@@ -52,14 +51,13 @@ def user_team_view(request):
 			team_id = None
 
 		if team_id:
+			print('van id')
 			user_team = Team.objects.get(id=team_id)
 			print(user_team.id, user_team.name, user_team.description)
 
-			print('Csapattagok:', user_team.users.all())
 			for user in user_team.users.all():
 				print(user)
 
-			print('USERID---', recent_user_id)
 			context['has_team'] = True
 			context['form'] = form
 			context['user_id'] = recent_user_id
@@ -99,8 +97,7 @@ def leave_team(request):
 		print(f'Team id not found in leave team ' + str(e))
 
 	# errort dobhat ha a try utan except van
-	print(user_team.name)
-	print('leaving team')
+
 
 	# felhasználó törlése a csapatból
 	user_team.users.remove(user)
@@ -121,14 +118,14 @@ def join_team(request):
 	context = {}
 
 	user_id = request.POST.get('user_id')
-	print('user_id ' + user_id)
+	#print('user_id ' + user_id)
 	user = Account.objects.get(id=user_id)
-	print('felhasznalo ' + user.username)
+	#print('felhasznalo ' + user.username)
 
 	team_id = request.POST.get('team_id')
-	print('team_id ' + team_id)
+	#print('team_id ' + team_id)
 	team = Team.objects.get(id=team_id)
-	print('csapat ' + team.name)
+	#print('csapat ' + team.name)
 
 
 	Membership.objects.create(user=user, team=team)
@@ -141,6 +138,7 @@ def join_team(request):
 @login_required(login_url='login')
 def individual_team_view(request, *args, **kwargs):
 	context = {}
+
 
 	team_id = kwargs.get('team_id')
 
@@ -159,15 +157,15 @@ def individual_team_view(request, *args, **kwargs):
 	is_own_team = True
 	try:
 		team_membership = Membership.objects.get(user=user.id, team=team.id)
-		print('csapattag')
+		#print('csapattag')
 	except Membership.DoesNotExist:
-		print('nem csapattag')
+		#print('nem csapattag')
 		is_own_team = False
 		try:
 			membership = Membership.objects.get(user=user.id)
-			print('van csapata')
+			#print('van csapata')
 		except Membership.DoesNotExist:
-			print('nincs csapata')
+			#print('nincs csapata')
 			has_team = False
 
 

@@ -20,9 +20,9 @@ from datetime import datetime
 
 @login_required(login_url='login')
 def private_chat_page_view(request, *args, **kwargs):
-	print(request.GET.get('room_id'))
+	print("SZOBA ID", request.GET.get('szoba_id'))
 	user = request.user
-	room_id = request.GET.get('room_id')
+	room_id = request.GET.get('szoba_id')
 
 	context = {}
 
@@ -93,7 +93,7 @@ def private_chat_page_view(request, *args, **kwargs):
 	context['debug_mode'] = settings.DEBUG
 	context['messages_and_users'] = messages_and_users
 
-	return render(request, 'private_chat/room.html', context)
+	return render(request, 'private_chat/private_chat_room.html', context)
 
 
 @login_required(login_url='login')

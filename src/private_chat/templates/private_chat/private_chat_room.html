@@ -1,0 +1,680 @@
+<!-- PrivateChatRoom -->
+<!-- Chat room for 1 on 1 conversations -->
+<!-- TODO: ÁTDOLGOZNI AZ EGÉSZET-->
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+
+
+<style type="text/css">
+	.chat-log {
+		height: 500px;
+		overflow-x: hidden;
+		overflow-y: auto;
+		padding: 10px;
+		background-color: #fff;
+		font-size: 0.9em;
+		flex-direction: column-reverse;
+	}
+	.chat-message-input-container{
+		outline: none;
+		box-shadow: none;
+	}
+	.chat-message-input{
+		outline: none;
+		border: 1px solid #fff;
+		border-top: 2px solid var(--main-background-color);
+		
+	}
+	.message-container{
+		margin-top: 10px;
+		justify-content: start;
+	}
+	.username-span{
+		font-weight: 600;
+		margin-top: 0px;
+		margin-bottom: auto;
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+	.friend-message-span{
+		font-weight: 380;
+		margin-top: 0px;
+		margin-bottom: auto;
+		margin-left: 5px;
+		margin-right: 5px;
+		font-size: 0.6em;
+		color: var(--light-primary-text-color);
+	}
+	.timestamp-span{
+		font-weight: 400;
+		font-size: 0.8em;
+		color: var(--secondary-text-color);
+	}
+	.timestamp-span:hover{
+		cursor: pointer;
+	}
+	.msg-p{
+		font-weight: 450;
+		margin-top: 5px;
+		margin-bottom: auto;
+		margin-left: 5px;
+		margin-right: 5px;
+		white-space: normal;
+		-ms-word-break: break-all;
+		word-break: break-all;
+	}
+	.profile-image{
+		width: 33px;
+		height: 33px;
+		margin-top: 0px;
+		margin-bottom: auto;
+	}
+	.profile-image-small{
+		width: 25px;
+		height: 25px;
+		margin-top: 0px;
+		margin-bottom: auto;
+		margin-right: 5px;
+	}
+	.profile-image:hover{
+		cursor: pointer;
+	}
+	.profile-image-small:hover{
+		cursor: pointer;
+	}
+	.username-span:hover{
+		cursor: pointer;
+	}
+	.material-icons:hover{
+		cursor: pointer;
+	}
+	.card {
+		border-radius: 12px;
+	}
+	
+	#id_chatroom_loading_spinner{
+		position: absolute;
+	}
+	.friend-container:hover{
+		background: var(--main-background-color);
+		cursor: pointer;
+	}
+	.friends-list-container{
+		max-height: 500px;
+		overflow-y: scroll;
+	}
+</style>
+
+
+
+<div class="container">
+	<div class="row">
+		<div class="col-sm-9 m-0 p-2">
+			<div class="card" id="id_chatroom_card">
+				<div class="d-flex flex-row align-items-center card-header" id="id_room_title">
+				<a class="d-flex flex-row" id="id_user_info_container">
+				<!--	<img class="profile-image rounded-circle img-fluid" id="id_other_profile_image" src="{{message_and_user.profile_image}}">-->
+					<h3 class="ml-2" id="id_other_username"></h3>
+				</a>
+				
+				</div>
+				<div class="card-body p-1">
+					<div class="d-flex flex-column" id="id_chat_log_container">
+					
+						<div class="d-flex flex-row justify-content-center" id="id_chatroom_loading_spinner_container">
+							<div class="spinner-border text-primary"  id="id_chatroom_loading_spinner" role="status"  style="display: none; ">
+								<span class="sr-only">Loading...</span>
+							</div>
+						</div>
+						<div class="d-flex chat-log" id="chat_messages_id">
+							
+						</div>
+						<span class="{% if not debug_mode %}d-none{% endif %} page-number" id="id_page_number">1</span>
+						
+						<div class="d-flex flex-row chat-message-input-container">
+							<textarea class="flex-grow-1 chat-message-input" id="send-message-textarea_id"></textarea>
+							<button class="btn btn-primary chat-message-submit-button">
+								<span id="send-message-submit_id" class="material-icons">send
+								</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-sm-3 m-0 p-2" id="recent-chat-with-users">
+			<div class="card">
+				<div class="d-flex flex-row align-items-center card-header">
+					<h3 >Friends</h3>
+				</div>
+				<div class="card-body p-1">	
+					<div class="d-flex flex-column friends-list-container " id="refresh-me">
+						{% for message_and_user in messages_and_users %}
+						<div class="d-flex flex-row p-2 friend-container flex-grow-1" onclick="selectUserChatRoom('{{message_and_user.other_user.id}}')" id="id_friend_container_{{message_and_user.other_user.id}}">
+							<img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{message_and_user.other_user.id}}" src="{{message_and_user.profile_image}}" >
+							<div class="d-flex flex-column">
+								<span class="username-span">{{message_and_user.other_user.username}}</span>
+								<!--<span class="friend-message-span">{{message_and_user.message|truncatechars:10}}</span>-->
+								<span>{{message_and_user.message|truncatechars:30}}</span>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Client Error MODAL -->
+
+<script type="text/javascript">
+
+	// kinullázzuk minden egyes alkalommal, mivel váltogatunk a chatek között
+	var privateChatRoomSocket = null;
+	var roomId = null;
+
+	onStart()
+
+	function onStart(){
+		console.log("room : {{room}}")
+
+		//hogyan toltodjon be az oldal: ha van room_id megadva, akkor masfelol redirectel az oldal
+		{% if room %} //context[room] a private_chat_room_view elejerol, csak akkor fog letezni hogyha egy room_id benne votl a k keyargsban az urlben
+			console.log('TRUEEEE')
+			var room = "{{room}}"
+			if("{{room.user1}}" == "{{request.user}}") //ha a user az adott bejelentkezett felhasznalo
+				selectUserChatRoom("{{room.user2.id}}") //akkor a masik felt valasztom ki a szobabol
+			else
+				selectUserChatRoom("{{room.user1.id}}")
+			console.log("{{room.user1.id}}")
+			console.log("{{room.user2.id}}")
+		{% else %}
+			console.log("ELSE IS LEFUT")
+			{% if messages_and_users %}
+				selectUserChatRoom("{{messages_and_users.0.other_user.id}}")
+			{% endif %}
+		{% endif %}
+
+
+
+
+
+	}
+
+
+	function selectUserChatRoom(userId){
+		createOrReturnPrivateChat(userId)
+	}
+
+
+	function closeWebsocket(){
+		if(privateChatRoomSocket != null){
+			privateChatRoomSocket.close()
+			privateChatRoomSocket = null
+			clearChatMessage()
+			setPageNumber("1")
+			disableChatMessageScrollListener()
+		}
+	}
+
+
+	function setupWebsocket(room_id){
+		console.log('open WebSocket ' + room_id)
+
+		roomId = room_id
+
+		closeWebsocket()
+		// WEBSOCKET BEÁLLÍTÁS FOLYAMATA KEZDETE //
+
+		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+
+		if ("{{ debug_mode }}")
+			var ws_path = ws_scheme + "://" + window.location.host + "/private_chat/" + roomId + "/"; // fejlesztéshez
+		else
+			var ws_path = ws_scheme + "://" + window.location.host + ":8001/private_chat/" + roomId + "/"; // élesben
+
+		// websocket beállítás
+		privateChatRoomSocket = new WebSocket(ws_path)
+
+		// websocket megnyitása
+		privateChatRoomSocket.onopen = function(event) {
+			console.log("Connection successfully created");
+
+		};
+
+		// felhasználó beléptetése az adott szobába miután a socket kapcsolat létrejött
+		privateChatRoomSocket.addEventListener("open", function(event) {
+			if ("{{request.user.is_authenticated}}"){
+				privateChatRoomSocket.send(JSON.stringify({
+					"command": "join",
+					"room_id": roomId,
+				}))
+			}
+		})
+
+		// bejövő üzeneket kezelése a consumertől
+		privateChatRoomSocket.onmessage = function(event) {
+			console.log("Data received from the server: ", event.data);
+			var data = JSON.parse(event.data)
+
+
+			// üzenet típus ellenőrzése
+
+			if (data.error){ // az error a consumerstől jön ha üres az üzenet
+				console.log(data.message)
+			}
+
+			if (data.join){
+				console.log(data.username, " joined the room")
+				// mikor a felhasználó csatlakozik a szobába, kapja meg a másik felhasználóról az adatok
+				getUserInformation()
+				getPrivateChatRoomMessages()
+				enableChatMessageScrollListener()
+			}
+
+			if (data.leave){
+				console.log(data.username, " leaved the room")
+			}
+
+			// mikor a consumers.py-ban a send_info_about_user_payload beérkezik ez fut le
+			if (data.user_information){
+				handleSendInfoAboutUserPayload(data.user_information)
+			}
+
+			if (data.message_type == 0){
+				appendChatMessage(data, false, true)
+				refresh_page_part()
+
+
+			}
+			else if (data.message_type == 3 || data.message_type == 4){
+				showUserIsOnline(data)
+			}
+
+			if (data.message_packet){
+				handleSendPreviousMessagesPayload(data.messages, data.load_page_number)
+			}
+		
+		};
+
+
+		// hibaüzenetek kiírása
+		privateChatRoomSocket.onerror = function(event) {
+			console.log("Error: ", event.message);
+		};
+
+
+		// websocket bezárása
+		privateChatRoomSocket.onclose = function(event) {
+			if (event.wasClean){
+				console.log("Connection closed");
+			}
+			else {
+				console.log("Connection died.");
+			}
+		};
+	}
+
+
+
+
+	// https://stackoverflow.com/questions/44541421/refreshing-div-using-ajax-in-a-django-template
+	function refresh_page_part(){
+		$.get(window.location.href,{},function(response){
+		var new_version = $('<div></div>').append(response);
+		var new_result = new_version.find('#refresh-me');
+		if(new_result.length){
+			$('#refresh-me').html( new_result.html() );
+			console.log('update');
+		}else{
+			console.log('something wrong');
+		}
+            });
+
+		setTimeout(refresh_page_part, 2000)
+/*
+		$.ajax({
+
+			url: "{% url 'private_chat:private_chat_page_view' %}",
+			success: function(data) {
+				console.log("REGRESG")
+  				$('#refresh-me').load('#refresh-me');
+
+                console.log('kesz')
+			}
+		});
+	*/
+	}
+
+	// MÁSIK FELHASZNÁLÓ VÁLASZTÁSÁNÁL FELHASZNÁLÓI INFORMÁCIÓK LEKÉRDEZÉS ÉS MEGJELENÍTÉS // 
+
+
+	// elküldjük a parancsot a backendnek
+	function getUserInformation(){
+		privateChatRoomSocket.send(JSON.stringify({
+			"command": "get_info_about_user",
+			"room_id": roomId,
+		}));
+	}
+
+
+	// a beérkező adatcsomagot megjelenítjük a felületen
+	function handleSendInfoAboutUserPayload(user_information){
+		console.log(user_information)
+		document.getElementById("id_other_username").innerHTML = user_information.username
+		//document.getElementById("id_other_profile_image").classList.remove("d-none") // alapból láthatatlan, megjelenítjük ezt a mezőt
+		document.getElementById("id_user_info_container").href = "{% url 'profile' user_id=31323423 %}".replace("31323423", user_information.id)
+
+
+	}
+
+
+	// <<<-------------------------------------------------->>> //
+	// <<<-------------------------------------------------->>> //
+
+
+
+
+	//ajax ; id: the user akivel beszelni akarok
+	function createOrReturnPrivateChat(id){
+		payload = {
+			"csrfmiddlewaretoken": "{{csrf_token}}",
+			"user2_id": id,
+		}
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			url: "{% url 'private_chat:create_or_return_private_chat' %}",
+			data: payload,
+			timeout: 5000,
+			success: function(data){
+				console.log("SUCCESS (IN PUBLIC_CHAT_ROOM.HTML)", data)
+				if(data.message == 'Got your private chat'){ // SUCCESS_MESSAGE_ON_FINDING_PRIVATE_CHAT
+					setupWebsocket(data.private_chat_room_id)
+				}
+				else if(data.message != null){
+					alert(data.message)
+				}
+			},
+			error: function(data){
+				console.log('Error')
+			},
+		})
+	}
+
+
+
+	// <<<-------------------------------------------------->>> //
+	// <<<-------------------------------------------------->>> //
+
+
+	// ÜZENET KÜLDÉS KEZDETE //
+
+	document.getElementById("send-message-textarea_id").focus();
+	document.getElementById("send-message-textarea_id").onkeyup = function(event) {
+		if (event.keyCode == 13 && event.shiftKey){
+			// új sor, küldés nélkül, textarea automatikusan kezeli
+		}
+		else if (event.keyCode == 13 && !event.shiftKey){
+			document.getElementById("send-message-submit_id").click();
+		}
+	}
+
+
+	document.getElementById("send-message-submit_id").onclick = function(event) {
+		var rawInputMessage = document.getElementById("send-message-textarea_id"); 	// html formátum
+		var message = rawInputMessage.value;										// a bevitt szöveg
+
+		// üzenet küldése a consumernek, receive_json hívódik meg a consumerben
+		// https://www.w3schools.com/js/tryit.asp?filename=tryjson_stringify
+		privateChatRoomSocket.send(JSON.stringify({
+			"command": "send",
+			"message": message,
+			"room_id": roomId,
+		}))
+		rawInputMessage.value = "";
+	}
+
+	// <<<-------------------------------------------------->>> //
+	// <<<-------------------------------------------------->>> //
+
+	//
+
+	function showUserIsOnline(data) {
+		console.log('tipusa')
+		console.log(data.message_type, data.username)
+	}
+
+	//
+
+	function clearChatMessage(){
+		document.getElementById("chat_messages_id").innerHTML = ""
+	}
+
+	// CHAT ÜZENETEK BETÖLTÉSE KEZDETE //
+	
+	var privateChatPageNumber = 1;
+
+	function setPageNumber(pageNumber, loadedAllMessages){ // loadedAllMessages igaz, hogyha betöltötte az összes üzenetet és már nincs mit lekérdezni
+		if (loadedAllMessages){
+			privateChatPageNumber = -1
+		}
+		else {
+			privateChatPageNumber = pageNumber
+		}
+
+		document.getElementById("id_page_number").innerHTML = privateChatPageNumber
+		console.log(privateChatPageNumber)
+	}
+
+
+
+	function getPrivateChatRoomMessages(){
+		let pageNumber = privateChatPageNumber
+		if (pageNumber != -1){
+			setPageNumber(-1, false) // a lekérdezés és betöltés folyamatban van
+			privateChatRoomSocket.send(JSON.stringify({
+				"command": "get_private_chat_room_messages",
+				"room_id": roomId,
+				"page_number": pageNumber
+			}))
+		}
+	}
+
+
+	// send_previous_messages_payload kezelése(load_messages publicban)
+	function handleSendPreviousMessagesPayload(messages, loadPageNumber) {
+		if(messages != null && messages != "undefined" && messages != "None"){
+			setPageNumber(loadPageNumber, false)
+			messages.forEach(function(message){ //foreach, minden iterationben meghivodik ez a fgv
+				appendChatMessage(message, true, false) // tartsa a pozicíót, nem új üzenet
+			})
+		}
+		else{
+			setPageNumber(-1, true)
+		}
+	}
+
+
+	function chatMessageScrollListener(e) {
+		var chatMessage = document.getElementById("chat_messages_id")
+		if ((Math.abs(chatMessage.scrollTop) + 2) >= (chatMessage.scrollHeight - chatMessage.offsetHeight)) {
+			getPrivateChatRoomMessages()
+		}
+	}
+
+	/*
+		Enable the function "chatLogScrollListener"
+	*/
+	function enableChatMessageScrollListener(){
+		document.getElementById("chat_messages_id").addEventListener("scroll", chatMessageScrollListener);
+	}
+	
+	/*
+		Disable the function "chatLogScrollListener"
+	*/
+	function disableChatMessageScrollListener(){
+		document.getElementById("chat_messages_id").removeEventListener("scroll", chatMessageScrollListener)
+	}
+
+
+
+
+	// <<<-------------------------------------------------->>> //
+	// <<<-------------------------------------------------->>> //
+
+
+
+	// CHAT ÜZENETEK MEGJELENÍTÉSE KEZDETE // 
+
+	function appendChatMessage(data, maintainPosition, isNewMessage){
+		userId = data["user_id"]
+		usernameReceived = data["username"]
+		message_type = data["message_type"]
+		message_id = data["message_id"]
+		message = data["message"]
+		profile_image = data["profile_image"]
+		sendingTime = data["sending_time"]
+
+		var msg = message + "\n";
+		var username = usernameReceived + ": "; 
+
+		createChatMessageElement(userId, username, message_id, msg, profile_image, sendingTime, maintainPosition, isNewMessage);
+	}
+
+
+
+	function createChatMessageElement(userId, username, message_id, message, profile_image, sendingTime, maintainPosition, isNewMessage){
+	var chatMessage = document.getElementById("chat_messages_id");
+
+
+	var chatMessage = document.getElementById("chat_messages_id");
+
+		var newMessageDiv = document.createElement("div")
+		newMessageDiv.classList.add("d-flex")
+		newMessageDiv.classList.add("flex-row")
+		newMessageDiv.classList.add("message-container") //css
+		//ezeket lehet 1 sorba is hozzaadni
+
+		var profileImage = document.createElement("img")
+		profileImage.addEventListener("click", function(evenet){
+			selectUser(userId)
+		})
+		profileImage.classList.add("profile-image")
+		profileImage.classList.add("rounded-circle")
+		profileImage.classList.add("img-fluid")
+		profileImage.src = "{% static 'images/blank_profile_image.png' %}"
+		var profileImageId = "profile_image_id" + message_id 
+		profileImage.id = profileImageId
+		newMessageDiv.appendChild(profileImage)
+
+
+		var div1 = document.createElement("div")
+		div1.classList.add("d-flex")
+		div1.classList.add("flex-column")
+
+
+		var div2 = document.createElement("div")
+		div2.classList.add("d-flex")
+		div2.classList.add("flex-row")
+
+		var usernameSpan = document.createElement("span")
+		usernameSpan.addEventListener("click", function(evenet){
+			selectUser(userId)
+		})
+		usernameSpan.classList.add('username-span')
+		usernameSpan.innerHTML = username
+		div2.appendChild(usernameSpan)
+
+		// sending_time hozzáadása
+
+		var sendingTimeSpan = document.createElement("span")
+
+		sendingTimeSpan.innerHTML = sendingTime
+		sendingTimeSpan.classList.add("sendingTimeSpanClass")
+		sendingTimeSpan.classList.add("d-flex")
+		sendingTimeSpan.classList.add("align-items-center")
+
+		sendingTimeSpan.classList.add("sentMessagesTime")
+
+
+		div2.appendChild(sendingTimeSpan)
+
+		div1.appendChild(div2)
+
+		var msgP = document.createElement("p")
+		msgP.innerHTML = message
+		msgP.classList.add("msg-p")
+		div1.appendChild(msgP)
+
+		newMessageDiv.appendChild(div1)
+
+
+		if(isNewMessage){
+			chatMessage.insertBefore(newMessageDiv, chatMessage.firstChild)
+		}
+		else {
+			chatMessage.appendChild(newMessageDiv)
+		}
+
+		if(!maintainPosition){
+			chatMessage.scrollTop = chatMessage.scrollHeight
+		}
+
+		loadProfilePicture(profile_image, profileImageId) // profile_image az input
+
+	}
+
+	function selectUser(userId){
+		var url = "{% url 'profile' user_id=7347328438423 %}".replace("7347328438423", userId);
+		var win = window.open(url, "_self")
+		win.focus()
+	}
+
+	// <<<-------------------------------------------------->>> //
+	// <<<-------------------------------------------------->>> //
+
+	// ALAPÉRTELMEZETT ÉS AZ IGAZI PROFILKÉP BETÖLTÉSE ASZINKRON MÓDON //
+
+	function setProfilePicture(imageSource, elementId) {
+		// beállítja az igazi profilképet
+		let image = document.getElementById(elementId)
+		image.src = imageSource
+	}
+
+
+	function loadProfilePicture(imageSource, profileImageId){
+		// profilkép betöltését indítja el
+		var profileImageLoader = new Image()
+		profileImageLoader.src = imageSource
+
+		if (!profileImageLoader.complete){
+			profileImageLoader.onload = function(){
+				// beállítja az alapértelmezett profilképet
+				setProfilePicture(profileImageLoader.src, profileImageId)
+				profileImageLoader.onload = function(){
+					// pass
+				}
+			}
+		}
+		else{
+			setProfilePicture(profileImageLoader.src, profileImageId)
+			profileImageLoader.onload = function() {
+				// pass
+			}
+			}
+		}
+	
+	// <<<-------------------------------------------------->>> //
+	// <<<-------------------------------------------------->>> //
+
+</script>
+
+{% endblock content %}
