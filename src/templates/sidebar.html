@@ -78,7 +78,7 @@
     <li><a href="{% url 'public_chat' %}">Beszélgetés</a></li>
     <li><a href="{% url 'search' %}">Hősök csarnoka</a></li>
     <li><a href="{% url 'team:user_team_view' %}">Csapat</a></li>
-    <li><a href="{% url 'private_chat:private_chat_room' %}">Levelek</a></li>
+    <li><a href="{% url 'private_chat:private_chat_room' %}">Levelek</a><div id="private-chat-notification-counter"></div></li>
     <li><a href="{% url 'logout' %}">Logout</a></li>
   </ul>
 </div>
@@ -98,6 +98,7 @@ $( document ).ready(function() {
 
     var goldCount = "{% get_user_gold_count request.user %}"
     document.getElementById("gold-count").innerHTML = "Arany: " + goldCount
+
 
 });
 
@@ -131,3 +132,87 @@ $( document ).ready(function() {
       }
     }
  </script>
+
+ <script>
+    // WEBSOCKET BEÁLLÍTÁS FOLYAMATA KEZDETE //
+
+    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+
+    /* nincs debug_mode view de ezt viewban meg lehet csinalni sztem templatetagssel
+    if ("{{ debug_mode }}")
+      var ws_path = ws_scheme + "://" + window.location.host + "/"; // fejlesztéshez
+    else
+      var ws_path = ws_scheme + "://" + window.location.host + ":8001/"; // élesben
+    */
+    var ws_path = ws_scheme + '://' + window.location.host + "/";
+
+    // websocket beállítás
+    var notificationSocket = new WebSocket(ws_path)
+
+
+    // websocket megnyitása
+    notificationSocket.onopen = function(event) {
+      console.log("notificationSocket: Connection successfully created");
+      getUnreadChatNotificationsCount()
+
+    };
+
+    // bejövő üzeneket kezelése a consumertől
+    notificationSocket.onmessage = function(event) {
+      console.log("Data received from the server: ", event.data);
+      var data = JSON.parse(event.data)
+
+
+      if(data.message_type == 20){
+        console.log("got message_type 20")
+        setNumOfPrivateChatNotifications(data.num)
+      }
+
+    };
+
+
+    // hibaüzenetek kiírása
+    notificationSocket.onerror = function(event) {
+      console.log("Error: ", event.message);
+    };
+
+
+    // websocket bezárása
+    notificationSocket.onclose = function(event) {
+      if (event.wasClean){
+        console.log("Connection closed");
+      }
+      else {
+        console.log("Connection died.");
+      }
+    };
+
+
+
+    function setNumOfPrivateChatNotifications(numOfNotifications){
+      console.log("setting num of notification")
+      console.log("num of notifications: " + numOfNotifications)
+      var notificationCounter = document.getElementById("private-chat-notification-counter")
+      if (numOfNotifications > 0){
+        notificationCounter.innerHTML = numOfNotifications
+        notificationCounter.style.display = "block"
+        notificationCounter.style.background = "red"
+      }
+      else{
+        notificationCounter.style.display = "none"
+        notificationCounter.style.background = "transparent"
+      }
+    }
+
+
+    function getUnreadChatNotificationsCount(){
+      if("{{request.user.is_authenticated}}"){
+        notificationSocket.send(JSON.stringify({
+            "command": "get_unread_chat_notifications_count",
+        }));
+      }
+    }
+
+    setInterval(getUnreadChatNotificationsCount, 2500)
+ </script>
+

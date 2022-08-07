@@ -5,6 +5,7 @@ from django.urls import path
 from public_chat.consumers import PublicChatRoomConsumer
 from private_chat.consumers import PrivateChatRoomConsumer
 from team.consumers import TeamConsumer
+from notification.consumers import NotificationConsumer
 
 """
 ###   Django channels kapcsolódó dokumentáció: https://channels.readthedocs.io/en/latest/topics/routing.html#   ###
@@ -22,6 +23,7 @@ from team.consumers import TeamConsumer
 				(azoknak a url-eknek a listája, ahova a websocketet csatlakoztatjuk, amíg nincs consumer addig üres)
 
 """
+# notification: bármelyik oldalon működhet ez a consumer, mivel nem adtunk meg külön path-t neki
 
 
 
@@ -32,6 +34,7 @@ application = ProtocolTypeRouter({
 				path('public_chat/<room_id>/', PublicChatRoomConsumer.as_asgi()),
 				path('private_chat/<room_id>/', PrivateChatRoomConsumer.as_asgi()),
 				path('team/<room_id>/', TeamConsumer.as_asgi()),
+				path('', NotificationConsumer.as_asgi()), 
 				]) 
 			)
 		),

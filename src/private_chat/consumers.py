@@ -26,6 +26,14 @@ from django.core.paginator import Paginator
 from django.core.serializers import serialize
 
 
+# Értesítésekhez
+from account.models import Account
+
+# Aszinkron futtatáshoz
+import asyncio
+
+
+
 class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 	async def connect(self):
 		"""
@@ -130,6 +138,25 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 		
 		room = await get_private_chat_room(room_id, user)
 
+		# értesiteshez
+		# ASYNC consumer itt gyorsabb a három most következo async fuggveny lefuttathato egymastol fuggetlenul
+		current_users = room.current_users.all()
+
+		"""
+		await asyncio.gather(*[
+				add_or_update_unread_message(room.user1, room, current_users, message),
+				add_or_update_unread_message(room.user2, room, current_users, message),
+				save_private_chat_room_message(user, room, message)
+			])
+		print('HEY')
+		"""
+
+
+		user1, user2 = await get_user1_and_user2(room, user)
+
+		await add_or_update_unread_message(user1, room, current_users, message)
+		await add_or_update_unread_message(user2, room, current_users, message)
+
 		# üzenet mentése az adatbázisba
 		await save_private_chat_room_message(user, room, message)
 
@@ -189,6 +216,11 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 		# tároljuk hogy a szobában vagyunk
 		self.room_id = room_id
 
+		# értesítésekhez
+		await add_user_to_current_users(user, room)
+		await on_user_connected(user, room)
+
+
 		# a channel(felhasználó tulajdonképpen) hozzáadása a csoporthoz, így megkapja mindenki az adott üzenetet
 		await self.channel_layer.group_add(
 			room.group_name,
@@ -227,6 +259,11 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 			await self.send_json(error)
 			return
 
+
+		# értesítéshez
+		await remove_user_from_current_users(user, room)
+
+
 		await self.channel_layer.group_send(
 			room.group_name,
 			{
@@ -238,6 +275,7 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 		)
 
 		self.room_id = None
+
 
 		# felhasználó törlése a csoportból
 		await self.channel_layer.group_discard(
@@ -298,6 +336,8 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 					'username': event['username'],
 				})
 
+
+
 @database_sync_to_async
 def get_private_chat_room(room_id, user):
 	"""
@@ -324,6 +364,18 @@ def save_private_chat_room_message(user, room, message):
 	"""
 	return PrivateChatRoomMessage.objects.create(user=user, room=room, content=message)
 
+
+@database_sync_to_async
+def get_user1_and_user2(room, user):
+	print('VLAMI')
+	user1 = room.user1
+	user2 = room.user2
+	if user1 == user:
+		user2 = room.user2
+		user1 = room.user1
+
+	print(f'felhasznalok: {user1} és {user2}')
+	return user1, user2
 
 
 @database_sync_to_async
@@ -411,4 +463,61 @@ class EncodePrivateChatRoomMessage(Serializer):
 		}
 
 		return message_obj
-		
+
+
+
+@database_sync_to_async
+def add_user_to_current_users(user, room):
+	"""
+	Meghívjuk a PrivateChatRoom modellben lévő ugyanilyen nevű függvényt
+	"""
+	account = Account.objects.get(id=user.id)
+	return room.add_user_to_current_users(account)
+
+
+@database_sync_to_async
+def remove_user_from_current_users(user, room):
+	"""
+	Meghívjuk a PrivateChatRoom modellben lévő ugyanilyen nevű függvényt
+	"""
+	account = Account.objects.get(id=user.id)
+	return room.remove_user_from_current_users(account)
+
+
+
+# incrementing unread message count if they are not in the room and updatet message
+@database_sync_to_async
+def add_or_update_unread_message(user, room, current_users, current_message):
+	"""
+	Hogyha nincs csatlakozva a chathez a felhasználó, updateeljük a countert es a recent messaget
+	"""
+	print('ADDING')
+	if not user in current_users:
+		try:
+			unread_messages = UnreadPrivateChatRoomMessages.objects.get(user=user, room=room)
+			unread_messages.recent_message = current_message
+			unread_messages.unread_messages_count += 1
+			unread_messages.save() # activate pre_save receiver
+		except UnreadPrivateChatRoomMessages.DoesNotExist:
+			#elvileg nem kene ilyennek legyen
+			UnreadPrivateChatRoomMessages(user=user, room=room, unread_messages_count=1).save()
+			pass
+	return 
+
+# felhasznalo csatlakozik a szobahoz, reseteljuk a countert
+@database_sync_to_async
+def on_user_connected(user, room):
+	current_users = room.current_users.all()
+
+	if user in current_users:
+		print('IFEN BELUL')
+		try:
+			unread_messages = UnreadPrivateChatRoomMessages.objects.get(user=user, room=room)
+			unread_messages.unread_messages_count = 0
+			unread_messages.save()
+		except UnreadPrivateChatRoomMessages.DoesNotExist:
+			UnreadPrivateChatRoomMessages(user=user, room=room).save()
+			pass
+	return 
+
+

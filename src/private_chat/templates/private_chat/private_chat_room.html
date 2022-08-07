@@ -108,6 +108,8 @@
 		max-height: 500px;
 		overflow-y: scroll;
 	}
+
+
 </style>
 
 <div class="main">
@@ -156,12 +158,17 @@
 				<div class="card-body p-1">	
 					<div class="d-flex flex-column friends-list-container " id="refresh-me">
 						{% for message_and_user in messages_and_users %}
-						<div class="d-flex flex-row p-2 friend-container flex-grow-1" onclick="selectUserChatRoom('{{message_and_user.other_user.id}}')" id="id_friend_container_{{message_and_user.other_user.id}}">
+						{% if message_and_user.has_new_messages %}
+						<div class="d-flex flex-row p-2 friend-container flex-grow-1" onclick="selectUserChatRoom('{{message_and_user.other_user.id}}')" id="id_friend_container_{{message_and_user.other_user.id}}" style="background-color: lightgrey;">
+						{% else %}
+						<div class="d-flex flex-row p-2 friend-container flex-grow-1" onclick="selectUserChatRoom('{{message_and_user.other_user.id}}')" id="id_friend_container_{{message_and_user.other_user.id}}" style="background-color: white;">
+						{% endif %}
 							<img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{message_and_user.other_user.id}}" src="{{message_and_user.profile_image}}" >
 							<div class="d-flex flex-column">
-								<span class="username-span">{{message_and_user.other_user.username}}</span>
+								<span class="username-span">{{message_and_user.other_user.username}} </span>
 								<!--<span class="friend-message-span">{{message_and_user.message|truncatechars:10}}</span>-->
 								<span>{{message_and_user.message|truncatechars:30}}</span>
+
 							</div>
 						</div>
 						{% endfor %}
@@ -203,7 +210,7 @@
 		{% endif %}
 
 
-
+		setInterval(refresh_page_part, 2500)
 
 
 	}
@@ -246,7 +253,7 @@
 		// websocket megnyitása
 		privateChatRoomSocket.onopen = function(event) {
 			console.log("Connection successfully created");
-
+			
 		};
 
 		// felhasználó beléptetése az adott szobába miután a socket kapcsolat létrejött
@@ -290,7 +297,8 @@
 
 			if (data.message_type == 0){
 				appendChatMessage(data, false, true)
-				refresh_page_part()
+				//refresh_page_part()
+
 
 
 			}
@@ -338,7 +346,7 @@
 		}
             });
 
-		setTimeout(refresh_page_part, 2000)
+	
 /*
 		$.ajax({
 
@@ -674,6 +682,19 @@
 	
 	// <<<-------------------------------------------------->>> //
 	// <<<-------------------------------------------------->>> //
+
+
+
+
+// NOTIFICATION
+    function getUnreadChatNotificationsCount(){
+      if("{{request.user.is_authenticated}}"){
+        notificationSocket.send(JSON.stringify({
+            "command": "get_unread_chat_notifications_count",
+        }));
+      }
+    }
+
 
 </script>
 

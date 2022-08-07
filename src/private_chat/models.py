@@ -1,6 +1,15 @@
 from django.db import models
 from django.conf import settings
 
+# értesítésekhez
+from notification.models import Notification
+from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.models import ContentType
+from django.dispatch import receiver
+from django.db.models.signals import post_save, pre_save # trigger when notification generated
+from django.utils import timezone
+
+
 
 
 class PrivateChatRoom(models.Model):
@@ -10,6 +19,10 @@ class PrivateChatRoom(models.Model):
 	user1			= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user1')
 	user2			= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user2')
 
+	# users who are currently in the room
+	current_users	= models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='current_users')
+
+
 	#def __str__(self):
 	#	return f'Private chat between {self.user1} and {self.user2}'
 
@@ -17,6 +30,27 @@ class PrivateChatRoom(models.Model):
 	@property
 	def group_name(self):
 		return f'PrivateChatRoom_{self.id}'
+
+
+	# notificationhöz lehet nem is kell self.save nem kell?
+	def add_user_to_current_users(self, user):
+		"""
+		Visszatérési értéke: igaz, hogyha a felhasználó hozzá lett adva a current_users-hez
+		"""
+		if not user in self.current_users.all():
+			self.current_users.add(user)
+			return True
+		return False
+
+
+	def remove_user_from_current_users(self, user):
+		"""
+		Visszatérési értéke: igaz, hogyha a felhasználó el lett távolítva a current_users-ből
+		"""
+		if user in self.current_users.all():
+			self.current_users.remove(user)
+			return True
+		return False
 
 
 class PrivateChatRoomMessageManager(models.Manager):
@@ -44,3 +78,115 @@ class PrivateChatRoomMessage(models.Model):
 
 	def get_sending_time(self):
 		return self.sending_time
+
+
+
+class UnreadPrivateChatRoomMessages(models.Model):
+	"""
+	Eltároljuk az olvasatlan üzeneteknek a számát adott felhasználónak az adott privát szobában
+	Ahogy belépett a szobába a felhasználó, visszaállítjuk 0-ra a számlálót, 'olvasottra' állítjuk
+	"""
+	user 					= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	room 					= models.ForeignKey(PrivateChatRoom, on_delete=models.CASCADE)
+	unread_messages_count	= models.IntegerField(default=0)
+	recent_message 			= models.CharField(max_length=200, blank=True, null=True)
+	sending_time 			= models.DateTimeField() # a legutóbbi idő mikor a user olvasta az uzeneteket
+
+	notifications 			= GenericRelation(Notification)
+
+
+	def __str__(self):
+		return f'{self.user.username}\'s unread messages'
+
+
+	def save(self, *args, **kwargs):
+		"""
+		Felülírjuk a save függvényt, hogy mikor a modell mentésre kerül mi történjen
+		"""
+		# hogyha most jön létre, hozzáadjuk a küldési időt, amúgy ne változtassa meg folyton
+		if not self.id:
+			self.sending_time = timezone.now()
+
+		return super(UnreadPrivateChatRoomMessages, self).save(*args, **kwargs)
+
+
+	@property
+	def get_cname(self):
+		"""
+
+		"""
+		return "UnreadPrivateChatRoomMessages"
+
+
+	@property
+	def determine_other_user_in_private_chat_room(self):
+		"""
+		
+		"""
+		if self.user == self.room.user1:
+			return self.room.user2
+		else:
+			return self.room.user1
+
+
+	# how do we trigger the notifciation associated with this(notifications a modellben)
+	#ezzel
+
+@receiver(post_save, sender=PrivateChatRoom)
+def create_unread_private_chat_room_message(sender, instance, created, **kwargs):
+	"""
+	Amikor létrejön egy chatszoba mindkettő felhasználónak generálunk egy értesítést
+	"""	
+	if created:
+		unread_message_user1 = UnreadPrivateChatRoomMessages(room=instance, user=instance.user1)
+		unread_message_user2 = UnreadPrivateChatRoomMessages(room=instance, user=instance.user2)
+
+		unread_message_user1.save()
+		unread_message_user2.save()
+
+@receiver(pre_save, sender=UnreadPrivateChatRoomMessages)
+def unread_messages_count_inc(sender, instance, **kwargs):
+	if instance.id == None:
+		pass # create_unread_private_chat_room_message fog lefutni(post_save)
+	else:
+		prev_notification = UnreadPrivateChatRoomMessages.objects.get(id=instance.id)
+		if prev_notification.unread_messages_count < instance.unread_messages_count:
+			content_type = ContentType.objects.get_for_model(instance)
+			# meghatározzuk melyik user melyik
+			if instance.user == instance.room.user1:
+				other_user = instance.room.user2
+			else:
+				other_user = instance.room.user1
+
+			try:
+				notification = Notification.objects.get(notified_user=instance.user, content_type=content_type, object_id=instance.id)
+				notification.verb = instance.recent_message
+				notification.sending_time = timezone.now()
+				notification.save()
+			except Notification.DoesNotExist:
+				# elméletileg nem kellene ilyen hibának legyen, hiszen ezt az elején kezeljük, majd a post_save létrehozza
+				instance.notifications.create(
+					notified_user=instance.user,
+					sender_user=other_user,
+					notification_url=f'{settings.BASE_URL}/uzenetek/?szoba_id={instance.room.id}',
+					verb=instance.recent_message,
+					content_type=content_type
+					)
+
+@receiver(pre_save, sender=UnreadPrivateChatRoomMessages)
+def unread_messages_count_reset(sender, instance, **kwargs):
+	"""
+	A táblában az értesítés sosem törlődik, a verb és a sending time updatelodik, de a sor nem torlodik
+	Ha a counter csokken akkor törölje a notificatont(tablabvan marad)
+	"""
+	if instance.id == None:
+		pass
+	else:
+		prev_notification = UnreadPrivateChatRoomMessages.objects.get(id=instance.id)
+		if prev_notification.unread_messages_count > instance.unread_messages_count:
+			content_type = ContentType.objects.get_for_model(instance)
+			try:
+				notification = Notification.objects.get(notified_user=instance.user, content_type=content_type, object_id=instance.id)
+				notification.delete()
+			except Notification.DoesNotExist:
+				pass

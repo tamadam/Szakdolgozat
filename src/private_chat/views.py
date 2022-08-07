@@ -75,18 +75,33 @@ def private_chat_page_view(request, *args, **kwargs):
 		except:
 			# abban az esetben ha még nincs üzenet a szobában, küldési idő sem lehet, default érték
 			recent_message_sending_time = DEFAULT_SENDING_TIME
+		has_new_messages = False
+		try:
+			unread_messages_count = UnreadPrivateChatRoomMessages.objects.get(room=room, user=user).unread_messages_count
+			print(unread_messages_count)
+			print('letezik')
+
+			if unread_messages_count > 0:
+				has_new_messages = True
+			else:
+				has_new_messages = False
+		except:
+			print('nem letezik')
+
 
 		messages_and_users.append({
 				'message': recent_message,
 				'recent_message_sending_time': recent_message_sending_time,
 				'other_user': other_user,
 				'profile_image': profile_image,
+				'has_new_messages': has_new_messages,
 			})
 
 
 
 
 	messages_and_users = sorted(messages_and_users, key=lambda x: x['recent_message_sending_time'], reverse=True)
+
 
 
 
