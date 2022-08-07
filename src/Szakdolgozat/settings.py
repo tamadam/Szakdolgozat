@@ -83,6 +83,12 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+
+            # sidebar-nál ennek a segítségével jelenítünk meg információkat
+            # template tag
+            'libraries':{
+                'user_info_tags': 'templatetags.user_info_tags',
+            }
         },
     },
 ]
