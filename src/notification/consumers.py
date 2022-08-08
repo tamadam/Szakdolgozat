@@ -40,19 +40,19 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
 		print('NotificationConsumer: receive_json called with command: ' + str(command))
 
 		try:
-			if command == 'get_unread_chat_notifications_count':
+			if command == 'get_unread_private_chat_room_messages_count':
 				try:
-					payload = await get_unread_chat_notification_count(self.scope["user"])
+					payload = await get_unread_private_chat_room_messages_count(self.scope["user"])
 					if payload != None:
 						payload = json.loads(payload)
-						await self.send_unread_chat_notification_count(payload['count'])
+						await self.send_private_chat_notifications_count(payload['count'])
 				except Exception as e:
-					print("UNREAD CHAT MESSAGE COUNT EXCEPTION: " + str(e))
+					print("Exception at get_unread_private_chat_room_messages_count consumer: " + str(e))
 					pass
 		except:
 			pass
 
-	async def send_unread_chat_notification_count(self, count):
+	async def send_private_chat_notifications_count(self, count):
 		"""
 		Send the number of unread "chat" notifications to the template
 		"""
@@ -64,7 +64,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
 		)
 
 @database_sync_to_async
-def get_unread_chat_notification_count(user):
+def get_unread_private_chat_room_messages_count(user):
     print('hey')
     payload = {}
     if user.is_authenticated:

@@ -218,7 +218,7 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 
 		# értesítésekhez
 		await add_user_to_current_users(user, room)
-		await on_user_connected(user, room)
+		await reset_notification_count(user, room)
 
 
 		# a channel(felhasználó tulajdonképpen) hozzáadása a csoporthoz, így megkapja mindenki az adott üzenetet
@@ -506,7 +506,7 @@ def add_or_update_unread_message(user, room, current_users, current_message):
 
 # felhasznalo csatlakozik a szobahoz, reseteljuk a countert
 @database_sync_to_async
-def on_user_connected(user, room):
+def reset_notification_count(user, room):
 	current_users = room.current_users.all()
 
 	if user in current_users:

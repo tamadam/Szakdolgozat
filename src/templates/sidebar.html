@@ -153,7 +153,7 @@ $( document ).ready(function() {
     // websocket megnyitása
     notificationSocket.onopen = function(event) {
       console.log("notificationSocket: Connection successfully created");
-      getUnreadChatNotificationsCount()
+      getUnreadPrivateChatRoomMessagesCount()
 
     };
 
@@ -205,14 +205,14 @@ $( document ).ready(function() {
     }
 
 
-    function getUnreadChatNotificationsCount(){
+    function getUnreadPrivateChatRoomMessagesCount(){
       if("{{request.user.is_authenticated}}"){
         notificationSocket.send(JSON.stringify({
-            "command": "get_unread_chat_notifications_count",
+            "command": "get_unread_private_chat_room_messages_count",
         }));
       }
     }
 
-    setInterval(getUnreadChatNotificationsCount, 2500)
+    setInterval(getUnreadPrivateChatRoomMessagesCount, 1800)
  </script>
 

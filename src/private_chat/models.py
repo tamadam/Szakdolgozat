@@ -110,24 +110,6 @@ class UnreadPrivateChatRoomMessages(models.Model):
 		return super(UnreadPrivateChatRoomMessages, self).save(*args, **kwargs)
 
 
-	@property
-	def get_cname(self):
-		"""
-
-		"""
-		return "UnreadPrivateChatRoomMessages"
-
-
-	@property
-	def determine_other_user_in_private_chat_room(self):
-		"""
-		
-		"""
-		if self.user == self.room.user1:
-			return self.room.user2
-		else:
-			return self.room.user1
-
 
 	# how do we trigger the notifciation associated with this(notifications a modellben)
 	#ezzel
@@ -160,7 +142,7 @@ def unread_messages_count_inc(sender, instance, **kwargs):
 
 			try:
 				notification = Notification.objects.get(notified_user=instance.user, content_type=content_type, object_id=instance.id)
-				notification.verb = instance.recent_message
+				notification.notification_text = instance.recent_message
 				notification.sending_time = timezone.now()
 				notification.save()
 			except Notification.DoesNotExist:
@@ -168,15 +150,14 @@ def unread_messages_count_inc(sender, instance, **kwargs):
 				instance.notifications.create(
 					notified_user=instance.user,
 					sender_user=other_user,
-					notification_url=f'{settings.BASE_URL}/uzenetek/?szoba_id={instance.room.id}',
-					verb=instance.recent_message,
+					notification_text=instance.recent_message,
 					content_type=content_type
 					)
 
 @receiver(pre_save, sender=UnreadPrivateChatRoomMessages)
 def unread_messages_count_reset(sender, instance, **kwargs):
 	"""
-	A táblában az értesítés sosem törlődik, a verb és a sending time updatelodik, de a sor nem torlodik
+	A táblában az értesítés sosem törlődik, a notification_text és a sending time updatelodik, de a sor nem torlodik
 	Ha a counter csokken akkor törölje a notificatont(tablabvan marad)
 	"""
 	if instance.id == None:
