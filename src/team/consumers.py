@@ -22,6 +22,8 @@ from django.core.serializers.python import Serializer
 from django.core.paginator import Paginator
 from django.core.serializers import serialize
 
+# Értesítéshez
+from account.models import Account
 
 
 
@@ -118,6 +120,19 @@ class TeamConsumer(AsyncJsonWebsocketConsumer):
 
 		room = await get_team_chat_room(room_id, user)
 
+
+		team_mate_users = room.users.all() # csapatban lévő felhasználók
+		current_users = room.users_in_chat.all() # online lévő felhasználók
+		#print('FELHASZNALOK')
+		#await get_users_in_list(current_users)
+		#await get_users_in_list(team_mate_users)
+
+		#all_registered_users = Account.objects.all() 
+
+		await add_or_update_unread_message(user, team_mate_users, room, current_users, message)
+
+
+
 		# üzenet mentése az adatbázisba
 		await save_team_room_message(user, room, message)
 
@@ -181,6 +196,14 @@ class TeamConsumer(AsyncJsonWebsocketConsumer):
 		# tároljuk hogy a szobában vagyunk
 		self.room_id = room_id
 
+
+		# hozzáadjuk az adott felhasználót a jelenleg chatben lévő felhasználók közé
+		if user.is_authenticated:
+			print(f'TeamConsumer: add user {user.username} to online users in group {room.group_name} ') 
+			await add_user(room, user)
+			await reset_notification_count(user, room)
+
+
 		# a channel(felhasználó tulajdonképpen) hozzáadása a csoporthoz, így megkapja mindenki az adott üzenetet
 		await self.channel_layer.group_add(
 			room.group_name,
@@ -236,6 +259,11 @@ class TeamConsumer(AsyncJsonWebsocketConsumer):
 
 		self.room_id = None
 
+		# felhasználó törlése a jelenleg online lévő felhasználók közül
+		if user.is_authenticated:
+			print(f'TeamConsumer: remove user {user.username} from online users in group {room.group_name} ')
+			await remove_user(room, user)
+
 		# felhasználó törlése a csoportból
 		await self.channel_layer.group_discard(
 			room.group_name,
@@ -282,6 +310,14 @@ class TeamConsumer(AsyncJsonWebsocketConsumer):
 					'user_id': event['user_id'],
 					'username': event['username'],
 				})
+
+
+@database_sync_to_async
+def get_users_in_list(users):
+	for user in users:
+		print(user.username)
+
+
 
 @database_sync_to_async
 def get_team_chat_room(room_id, user):
@@ -369,4 +405,65 @@ class EncodeTeamMessage(Serializer):
 		}
 
 		return message_obj
-		
+
+
+@database_sync_to_async
+def add_user(room, user):
+	"""
+	Meghívja a modellben lévő add_user_to_current_users függvényt
+	Ezzel hozzáférünk az adatbázis táblához:
+		- mivel a hozzáférés szinkron művelet ezért át kell alakítani aszinkronná
+	"""
+	return room.add_user_to_current_users(user)
+
+
+@database_sync_to_async
+def remove_user(room, user):
+	"""
+	Meghívja a modellben lévő remove_user_from_current_users függvényt
+	Ezzel hozzáférünk az adatbázis táblához:
+		- mivel a hozzáférés szinkron művelet ezért át kell alakítani aszinkronná
+	"""
+
+	return room.remove_user_from_current_users(user)
+
+
+# incrementing unread message count if they are not in the room and updatet message
+@database_sync_to_async
+def add_or_update_unread_message(sender_user, all_registered_users, room, current_users, current_message):
+	"""
+	Hogyha nincs csatlakozva a chathez a felhasználó, updateeljük a countert es a recent messaget
+	"""
+	print('ADDING')
+	for user in all_registered_users:
+		if not user in current_users:
+			try:
+				unread_messages = UnreadTeamMessages.objects.get(user=user, room=room)
+				unread_messages.recent_message = f'{sender_user.id}+{current_message}'
+				unread_messages.unread_messages_count += 1
+
+				unread_messages.save() # activate pre_save receiver
+			except UnreadTeamMessages.DoesNotExist:
+				#elvileg nem kene ilyennek legyen
+				UnreadTeamMessages(user=user, room=room, unread_messages_count=1).save()
+				pass
+	return 
+
+# felhasznalo csatlakozik a szobahoz, reseteljuk a countert
+@database_sync_to_async
+def reset_notification_count(user, room):
+	current_users = room.users.all()
+
+	if user in current_users:
+		print('IFEN BELUL')
+		try:
+			unread_messages = UnreadTeamMessages.objects.get(user=user, room=room)
+			unread_messages.unread_messages_count = 0
+			unread_messages.last_seen_time = timezone.now()
+			unread_messages.save()
+		except UnreadTeamMessages.DoesNotExist:
+			UnreadTeamMessages(user=user, room=room, last_seen_time=timezone.now()).save()
+			pass
+	return 
+
+

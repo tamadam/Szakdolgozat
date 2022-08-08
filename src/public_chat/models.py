@@ -118,7 +118,7 @@ def unread_messages_count_inc(sender, instance, **kwargs):
 			try:
 				sender_user = Account.objects.get(username=received_message[0]) # a sender user
 			except:
-				sender_user = 'ismeretlen'
+				sender_user = None
 			message = received_message[1] # az uzenet maga
 
 			

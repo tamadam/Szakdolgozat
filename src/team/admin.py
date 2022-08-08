@@ -1,6 +1,6 @@
 from django.contrib import admin
 from account.models import Account
-from .models import Team, Membership, TeamMessage
+from .models import Team, Membership, TeamMessage, UnreadTeamMessages
 from django.core.paginator import Paginator
 from django.core.cache import cache
 
@@ -23,6 +23,8 @@ class TeamAdmin(admin.ModelAdmin):
 	list_display = ['name', 'description', 'date_created']
 	inlines = [MembershipConfigInline]
 	readonly_fields = ['id']
+
+
 
 
 class MembershipConfig(admin.ModelAdmin):
@@ -76,3 +78,16 @@ class TeamMessageAdmin(admin.ModelAdmin):
 
 
 admin.site.register(TeamMessage, TeamMessageAdmin)
+
+
+
+
+class UnreadTeamMessagesAdmin(admin.ModelAdmin):
+	list_display = ['user', 'room', 'unread_messages_count']
+	search_fields = []
+	readonly_fields = ['id']
+
+	class Meta:
+		model = UnreadTeamMessages
+
+admin.site.register(UnreadTeamMessages, UnreadTeamMessagesAdmin)

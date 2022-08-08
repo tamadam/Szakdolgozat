@@ -77,7 +77,7 @@
     <li><a href="{% url 'profile' user_id=request.user.id %}">Karakter</a></li>
     <li><a href="{% url 'public_chat' %}">Beszélgetés</a><div id="public-chat-notification-counter"></div></li>
     <li><a href="{% url 'search' %}">Hősök csarnoka</a></li>
-    <li><a href="{% url 'team:user_team_view' %}">Csapat</a></li>
+    <li><a href="{% url 'team:user_team_view' %}">Csapat</a><div id="team-chat-notification-counter"></div></li>
     <li><a href="{% url 'private_chat:private_chat_room' %}">Levelek</a><div id="private-chat-notification-counter"></div></li>
     <li><a href="{% url 'logout' %}">Logout</a></li>
   </ul>
@@ -155,6 +155,7 @@ $( document ).ready(function() {
       console.log("notificationSocket: Connection successfully created");
       getUnreadPrivateChatRoomMessagesCount()
       getUnreadPublicChatRoomMessagesCount()
+      getUnreadTeamMessagesCount()
     };
 
     // bejövő üzeneket kezelése a consumertől
@@ -170,6 +171,10 @@ $( document ).ready(function() {
       else if(data.message_type == 21){
         console.log("got message_type 21")
         setNumOfPublicChatNotifications(data.num)
+      }
+      else if(data.message_type == 22){
+        console.log("got message_type 22")
+        setTeamChatNotifications(data.num)
       }
 
     };
@@ -191,7 +196,25 @@ $( document ).ready(function() {
       }
     };
 
+    function setTeamChatNotifications(numOfNotifications) {
+      console.log("setting num of team chat notification")
+      console.log("num of team chat notifications: " + numOfNotifications)
+      var notificationCounter = document.getElementById("team-chat-notification-counter")
+      if (numOfNotifications > 0){
+        notificationCounter.innerHTML = '+'
+        notificationCounter.style.display = "block"
+        notificationCounter.style.background = "red"
+      }
+      else{
+        notificationCounter.style.display = "none"
+        notificationCounter.style.background = "transparent"
+      }
+    }
 
+
+
+
+    // public chat notifications
     function setNumOfPublicChatNotifications(numOfNotifications){
       console.log("setting num of public chat notification")
       console.log("num of public chat notifications: " + numOfNotifications)
@@ -208,7 +231,7 @@ $( document ).ready(function() {
     }
 
 
-
+    // private chat notifications
     function setNumOfPrivateChatNotifications(numOfNotifications){
       console.log("setting num of private chat notification")
       console.log("num of private chat notifications: " + numOfNotifications)
@@ -223,6 +246,15 @@ $( document ).ready(function() {
         notificationCounter.style.background = "transparent"
       }
     }
+
+    function getUnreadTeamMessagesCount(){
+      if("{{request.user.is_authenticated}}"){
+        notificationSocket.send(JSON.stringify({
+            "command": "get_unread_team_messages_count",
+        }));
+      }
+    } 
+
 
 
     function getUnreadPublicChatRoomMessagesCount(){
@@ -243,7 +275,7 @@ $( document ).ready(function() {
       }
     }
 
-
+    setInterval(getUnreadTeamMessagesCount, 1800)
     setInterval(getUnreadPublicChatRoomMessagesCount, 1800)
     setInterval(getUnreadPrivateChatRoomMessagesCount, 1800)
  </script>

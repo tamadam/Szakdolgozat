@@ -11,6 +11,7 @@ MESSAGE_TYPE_LEAVE = 4 # felhasználó szobából kilépését jelző üzenet
 MESSAGE_TYPE_ONLINE_USERS = 5 # a szobához csatlakozott felhasználók számát és nevét jelző üzenet
 MESSAGE_TYPE_PRIVATE_NOTIFICATIONS_COUNT = 20
 MESSAGE_TYPE_PUBLIC_NOTIFICATIONS_COUNT = 21
+MESSAGE_TYPE_TEAM_NOTIFICATIONS_COUNT = 22
 
 #--ÜZENETEK BETÖLTÉSE--#
 PUBLIC_CHAT_ROOM_MESSAGE_PAGE_SIZE = 10 # oldalanként betöltött üzenetek száma a publikus chat szobában
