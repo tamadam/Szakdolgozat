@@ -10,7 +10,7 @@ from .exceptions import ClientError, handle_client_error
 from core.constants import *
 
 # Modellek
-from .models import PublicChatRoom, PublicChatRoomMessage
+from .models import PublicChatRoom, PublicChatRoomMessage, UnreadPublicChatRoomMessages
 
 # Küldési idő kalkulálása
 from .utils import *
@@ -21,6 +21,9 @@ from django.utils import timezone
 from django.core.serializers.python import Serializer
 from django.core.paginator import Paginator
 from django.core.serializers import serialize
+
+# Értesítéshez
+from account.models import Account
 
 """
 Documentation used:
@@ -124,6 +127,16 @@ class PublicChatRoomConsumer(AsyncJsonWebsocketConsumer):
 
 		room = await get_public_chat_room(room_id)
 
+		current_users = room.users.all()
+
+		all_registered_users = Account.objects.all() # ezeknek a usereknek kuldjuk ki az ertesitest akik nincsenek a chatszobaban benne
+		# az uzenetkuldo user is benne van ebben a listaban de mivel neki feltetlen a chatszobaban kell legyen
+		# uzenetkuldeskor így nem gond
+
+		await add_or_update_unread_message(user, all_registered_users, room, current_users, message)
+
+
+
 		# üzenet mentése az adatbázisba
 		await save_public_chat_room_message(user, room, message)
 
@@ -191,7 +204,7 @@ class PublicChatRoomConsumer(AsyncJsonWebsocketConsumer):
 		if user.is_authenticated:
 			print(f'PublicChatConsumer: add user {user.username} to online users in group {room.group_name} ') 
 			await add_user(room, user)
-
+			await reset_notification_count(user, room)
 
 		# a channel(felhasználó tulajdonképpen) hozzáadása a csoporthoz, így megkapja mindenki az adott üzenetet
 		await self.channel_layer.group_add(
@@ -423,5 +436,45 @@ def remove_user(room, user):
 	"""
 
 	return room.remove_user_from_current_users(user)
+
+
+
+# incrementing unread message count if they are not in the room and updatet message
+@database_sync_to_async
+def add_or_update_unread_message(sender_user, all_registered_users, room, current_users, current_message):
+	"""
+	Hogyha nincs csatlakozva a chathez a felhasználó, updateeljük a countert es a recent messaget
+	"""
+	print('ADDING')
+	for user in all_registered_users:
+		if not user in current_users:
+			try:
+				unread_messages = UnreadPublicChatRoomMessages.objects.get(user=user, room=room)
+				unread_messages.recent_message = f'{sender_user}+{current_message}'
+				unread_messages.unread_messages_count += 1
+
+				unread_messages.save() # activate pre_save receiver
+			except UnreadPublicChatRoomMessages.DoesNotExist:
+				#elvileg nem kene ilyennek legyen
+				UnreadPublicChatRoomMessages(user=user, room=room, unread_messages_count=1).save()
+				pass
+	return 
+
+# felhasznalo csatlakozik a szobahoz, reseteljuk a countert
+@database_sync_to_async
+def reset_notification_count(user, room):
+	current_users = room.users.all()
+
+	if user in current_users:
+		print('IFEN BELUL')
+		try:
+			unread_messages = UnreadPublicChatRoomMessages.objects.get(user=user, room=room)
+			unread_messages.unread_messages_count = 0
+			unread_messages.last_seen_time = timezone.now()
+			unread_messages.save()
+		except UnreadPublicChatRoomMessages.DoesNotExist:
+			UnreadPublicChatRoomMessages(user=user, room=room, last_seen_time=timezone.now()).save()
+			pass
+	return 
 
 

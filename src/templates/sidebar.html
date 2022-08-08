@@ -75,7 +75,7 @@
     <li><a href="#">Fegyverbolt</a></li>
     <li><a href="#">Varázsbolt</a></li>
     <li><a href="{% url 'profile' user_id=request.user.id %}">Karakter</a></li>
-    <li><a href="{% url 'public_chat' %}">Beszélgetés</a></li>
+    <li><a href="{% url 'public_chat' %}">Beszélgetés</a><div id="public-chat-notification-counter"></div></li>
     <li><a href="{% url 'search' %}">Hősök csarnoka</a></li>
     <li><a href="{% url 'team:user_team_view' %}">Csapat</a></li>
     <li><a href="{% url 'private_chat:private_chat_room' %}">Levelek</a><div id="private-chat-notification-counter"></div></li>
@@ -154,7 +154,7 @@ $( document ).ready(function() {
     notificationSocket.onopen = function(event) {
       console.log("notificationSocket: Connection successfully created");
       getUnreadPrivateChatRoomMessagesCount()
-
+      getUnreadPublicChatRoomMessagesCount()
     };
 
     // bejövő üzeneket kezelése a consumertől
@@ -166,6 +166,10 @@ $( document ).ready(function() {
       if(data.message_type == 20){
         console.log("got message_type 20")
         setNumOfPrivateChatNotifications(data.num)
+      }
+      else if(data.message_type == 21){
+        console.log("got message_type 21")
+        setNumOfPublicChatNotifications(data.num)
       }
 
     };
@@ -188,10 +192,26 @@ $( document ).ready(function() {
     };
 
 
+    function setNumOfPublicChatNotifications(numOfNotifications){
+      console.log("setting num of public chat notification")
+      console.log("num of public chat notifications: " + numOfNotifications)
+      var notificationCounter = document.getElementById("public-chat-notification-counter")
+      if (numOfNotifications > 0){
+        notificationCounter.innerHTML = '+'
+        notificationCounter.style.display = "block"
+        notificationCounter.style.background = "red"
+      }
+      else{
+        notificationCounter.style.display = "none"
+        notificationCounter.style.background = "transparent"
+      }
+    }
+
+
 
     function setNumOfPrivateChatNotifications(numOfNotifications){
-      console.log("setting num of notification")
-      console.log("num of notifications: " + numOfNotifications)
+      console.log("setting num of private chat notification")
+      console.log("num of private chat notifications: " + numOfNotifications)
       var notificationCounter = document.getElementById("private-chat-notification-counter")
       if (numOfNotifications > 0){
         notificationCounter.innerHTML = numOfNotifications
@@ -205,6 +225,16 @@ $( document ).ready(function() {
     }
 
 
+    function getUnreadPublicChatRoomMessagesCount(){
+      if("{{request.user.is_authenticated}}"){
+        notificationSocket.send(JSON.stringify({
+            "command": "get_unread_public_chat_room_messages_count",
+        }));
+      }
+    } 
+
+
+
     function getUnreadPrivateChatRoomMessagesCount(){
       if("{{request.user.is_authenticated}}"){
         notificationSocket.send(JSON.stringify({
@@ -213,6 +243,8 @@ $( document ).ready(function() {
       }
     }
 
+
+    setInterval(getUnreadPublicChatRoomMessagesCount, 1800)
     setInterval(getUnreadPrivateChatRoomMessagesCount, 1800)
  </script>
 

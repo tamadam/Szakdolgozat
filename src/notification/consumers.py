@@ -10,6 +10,7 @@ from datetime import datetime
 from core.constants import *
 
 from private_chat.models import UnreadPrivateChatRoomMessages
+from public_chat.models import UnreadPublicChatRoomMessages
 
 from .models import Notification
 
@@ -37,17 +38,27 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
 		Első argumentumban van benne
 		"""
 		command = content.get('command', None) 
+		user = self.scope['user']
 		print('NotificationConsumer: receive_json called with command: ' + str(command))
 
 		try:
 			if command == 'get_unread_private_chat_room_messages_count':
 				try:
-					payload = await get_unread_private_chat_room_messages_count(self.scope["user"])
-					if payload != None:
-						payload = json.loads(payload)
-						await self.send_private_chat_notifications_count(payload['count'])
+					info_packet = await get_unread_private_chat_room_messages_count(user)
+					if info_packet != None:
+						info_packet = json.loads(info_packet)
+						await self.send_private_chat_notifications_count(info_packet['count'])
 				except Exception as e:
-					print("Exception at get_unread_private_chat_room_messages_count consumer: " + str(e))
+					print('Exception at get_unread_private_chat_room_messages_count consumer: ' + str(e))
+					pass
+			elif command == 'get_unread_public_chat_room_messages_count':
+				try:
+					info_packet = await get_unread_public_chat_room_messages_count(user)
+					if info_packet != None:
+						info_packet = json.loads(info_packet)
+						await self.send_public_chat_notifications_count(info_packet['count'])
+				except Exception as e:
+					print('Exception at get_unread_public_chat_room_messages_count consumer: ' + str(e))
 					pass
 		except:
 			pass
@@ -58,15 +69,29 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
 		"""
 		await self.send_json(
 			{
-				"message_type": MESSAGE_TYPE_NOTIFICATIONS_COUNT,
+				"message_type": MESSAGE_TYPE_PRIVATE_NOTIFICATIONS_COUNT,
 				"num": count,
 			},
 		)
 
+
+	async def send_public_chat_notifications_count(self, count):
+		"""
+		Send the number of unread "chat" notifications to the template
+		"""
+		await self.send_json(
+			{
+				"message_type": MESSAGE_TYPE_PUBLIC_NOTIFICATIONS_COUNT,
+				"num": count,
+			},
+		)
+
+
+
 @database_sync_to_async
 def get_unread_private_chat_room_messages_count(user):
-    print('hey')
-    payload = {}
+    print('get_unread_private_chat_room_messages_count')
+    info_packet = {}
     if user.is_authenticated:
         chatmessage_ct = ContentType.objects.get_for_model(UnreadPrivateChatRoomMessages)
         notifications = Notification.objects.filter(notified_user=user, content_type__in=[chatmessage_ct])
@@ -74,8 +99,27 @@ def get_unread_private_chat_room_messages_count(user):
         unread_count = 0
         if notifications:
             unread_count = len(notifications.all())
-        payload['count'] = unread_count
-        return json.dumps(payload)
+        info_packet['count'] = unread_count
+        return json.dumps(info_packet)
+    else:
+        #raise ClientError("AUTH_ERROR", "User must be authenticated to get notifications.")
+        pass
+    return None
+
+
+@database_sync_to_async
+def get_unread_public_chat_room_messages_count(user):
+    print('get_unread_public_chat_room_messages_count')
+    info_packet = {}
+    if user.is_authenticated:
+        chatmessage_ct = ContentType.objects.get_for_model(UnreadPublicChatRoomMessages)
+        notifications = Notification.objects.filter(notified_user=user, content_type__in=[chatmessage_ct])
+
+        unread_count = 0
+        if notifications:
+            unread_count = len(notifications.all())
+        info_packet['count'] = unread_count
+        return json.dumps(info_packet)
     else:
         #raise ClientError("AUTH_ERROR", "User must be authenticated to get notifications.")
         pass
