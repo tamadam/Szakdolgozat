@@ -90,24 +90,13 @@ class UnreadPrivateChatRoomMessages(models.Model):
 	room 					= models.ForeignKey(PrivateChatRoom, on_delete=models.CASCADE)
 	unread_messages_count	= models.IntegerField(default=0)
 	recent_message 			= models.CharField(max_length=200, blank=True, null=True)
-	sending_time 			= models.DateTimeField() # a legutóbbi idő mikor a user olvasta az uzeneteket
+	last_seen_time 			= models.DateTimeField() # a legutóbbi idő mikor a user olvasta az uzeneteket
 
 	notifications 			= GenericRelation(Notification)
 
 
 	def __str__(self):
 		return f'{self.user.username}\'s unread messages'
-
-
-	def save(self, *args, **kwargs):
-		"""
-		Felülírjuk a save függvényt, hogy mikor a modell mentésre kerül mi történjen
-		"""
-		# hogyha most jön létre, hozzáadjuk a küldési időt, amúgy ne változtassa meg folyton
-		if not self.id:
-			self.sending_time = timezone.now()
-
-		return super(UnreadPrivateChatRoomMessages, self).save(*args, **kwargs)
 
 
 
@@ -128,6 +117,7 @@ def create_unread_private_chat_room_message(sender, instance, created, **kwargs)
 
 @receiver(pre_save, sender=UnreadPrivateChatRoomMessages)
 def unread_messages_count_inc(sender, instance, **kwargs):
+	print('unread_messages_count_inc')
 	if instance.id == None:
 		pass # create_unread_private_chat_room_message fog lefutni(post_save)
 	else:
@@ -143,7 +133,7 @@ def unread_messages_count_inc(sender, instance, **kwargs):
 			try:
 				notification = Notification.objects.get(notified_user=instance.user, content_type=content_type, object_id=instance.id)
 				notification.notification_text = instance.recent_message
-				notification.sending_time = timezone.now()
+				notification.last_seen_time = timezone.now()
 				notification.save()
 			except Notification.DoesNotExist:
 				# elméletileg nem kellene ilyen hibának legyen, hiszen ezt az elején kezeljük, majd a post_save létrehozza
@@ -160,6 +150,7 @@ def unread_messages_count_reset(sender, instance, **kwargs):
 	A táblában az értesítés sosem törlődik, a notification_text és a sending time updatelodik, de a sor nem torlodik
 	Ha a counter csokken akkor törölje a notificatont(tablabvan marad)
 	"""
+	print('unread_messages_count_reset')
 	if instance.id == None:
 		pass
 	else:

@@ -497,6 +497,7 @@ def add_or_update_unread_message(user, room, current_users, current_message):
 			unread_messages = UnreadPrivateChatRoomMessages.objects.get(user=user, room=room)
 			unread_messages.recent_message = current_message
 			unread_messages.unread_messages_count += 1
+
 			unread_messages.save() # activate pre_save receiver
 		except UnreadPrivateChatRoomMessages.DoesNotExist:
 			#elvileg nem kene ilyennek legyen
@@ -514,6 +515,7 @@ def reset_notification_count(user, room):
 		try:
 			unread_messages = UnreadPrivateChatRoomMessages.objects.get(user=user, room=room)
 			unread_messages.unread_messages_count = 0
+			unread_messages.last_seen_time = timezone.now()
 			unread_messages.save()
 		except UnreadPrivateChatRoomMessages.DoesNotExist:
 			UnreadPrivateChatRoomMessages(user=user, room=room).save()
