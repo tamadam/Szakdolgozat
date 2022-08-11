@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'team',
     'notification'
     # third party apps
+
 ]
 
 MIDDLEWARE = [
@@ -125,13 +126,23 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
+#UserAttributeSimilarityValidator (checks for similarity between the password and a set of attributes of the user)
+#MinimumLengthValidator (checks whether the password meets a minimum length)
+#CommonPasswordValidator (checks whether the password occurs in a list of common passwords)
+#NumericPasswordValidator (checks whether the password isn’t entirely numeric)
 
-AUTH_PASSWORD_VALIDATORS = [
+# az accountnal a registrationnél ellenorizzuk manualisan amit kell
+
+"""
+
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 6,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -139,6 +150,12 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+
+"""
+#
+AUTH_PASSWORD_VALIDATORS = [
+
+
 ]
 
 

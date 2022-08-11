@@ -17,6 +17,7 @@ from django.contrib import messages
 from core.constants import STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
 from django.conf import settings 
 import os
+import re
 
 @anonymous_user
 def register_page_view(request):
@@ -42,6 +43,7 @@ def register_page_view(request):
 
 
 	context = {'form':form}
+
 
 	return render(request, 'account/register.html', context)
 
@@ -147,6 +149,58 @@ def edit_profile_view(request, *args, **kwargs):
 
 
 
+def validate_username_realtime(request):
+	username = request.GET.get('username')
+
+	is_long_enough = False
+	is_available = not Account.objects.filter(username=username).exists()
+	if len(username) > 0:
+		is_long_enough = True
+
+	data = {
+		'is_available': is_available,
+		'is_long_enough': is_long_enough,
+	}
+
+	return JsonResponse(data)
+
+# https://www.geeksforgeeks.org/check-if-email-address-valid-or-not-in-python/
+
+def validate_email_realtime(request):
+	email = request.GET.get('email')
+
+
+	is_valid = False
+	is_available = not Account.objects.filter(email=email).exists()
+
+	regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+	value = re.fullmatch(regex, email)
+
+	if value:
+		is_valid = True
+
+	data = {
+		'is_available': is_available,
+		'is_valid': is_valid,
+	}
+
+	return JsonResponse(data)
+
+
+def validate_password_realtime(request):
+	password = request.GET.get('password')
+
+	is_strong = False
+
+	print(len(password))
+
+	if len(password) >= 6:
+		if sum(character.isdigit() for character in password) >= 1:
+			if any (character.islower() for character in password):
+				if any (character.isupper() for character in password):
+					is_strong = True
+
+	return JsonResponse({'is_strong': is_strong})
 
 
 

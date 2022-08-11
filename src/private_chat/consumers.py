@@ -517,7 +517,10 @@ def reset_notification_count(user, room):
 			unread_messages.unread_messages_count = 0
 			unread_messages.last_seen_time = timezone.now()
 			unread_messages.save()
-		except UnreadPrivateChatRoomMessages.DoesNotExist:
+		#except UnreadPrivateChatRoomMessages.DoesNotExist:
+		#	UnreadPrivateChatRoomMessages(user=user, room=room).save()
+		#	pass
+		except Exception as exception:
 			UnreadPrivateChatRoomMessages(user=user, room=room).save()
 			pass
 	return 

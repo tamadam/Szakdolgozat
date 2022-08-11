@@ -90,7 +90,7 @@ class UnreadPrivateChatRoomMessages(models.Model):
 	room 					= models.ForeignKey(PrivateChatRoom, on_delete=models.CASCADE)
 	unread_messages_count	= models.IntegerField(default=0)
 	recent_message 			= models.CharField(max_length=200, blank=True, null=True)
-	last_seen_time 			= models.DateTimeField() # a legutóbbi idő mikor a user olvasta az uzeneteket
+	last_seen_time 			= models.DateTimeField(null=True) # a legutóbbi idő mikor a user olvasta az uzeneteket
 
 	notifications 			= GenericRelation(Notification)
 
