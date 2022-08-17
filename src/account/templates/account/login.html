@@ -1,123 +1,184 @@
-<!DOCTYPE html>
+{% load static %}
 <html>
     
 <head>
-	<title>Login</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+	<title>RoleGame - Bejelentkezés</title>
+
+	<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> JOBB AJAX?-->
 
 
-	<style>
-		body,
-		html {
-			margin: 0;
-			padding: 0;
-			height: 100%;
-			background: #7abecc !important;
-		}
-		.user_card {
-			width: 350px;
-			margin-top: auto;
-			margin-bottom: auto;
-			background: #74cfbf;
-			position: relative;
-			display: flex;
-			justify-content: center;
-			flex-direction: column;
-			padding: 10px;
-			box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-			-webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-			-moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-			border-radius: 5px;
+	<!-- AJAXHOZ KELL JQUERY IMPORT -->
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 
-		}
+	<!-- JQUERY UI slide effecthez -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
 
-		.form_container {
-			margin-top: 20px;
-		}
 
-		#form-title{
-			color: #fff;
-			
-		}
 
-		.login_btn {
-			width: 100%;
-			background: #33ccff !important;
-			color: white !important;
-		}
-		.login_btn:focus {
-			box-shadow: none !important;
-			outline: 0px !important;
-		}
-		.login_container {
-			padding: 0 2rem;
-		}
-		.input-group-text {
-			background: #f7ba5b !important;
-			color: white !important;
-			border: 0 !important;
-			border-radius: 0.25rem 0 0 0.25rem !important;
-		}
-		.input_user,
-		.input_pass:focus {
-			box-shadow: none !important;
-			outline: 0px !important;
-		}
 
-		#messages{
-			background-color: grey;
-			color: #fff;
-			padding: 10px;
-			margin-top: 10px;
-		}
-	</style>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 </head>
+
+<style>
+html, body{
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
+	position: relative;
+	background-color: black; /* hasonló szerepe van mint a register.html-ben */
+	overflow: hidden;
+
+
+}
+
+.background-image-container {
+	width: 110%;
+	height: 110%;
+	top: 0;
+	position: absolute;
+	background: url("{% static 'images/login.jpg' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	/*transition: transform 180ms linear;*/
+}
+
+.container {
+	text-align: center;
+	position: relative;
+	z-index: 1;
+	height: 100%;
+	width: 100%;
+	float: left;      
+	display: block;
+
+
+
+}
+
+#login-part {
+    width: fit-content;
+    height: 20%;
+    background-color: rgba(0,0,0,0.8);
+    margin: auto;
+    border-radius: 20px;
+    padding: 10px;
+
+}
+
+
+.fade-in-out-container{
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: black;
+	display: flex;
+	z-index: 2;
+}
+
+#redirect-register {
+
+    background-color: rgba(0,0,0,0.8);
+	float: left;
+	color: white;
+
+}
+
+#redirect-register img{
+	height: 1.4em;
+	vertical-align: middle;
+}
+
+
+#redirect-register a {
+	color: white;
+	text-decoration: none;
+}
+
+#redirect-register a:hover {
+	color: #b8a529;
+	text-decoration: none;
+}
+
+#redirect-register a:active {
+	color: #e31612;
+	text-decoration: none;
+}
+
+
+
+</style>
 <body>
-	<div class="container h-100">
-		<div class="d-flex justify-content-center h-100">
-			<div class="user_card">
-				<div class="d-flex justify-content-center">
+
+	<!-- Funkcionalitást tartalmazó div -->
+	<div class="container">
+		<div id="login-part">
+			<form method="POST">
+				{%csrf_token%}
+
+				<input type="text" name="username" placeholder="Username..." class="form-control">
+
+				<input type="password" name="password" placeholder="Password..." class="form-control" >
 
 
-					<h3 id="form-title">LOGIN</h3>
-				</div>
-				<div class="d-flex justify-content-center form_container">
-					<form method="POST" action="">
-						{%csrf_token%}
-						<div class="input-group mb-3">
-							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-user"></i></span>
-							</div>
-							<input type="text" name="username" placeholder="Username..." class="form-control">
-						</div>
-						<div class="input-group mb-2">
-							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-key"></i></span>
-							</div>
-								<input type="password" name="password" placeholder="Password..." class="form-control" >
-						</div>
+				<input type="submit" value="Login">
 
-							<div class="d-flex justify-content-center mt-3 login_container">
-				 				<input class="btn login_btn" type="submit" value="Login">
-				   			</div>
-					</form>
+			</form>
 
-				</div>
-				{% for message in messages %}
-					<p id="messages">{{message}}</p>
-				{% endfor %}
-				<div class="mt-4">
-					<div class="d-flex justify-content-center links">
-						Don't have an account? <a href="{% url 'register' %}" class="ml-2">Sign Up</a>
-					</div>
-			
-				</div>
+			{% for message in messages %}
+				<p id="messages">{{message}}</p>
+			{% endfor %}
+			<div id="redirect-register">
+				Nincs fiókod?  <img src="{% static 'images/register-icon.png' %}">  <a href="{% url 'register' %}">Regisztráció</a>
 			</div>
+
 		</div>
+
 	</div>
+
+	<!-- Egérmozgásra mozgó háttérképet tartalmazó div -->
+	<div class="background-image-container">
+	</div>
+
+
+	<!-- A fekete átmosást segítő div -->
+	<div class="fade-in-out-container" />
+
+<script>
+
+	$(window).on("load", function(){
+		$(".fade-in-out-container").fadeOut("slow")
+	})
+
+
+	moveBackgroundOnMouseMovement()
+
+	function moveBackgroundOnMouseMovement(){
+		console.log("hey")
+		const backgroundImageContainer = document.querySelector(".background-image-container");
+		const containerBackground = document.querySelector('.container'); //container lefedi az egesz kepes backgroundot, ezert azon kell erzekelni a mousemove-ot
+
+
+		const windowWidth = window.innerWidth
+
+		$(containerBackground).mousemove(function(event){
+			console.log("mozag")
+			var moveDirX = event.clientX / (windowWidth / 2)
+
+			backgroundImageContainer.style.transform = `translate3d(-${moveDirX}%, 0, 0)`
+		});
+
+		console.log("yey")
+
+	}
+
+</script>
+
+
 </body>
 
 </html>

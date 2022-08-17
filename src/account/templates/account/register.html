@@ -2,7 +2,7 @@
 <html>
     
 <head>
-	<title>Register</title>
+	<title>RoleGame - Regisztráció</title>
 
 
 	<!-- AJAXHOZ KELL JQUERY IMPORT -->
@@ -17,23 +17,34 @@
 
 <style>
 @font-face {
-	font-family: 'AlumniSansCollegiateOne-Regular';
-	src: local('AlumniSansCollegiateOne-Regular'),
-	url("{% static 'fonts/AlumniSansCollegiateOne-Regular.ttf' %}");
+	font-family: 'Kanit-Regular';
+	src: local('Kanit-Regular'),
+	url("{% static 'fonts/Kanit-Regular.ttf' %}");
 }
+
+@font-face {
+	font-family: 'Kanit-Bold';
+	src: local('Kanit-Bold'),
+	url("{% static 'fonts/Kanit-Bold.ttf' %}");
+}
+
+@font-face {
+	font-family: 'Kanit-Light';
+	src: local('Kanit-Light'),
+	url("{% static 'fonts/Kanit-Light.ttf' %}");
+}
+
+
 html, body {
 	margin: 0;
 	padding: 0;
 	height: 100%;
+	width: 100%;
 	position: relative;
 	overflow:  hidden;
 	background-color: black; /* a háttér ki fogja takarni de előfordulhat hogy nem tölt be/lassabban tölt be */
 }
 
-body img {
-
-
-}
 
 .background-movement-content {
 	width: 110%;
@@ -46,6 +57,8 @@ body img {
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
+	/*transition: transform 180ms linear;*/
+	/*transition: none;*/
 
 }
 #character-type-choice-field {
@@ -76,19 +89,21 @@ body img {
 .container{
 	align-content: center;
 	text-align: center;
-	font-family: 'AlumniSansCollegiateOne-Regular';
+	font-family: 'Kanit-Bold';
 	font-size: 3vh;
 	color: #b8a529;
-	min-height: 90%;
 	position: relative;
-	border: 10px solid transparent;
-
+	width: 100%;
+	height: 100%;
+	margin: 0 auto;
+  	z-index: 1;
 
 }
 
 .container p{
-	font-family: 'AlumniSansCollegiateOne-Regular';
-	font-size: 6vh;
+	font-family: 'Kanit-Bold';
+	font-size: 6.2vh;
+
 }
 
 #go-back-to-choose-menu {
@@ -112,6 +127,7 @@ body img {
 
 .description {
 	margin-top: 15px;
+	user-select: none;
 }
 
 #desc0, #desc1, #desc2 {
@@ -129,6 +145,7 @@ body img {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	z-index: 2;
 }
 
 
@@ -141,6 +158,15 @@ body img {
 /* a nyitóoldal, ahol a karakter típust lehet választani */
 #part1 {
 	display:  block;
+	user-select: none;
+	border: 2px solid red;
+}
+
+.part1background{
+	background-color: red;
+	width: 100%;
+	height: 100%;
+	z-index: 3;
 }
 
 /* a konkrét oldal ahol az adatokat kell megadni */
@@ -148,8 +174,12 @@ body img {
 	display: none;
 	overflow: hidden;
 	border: 2px solid black;
-	width: 20%;
+	width: 30%;
 	margin: 0 auto;
+	padding: 10px;
+	background-color: rgba(0,0,0,0.8);
+	border: 3px solid #b8a529;
+	border-radius: 20px;
 }
 
 
@@ -213,30 +243,57 @@ body img {
 
 
 #choosen-character-description{
-	width: 45%;
+	width: 50%;
 	float: left;
 	border: 1px solid;
 	min-width: 60px;
 	visibility: hidden;
 	opacity: 0;
+	user-select: none;
 }
 
+#certain-desc-div{
+	visibility: hidden;
+	opacity: 0;
+	background-color: red;	
+}
 
 /* oldal alján van lényegében egy footer*/
 #part3 {
+	user-select: none;
 	position: absolute;
 	bottom: 0;
-	height:60px;
+	padding: 10px;
 	text-align: center;
 	width: 100%;
-	/*
-
-	left: 0;
-	background-image: url("{% static 'images/wood.png' %}");
-*/
+	background-color: rgba(0, 0, 0, 0.86);
+	font-family: "Kanit-Regular";
+	vertical-align: middle;
+	color: white;
 
 
 }
+
+#part3 img {
+	height: 1.4em;
+	vertical-align: middle;
+}
+
+#part3 a {
+	color: white;
+	text-decoration: none;
+}
+
+#part3 a:hover {
+	color: #b8a529;
+	text-decoration: none;
+}
+
+#part3 a:active {
+	color: #e31612;
+	text-decoration: none;
+}
+
 
 .responsive-arrow {
 	width: 5.86%;
@@ -279,8 +336,7 @@ body {
 
 
 <body>
-	<div class="background-movement-content">
-		<div class="container">
+<div class="container">
 			<div id="part1">
 				<p id="choose-character-text">Válassz egy karaktert</p>
 				<div id="character-type-choice-field">
@@ -313,7 +369,11 @@ body {
 			<input type="image" src="{% static 'images/stone-arrow-yellow-left.png' %}" id="go-back-to-choose-menu" onmouseover="changeColor(this, 'left');" onmouseout="resetColor(this, 'left');" class="responsive-arrow"/>
 	      	<div id="part2">
 	      		<div id="choosen-character-description">
-	      			<p>Helo</p>
+	      			<p id="title-desc">A karaktered:</p>
+	      			<div id="certain-desc-div">
+	      				<p>Leírás</p>
+	      			</div>
+
 	      		</div>
 				<div id="account-data-form">
 
@@ -368,11 +428,14 @@ body {
 				 	{% endif %}
 				</div>
 				<div id="redirect-login">
-						Már regisztráltál? <a href="{% url 'login' %}">Bejelentkezés</a>
+						Már regisztráltál?  <img src="{% static 'images/login-icon.png' %}">  <a href="{% url 'login' %}" id="redirect-login-button">Bejelentkezés</a>
 				</div>	
 			</div>
 		</div>
+	<div class="background-movement-content">
+	
 	</div>
+
 	<div class="loader-container">
 		
 	</div>
@@ -399,9 +462,8 @@ body {
 
 
 <script>
-
-
-
+	//tároljuk az elozo eger helyet a mozgo hatterhez
+	var previousMoveDirX = null
 
 	moveBackgroundOnMouseMovement()
 
@@ -409,13 +471,45 @@ body {
 
 
 		const pageBackground = document.querySelector('.background-movement-content');
+		const containerBackground = document.querySelector('.container'); //container lefedi az egesz kepes backgroundot, ezert azon kell erzekelni a mousemove-ot
+
+
 		const windowWidth = window.innerWidth
 
-		$(pageBackground).mousemove(function(event){
+
+
+		$(containerBackground).mousemove(function(event){
 			var moveDirX = event.clientX / (windowWidth / 2)
+			//console.log("moveDirX " + moveDirX)
+			//console.log("previousMoveDirX" + previousMoveDirX)
+
+			//console.log(moveDirX - previousMoveDirX)
+			/*
+			if (previousMoveDirX != null){
+				let difference = moveDirX - previousMoveDirX
+
+				if (difference >= 0.1 || difference <= -0.1){
+					console.log("hey")
+					pageBackground.style.transition = "transform 240ms linear"
+				}
+				else{
+					pageBackground.style.transition = "none"
+				}
+			}
+*/
+
 
 			pageBackground.style.transform = `translate3d(-${moveDirX}%, 0, 0)`
+
+
+
+
+
+			previousMoveDirX = moveDirX
 		});
+
+
+
 	}
 
 
@@ -584,6 +678,27 @@ body {
 
 	//Animation docs : https://api.jquery.com/animate/
 
+
+	let warriorDescription = "Többet erővel mint ésszel.;Alaptulajdonságok:;Erő: 10;Ügyesség: 5;Értelem: 5;Életerő: 12;Szerencse:7";
+	let mageDescription = "A világ varázslatos tud lenni.Alaptulajdonságok:;Erő: 6;Ügyesség: 5;Értelem: 12;Életerő: 8;Szerencse:6";
+	let scoutDescription = "Kalandra fel, hív a vadon.Alaptulajdonságok:;Erő: 7;Ügyesség: 11;Értelem: 7;Életerő: 9;Szerencse:8";
+
+
+	function breakDescriptionLines(description){
+		description = description.split(";")
+		for(let i = 0; i < description.length; i++){
+			description[i] = description[i] + "<br>"
+		}
+
+		description = description.join("")	
+
+		return description
+	}
+
+
+
+
+
     var currentCharacterType = 0;
 	const audio = new Audio()
 	audio.src = "{% static 'audios/button_click.mp3' %}"
@@ -593,6 +708,7 @@ body {
 		$(".loader-container").fadeOut("slow")
 		animateCurrentCharacterTypeDescription(currentCharacterType, true)
 	})
+
 
 
     $("#leftButton").click(function () {
@@ -632,7 +748,7 @@ body {
 
     function switchCharacterType(characterTypeNumber){
 		jQuery.easing.def = 'easeOutCubic'; // a slide effekt típusát beállítjuk
-
+		hideCharacterDescription()
 		animateCurrentCharacterTypeDescription(characterTypeNumber, false)
 
     }
@@ -656,6 +772,9 @@ body {
 		descriptionField.style.visibility = "hidden"
 		descriptionField.style.opacity = 0
 
+		$('#certain-desc-div').css({opacity: 0, visibility: "hidden"})
+		$('#title-desc').css({"font-size": "6.2vh"});
+
 		$(".loader-container").fadeOut("slow")
     }
 
@@ -674,7 +793,8 @@ body {
     	part2.style.display = "flex"
 
     	var descriptionField = document.getElementById("choosen-character-description")
-    	//descriptionField.style.visibility = "visible"
+    	descriptionField.style.visibility = "visible"
+		descriptionField.style.opacity = 1
 
     	setCharacterType()
 
@@ -686,26 +806,21 @@ body {
 
 
     function showChoosenCharacterDescription(){
+		jQuery.easing.def = 'linear';
+		$('#title-desc').animate({"font-size": "4.2vh"}, 1200);
     	jQuery.easing.def = 'easeOutExpo';
-		$('#choosen-character-description').css({opacity: 0, visibility: "visible"}).animate({opacity: 1}, 2000);
+
+		$('#certain-desc-div').css({opacity: 0, visibility: "visible"}).animate({opacity: 1}, 1200);
+
 
     }
 
 
 
-    function hideOtherCharacterDescription(currentCharacterNumber){
-    	if(currentCharacterNumber == 0){
-    		$("#desc1").css("opacity", "0")
-    		$("#desc2").css("opacity", "0")
-    	}
-    	else if(currentCharacterNumber == 1){
-    		$("#desc0").css("opacity", "0")
-    		$("#desc2").css("opacity", "0")
-    	}
-    	else if(currentCharacterNumber == 2){
-    		$("#desc0").css("opacity", "0")
-    		$("#desc1").css("opacity", "0")
-    	}
+    function hideCharacterDescription(){
+		$("#desc0").css("opacity", "0")
+		$("#desc1").css("opacity", "0")
+	    $("#desc2").css("opacity", "0")	
     }
 
 
@@ -725,9 +840,7 @@ body {
 	        }, 1000, function() { // ez egy callback function ami az animacio vegrehajtasa utan fut le
 	        	$("#desc"+ currentCharacterNumber).animate({
 	        		opacity: 1,
-	        	}, 860, function(){
-	        		hideOtherCharacterDescription(currentCharacterNumber)
-	        	})	
+	        	}, 1000)
 	        })
 	    }
     }
@@ -735,23 +848,28 @@ body {
 
     function setCharacterType(){
        	var selector = document.getElementById('id_character_type')
-    	var choosenCharacterDescription = document.getElementById("choosen-character-description")
+    	var choosenCharacterDescription = document.getElementById("certain-desc-div")
+    	var choosenCharacterTitle = document.getElementById("title-desc")
     	if (currentCharacterType == 0){
     		selector.value="warrior";
-    		choosenCharacterDescription.innerHTML = "harcos"
+    		choosenCharacterTitle.innerHTML = "Harcos"
+    		choosenCharacterDescription.innerHTML = breakDescriptionLines(warriorDescription)
     	}
         else if (currentCharacterType == 1){
     		selector.value="mage";
-    		choosenCharacterDescription.innerHTML = "magus"
+    		choosenCharacterTitle.innerHTML = "Mágus"
+    		choosenCharacterDescription.innerHTML = breakDescriptionLines(mageDescription)
     	}
     	else if(currentCharacterType == 2){
     		selector.value="scout";
-    		choosenCharacterDescription.innerHTML = "ijasz"
+    		choosenCharacterTitle.innerHTML = "Íjász"
+    		choosenCharacterDescription.innerHTML = breakDescriptionLines(scoutDescription)
     	}
     	else{
     		//bármilyen hiba esetén warrior lesz
     		selector.value="warrior"
-    		choosenCharacterDescription.innerHTML = "harcos"
+    		choosenCharacterTitle.innerHTML = "Harcos"
+    		choosenCharacterDescription.innerHTML = breakDescriptionLines(warriorDescription)
     	}
 
 
