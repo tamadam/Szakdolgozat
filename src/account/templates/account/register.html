@@ -65,14 +65,18 @@ html, body {
     width: 300%;
     left: 0;
     position: relative;
-
+	background: url("{% static 'images/login_background.jpg' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
 }
 
 .character-type {
     width: 33.33%;
     float: left;
     text-align: center;
-	margin-bottom: 0.6%;
+    margin-top: 0.4%;
+
 
 }
 .character-type img{
@@ -106,16 +110,34 @@ html, body {
 
 }
 
+
+.container span{
+	font-family: 'Kanit-Bold';
+	font-size: 6.2vh;
+
+
+}
+
 #go-back-to-choose-menu {
 	user-select: none;
 	margin: 0 auto;
 	margin-bottom: 2vh;
-	border: 3px solid black;
+	border: 3px solid transparent;
 }
 
 /*  <--  --> gombok */
 #character-type-choice-buttons {
 	user-select: none;
+	/*border: 3px solid yellow;*/
+
+	width: 50%;
+	margin: 0 auto;
+	padding-top: 10px;
+	background-color: rgba(0,0,0,0.8);
+	background: url("{% static 'images/papir.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
 }
 
 
@@ -128,6 +150,12 @@ html, body {
 .description {
 	margin-top: 15px;
 	user-select: none;
+	/*border: 3px solid green;*/
+	padding: 3px;
+	width: 30%;
+	margin: 0 auto;
+	color: black;
+	font-family: "Kanit-Light";
 }
 
 #desc0, #desc1, #desc2 {
@@ -159,27 +187,32 @@ html, body {
 #part1 {
 	display:  block;
 	user-select: none;
-	border: 2px solid red;
+	/*border: 2px solid red;*/
 }
 
-.part1background{
-	background-color: red;
-	width: 100%;
-	height: 100%;
-	z-index: 3;
+#choose-character-text {
+	background-color: rgba(0, 0, 0, 0.86);
+	font-family: "Kanit-Bold";
+
 }
 
 /* a konkrét oldal ahol az adatokat kell megadni */
 #part2 {
 	display: none;
 	overflow: hidden;
-	border: 2px solid black;
+
 	width: 30%;
+	min-width: 50%;
 	margin: 0 auto;
-	padding: 10px;
+
 	background-color: rgba(0,0,0,0.8);
-	border: 3px solid #b8a529;
-	border-radius: 20px;
+	border: 10px solid transparent;
+  	padding: 15px;
+  	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
+
+	/*border: 3px solid #b8a529;*/
+	border-radius: 40px;
+	height: 55%;
 }
 
 
@@ -194,19 +227,30 @@ html, body {
 
 #account-data-form{
 	flex: 1;
-	border: 3px solid purple;
+	/*border: 3px solid purple;*/
 	min-width: 35%;
 	width: 100%;
+	position: relative;
 
+}
+
+#register-form {
+	margin-top: 4%;
 }
 
 
 .input-fields {
-	border:  3px solid brown;
+	/*border: 3px solid brown;*/
+
 	width: 40%;
-	min-width: 240;
+	min-width: 76%;
 	position: relative;
 	margin: 0 auto;
+}
+
+.input-fields span {
+	margin-bottom: 4px;
+	font-size: 2.8vh;
 }
 
 
@@ -220,7 +264,7 @@ html, body {
 
 .input-field-with-error-text {
 	display: block;
-	border: 2px solid red;
+	/*border: 2px solid red;*/
 
 
 }
@@ -241,22 +285,90 @@ html, body {
 
 }
 
+#registration-button-place{
+	bottom: 0;
+	position: absolute;
+	width: 100%;
+}
+
 
 #choosen-character-description{
+	/*
+	background-image: url("{% static 'images/swordsman.png' %}");
+	background-position: center center;
+	background-size: 100% 100%;
+
+	background-size: cover; 
+*/
+	background-image: none;
+	background-position: center center;
+	background-size: 100% 100%;
+
 	width: 50%;
+    height: 100%;
 	float: left;
-	border: 1px solid;
+	/*border: 1px solid yellow;*/
 	min-width: 60px;
 	visibility: hidden;
 	opacity: 0;
 	user-select: none;
+	position: relative;
+	border: 1px solid transparent;
+	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
+	border-width: 0 3 0 0px;
+	text-align: center;
+
 }
 
+#title-desc-div {
+	opacity: 0;
+	color: white;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
+	background-image: url("{% static 'images/button-back.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	padding: 6px;
+	width: 50%;
+}
+
+#title-desc-div span {
+	font-size: 1.8vh;
+	font-family: "Kanit-Regular";
+	color: black;
+	font-weight: bold;
+	width: 100%;
+}
+
+/*
 #certain-desc-div{
 	visibility: hidden;
 	opacity: 0;
-	background-color: red;	
+	width: 100%;
+
+	position: absolute;
+	bottom: 0;
+
 }
+*/
+
+/*
+#certain-desc-div span {
+	color: red;
+	font-size: 2.8vmin;
+	font-family: "Kanit-Light";
+	background-image: url("{% static 'images/button-back.png' %}");
+	padding:  4px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+*/
+
 
 /* oldal alján van lényegében egy footer*/
 #part3 {
@@ -310,6 +422,119 @@ html, body {
 }
 
 
+input {
+	font-family: "Kanit-Regular";
+    font-size: 1.2em;
+    color: black;
+    text-align: center;
+}
+
+
+::placeholder {
+	color: grey;
+}
+
+input[type=text], input[type=password], input[type=email] {
+	padding: 10px;
+	background-color: #f2f2f2;
+	border: 4px solid transparent;
+	border-radius: 0.4em;
+
+
+}
+
+input[type=text]:focus, input[type=password]:focus, input[type=email]:focus {
+	background-color: white;
+	outline: none;
+	border: 4px solid #b8a529;
+
+}
+
+
+input[type=submit] {
+	background: url("{% static 'images/button-back.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	padding: 6px;
+	min-width: 15%;
+	width: 60%;
+	border: none;
+	color: black;
+	font-family: "Kanit-Regular";
+	font-size: 1.8vh;
+	font-weight: bold;
+	margin-top: 15;
+
+
+
+}
+
+input[type=submit]:hover {
+	background: url("{% static 'images/button-back-red.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: #b8a529;
+
+
+
+
+}
+
+
+input[type=submit]:active {
+	background: url("{% static 'images/button-back-onclick.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: #b8a529;
+
+
+
+
+}
+
+
+
+
+
+#error-div{
+	position: absolute;
+	width: 100%;
+	height: auto;
+	color: #e31612;
+	margin: auto;
+	display: none;
+}
+
+
+
+#error-div span{
+	font-size: 2vh;
+}
+
+
+#error-div ul{
+	list-style-type:none;
+}
+
+/* automatikusan jön létre ha van hiba ez az osztály */
+.errorList{
+	padding: 0;
+	margin: 0;
+}
+
+
+#leftButton {
+	width: 6.2%;
+}
+
+#rightButton {
+	width: 6.2%;
+}
+
+
 /* 21:9 -hez  ne legyenek tul nagyok a kepek */
 @media screen and (min-width: 1921px) {
 
@@ -324,12 +549,21 @@ body {
  	height: auto;
 }
 
+
+
 .responsive-sign {
 	width: 11%;
 	min-width: 120px;
 	min-height: 99px;
 	height: auto;
 }
+
+#part2 {
+	min-width: 40%;
+	width: 40%;
+
+}
+
 }
 
 </style>
@@ -338,25 +572,25 @@ body {
 <body>
 <div class="container">
 			<div id="part1">
-				<p id="choose-character-text">Válassz egy karaktert</p>
+				<p id="choose-character-text">Válassz egy karakter típust!</p>
 				<div id="character-type-choice-field">
 	                <div class="character-type" id="character-type0">
 	                	<img src="{% static 'images/sign-sword.png' %}" class="character-type-sign responsive-sign">
 	                    <div class="description" id="desc0">
-	                        Harcos
+	                        "Többet erővel mint ésszel!"
 	                    </div>
 	                </div>
 	                <div class="character-type" id="character-type1">
 	                	<img src="{% static 'images/sign-wand.png' %}" class="character-type-sign responsive-sign">
 	                    <div class="description" id="desc1">
-	                        Mágus
+	                        "A világ varázslatos tud lenni..."
 	                    </div>
 	                </div>
 	                
 	                <div class="character-type" id="character-type2">
 	                	<img src="{% static 'images/sign-bow.png' %}" class="character-type-sign responsive-sign">
 	                    <div class="description" id="desc2">
-	                        Íjász
+	                        "Induljunk hát, kalandor!"
 	                    </div>
 	                </div>
 	            </div>
@@ -369,10 +603,14 @@ body {
 			<input type="image" src="{% static 'images/stone-arrow-yellow-left.png' %}" id="go-back-to-choose-menu" onmouseover="changeColor(this, 'left');" onmouseout="resetColor(this, 'left');" class="responsive-arrow"/>
 	      	<div id="part2">
 	      		<div id="choosen-character-description">
-	      			<p id="title-desc">A karaktered:</p>
-	      			<div id="certain-desc-div">
-	      				<p>Leírás</p>
+	      			<div id="title-desc-div">
+	      				<span id="title-desc">...</span>
 	      			</div>
+	      			<!--
+	      			<div id="certain-desc-div">
+	      				<span id="description-span">...</span>
+	      			</div>
+					-->	      			
 
 	      		</div>
 				<div id="account-data-form">
@@ -380,6 +618,7 @@ body {
 					<form method="POST" action="" id="register-form">
 						{%csrf_token%}
 						<div class="input-fields">
+							<span>Add meg az adatokat!</span>
 							<span class="input-field-with-error-text">
 								<input type="text" name="username" maxlength="20" autofocus required id="id_username">
 								<small id="username-not-available">Foglalt vagy hibás felhasználónév</small>
@@ -400,10 +639,6 @@ body {
 								<input type="password" name="password2" autocomplete="new-password" required id="id_password2">
 								<small id="password-not-match">A két jelszó nem egyezik meg</small>
 							</span>
-							<span class="input-field-with-error-text">
-
-				 				<input type="submit" value="Regisztráció">
-							</span>
 
 
 				 			<!-- Ez a rész mindig display: none -->
@@ -416,17 +651,26 @@ body {
 							</div>
 							<!-- ------------------------------ -->
 						</div>
+						<div id="error-div">
+							<span>Hiba! Kérlek figyelj az alábbiakra!</span>
+							{% if form.errors %}
+						    	{% for error in form.errors.values %}
+						        	<span class="error-messages">{{error}}</span>
+						    	{% endfor %}
+						 	{% endif %}
+						</div>
+
+
+						<div id="registration-button-place">
+				 			<input type="submit" value="Regisztráció">
+				 		</div>
 					</form>
+
 				</div>
 			</div>
+
 			<div id="part3">
-				<div id="error-div">
-					{% if form.errors %}
-				    	{% for error in form.errors.values %}
-				        	<span class="error-messages">{{error}}</span>
-				    	{% endfor %}
-				 	{% endif %}
-				</div>
+
 				<div id="redirect-login">
 						Már regisztráltál?  <img src="{% static 'images/login-icon.png' %}">  <a href="{% url 'login' %}" id="redirect-login-button">Bejelentkezés</a>
 				</div>	
@@ -678,11 +922,14 @@ body {
 
 	//Animation docs : https://api.jquery.com/animate/
 
-
+	/*
 	let warriorDescription = "Többet erővel mint ésszel.;Alaptulajdonságok:;Erő: 10;Ügyesség: 5;Értelem: 5;Életerő: 12;Szerencse:7";
 	let mageDescription = "A világ varázslatos tud lenni.Alaptulajdonságok:;Erő: 6;Ügyesség: 5;Értelem: 12;Életerő: 8;Szerencse:6";
 	let scoutDescription = "Kalandra fel, hív a vadon.Alaptulajdonságok:;Erő: 7;Ügyesség: 11;Értelem: 7;Életerő: 9;Szerencse:8";
-
+*/
+	let warriorDescription = "Erő: 10 Ügyesség: 5 Értelem: 5 Életerő: 12 Szerencse: 7";
+	let mageDescription = "A világ varázslatos tud lenni.Alaptulajdonságok:;Erő: 6;Ügyesség: 5;Értelem: 12;Életerő: 8;Szerencse:6";
+	let scoutDescription = "Kalandra fel, hív a vadon.Alaptulajdonságok:;Erő: 7;Ügyesség: 11;Értelem: 7;Életerő: 9;Szerencse:8";
 
 	function breakDescriptionLines(description){
 		description = description.split(";")
@@ -761,6 +1008,8 @@ body {
     })
 
     function showPreviousPart(){
+		hideErrorMessage()
+		hideCharacterPictures()
     	var part2 = document.getElementById("part2")
     	part2.style.display = "none"
     	var connectedArrow = document.getElementById("go-back-to-choose-menu")
@@ -773,7 +1022,7 @@ body {
 		descriptionField.style.opacity = 0
 
 		$('#certain-desc-div').css({opacity: 0, visibility: "hidden"})
-		$('#title-desc').css({"font-size": "6.2vh"});
+		$('#title-desc-div').css({opacity: 0});
 
 		$(".loader-container").fadeOut("slow")
     }
@@ -807,10 +1056,10 @@ body {
 
     function showChoosenCharacterDescription(){
 		jQuery.easing.def = 'linear';
-		$('#title-desc').animate({"font-size": "4.2vh"}, 1200);
+		$('#title-desc-div').animate({"opacity": "1"}, 1000);
     	jQuery.easing.def = 'easeOutExpo';
 
-		$('#certain-desc-div').css({opacity: 0, visibility: "visible"}).animate({opacity: 1}, 1200);
+		$('#certain-desc-div').css({opacity: 0, visibility: "visible"}).animate({opacity: 1}, 1000);
 
 
     }
@@ -848,28 +1097,44 @@ body {
 
     function setCharacterType(){
        	var selector = document.getElementById('id_character_type')
-    	var choosenCharacterDescription = document.getElementById("certain-desc-div")
+    	var choosenCharacterDescription = document.getElementById("description-span")
     	var choosenCharacterTitle = document.getElementById("title-desc")
+
+
+    	var background = document.getElementById("choosen-character-description")
+
     	if (currentCharacterType == 0){
     		selector.value="warrior";
     		choosenCharacterTitle.innerHTML = "Harcos"
-    		choosenCharacterDescription.innerHTML = breakDescriptionLines(warriorDescription)
+    		//choosenCharacterDescription.innerHTML = breakDescriptionLines(warriorDescription)
+    		//document.getElementById("warrior-picture").style.display = "none"
+
+
+    		background.style.backgroundImage  = "url('{% static 'images/swordsman.png' %}')"
+
+
     	}
         else if (currentCharacterType == 1){
     		selector.value="mage";
     		choosenCharacterTitle.innerHTML = "Mágus"
-    		choosenCharacterDescription.innerHTML = breakDescriptionLines(mageDescription)
+    		//choosenCharacterDescription.innerHTML = breakDescriptionLines(mageDescription)
+    		//document.getElementById("mage-picture").style.display = "block"
+    		background.style.backgroundImage  = "url('{% static 'images/wizard.png' %}')"
     	}
     	else if(currentCharacterType == 2){
     		selector.value="scout";
     		choosenCharacterTitle.innerHTML = "Íjász"
-    		choosenCharacterDescription.innerHTML = breakDescriptionLines(scoutDescription)
+    		//choosenCharacterDescription.innerHTML = breakDescriptionLines(scoutDescription)
+    		//document.getElementById("scout-picture").style.display = "block"
+    		background.style.backgroundImage  = "url('{% static 'images/archer.png' %}')"
     	}
     	else{
     		//bármilyen hiba esetén warrior lesz
     		selector.value="warrior"
     		choosenCharacterTitle.innerHTML = "Harcos"
-    		choosenCharacterDescription.innerHTML = breakDescriptionLines(warriorDescription)
+    		//choosenCharacterDescription.innerHTML = breakDescriptionLines(warriorDescription)
+    		//document.getElementById("warrior-picture").style.display = "block"
+    		background.style.backgroundImage  = "url('{% static 'images/swordsman.png' %}')"
     	}
 
 
@@ -877,6 +1142,45 @@ body {
 
     }
 
+
+    function hideCharacterPictures(){
+    	var background = document.getElementById("choosen-character-description")
+		background.style.backgroundImage = "none"
+    }
+
+
+
+	$("#register-form").on('submit', function() {
+
+	   	audio.play()
+
+	    return true;
+	});
+
+
+	var errorMessageSeen = false
+
+
+
+	{% if form.errors %}
+		console.log("van")
+		document.getElementById("error-div").style.display = "block"
+		showNextPart()
+		errorMessageSeen = true
+
+	{% else %}
+		console.log("nincs")
+		errorMessageSeen = false
+ 	{% endif %}
+
+ 	function hideErrorMessage(){
+	 	if(errorMessageSeen = true){
+	 		errorMessageSeen = false
+	 		document.getElementById("error-div").style.display = "none"
+	 	}
+ 	}
+
+ 	
 </script>
 
 </body>

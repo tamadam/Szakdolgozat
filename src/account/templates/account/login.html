@@ -21,6 +21,26 @@
 </head>
 
 <style>
+@font-face {
+	font-family: 'Kanit-Regular';
+	src: local('Kanit-Regular'),
+	url("{% static 'fonts/Kanit-Regular.ttf' %}");
+}
+
+@font-face {
+	font-family: 'Kanit-Bold';
+	src: local('Kanit-Bold'),
+	url("{% static 'fonts/Kanit-Bold.ttf' %}");
+}
+
+@font-face {
+	font-family: 'Kanit-Light';
+	src: local('Kanit-Light'),
+	url("{% static 'fonts/Kanit-Light.ttf' %}");
+}
+
+
+
 html, body{
 	margin: 0;
 	padding: 0;
@@ -51,22 +71,35 @@ html, body{
 	z-index: 1;
 	height: 100%;
 	width: 100%;
-	float: left;      
-	display: block;
+
+	display: flex;
+	justify-content: center;
+	align-items: center; 
 
 
 
 }
 
 #login-part {
+
+    height: auto;
     width: fit-content;
-    height: 20%;
+    min-width: 30%;
+
     background-color: rgba(0,0,0,0.8);
     margin: auto;
     border-radius: 20px;
     padding: 10px;
+    display: block;
+    position: absolute;
+    vertical-align: middle;
+	border: 10px solid transparent;
+  	padding: 15px;
+  	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
+
 
 }
+
 
 
 .fade-in-out-container{
@@ -83,13 +116,19 @@ html, body{
 #redirect-register {
 
     background-color: rgba(0,0,0,0.8);
-	float: left;
 	color: white;
-
+	bottom: 0;
+	position: absolute;
+	width: 100%;
+	padding: 10px;
+	vertical-align: middle;
+	font-size: 3vh;
+	font-family: "Kanit-Regular";
+	user-select: none;
 }
 
 #redirect-register img{
-	height: 1.4em;
+	height: 1.2em;
 	vertical-align: middle;
 }
 
@@ -110,6 +149,113 @@ html, body{
 }
 
 
+form {
+    width: 100%; 
+    margin:0 auto;
+    text-align:center;
+}
+
+input {
+	vertical-align: middle;
+	display: block;
+	width: auto;
+	height: auto;
+	min-width: 40%;
+    margin:10 auto;
+    font-family: "Kanit-Regular";
+    font-size: 1.2em;
+    color: black;
+    text-align: center;
+
+
+}
+
+::placeholder {
+	color: grey;
+}
+
+input[type=text], input[type=password] {
+	padding: 10px;
+	background-color: #f2f2f2;
+	border: 4px solid transparent;
+	border-radius: 0.4em;
+
+}
+
+
+input[type=submit] {
+	background: url("{% static 'images/button-back.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	padding: 6px;
+	min-width: 15%;
+	width: 60%;
+	border: none;
+	color: black;
+	font-family: "Kanit-Regular";
+	font-size: 1.8vh;
+	font-weight: bold;
+	margin-top: 15;
+
+
+
+}
+
+input[type=submit]:hover {
+	background: url("{% static 'images/button-back-red.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: #b8a529;
+
+
+
+
+}
+
+
+input[type=submit]:active {
+	background: url("{% static 'images/button-back-onclick.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: #b8a529;
+
+
+
+
+}
+
+
+
+input[type=text]:focus, input[type=password]:focus {
+	background-color: white;
+	outline: none;
+	border: 4px solid #b8a529;
+
+}
+
+#error-messages {
+	color: #e31612;
+	font-family: "Kanit-Bold";
+	font-size: 1.8vh;
+	display: block;
+	vertical-align: middle;
+	user-select: none;
+
+}
+
+
+@media screen and (min-width: 1200px) {
+
+
+form {
+	width: 60%;
+
+}
+
+}
 
 </style>
 <body>
@@ -117,32 +263,31 @@ html, body{
 	<!-- Funkcionalitást tartalmazó div -->
 	<div class="container">
 		<div id="login-part">
-			<form method="POST">
+			<form method="POST" id="login-form">
 				{%csrf_token%}
+				<div class="input-container">
+					<input type="text" name="username" id="id_username" class="input">
+					<input type="password" name="password" id="id_password" class="input">
+				</div>
 
-				<input type="text" name="username" placeholder="Username..." class="form-control">
-
-				<input type="password" name="password" placeholder="Password..." class="form-control" >
-
-
-				<input type="submit" value="Login">
+				<input type="submit" value="Belépés" id="login_button" class="input">
 
 			</form>
-
-			{% for message in messages %}
-				<p id="messages">{{message}}</p>
-			{% endfor %}
-			<div id="redirect-register">
-				Nincs fiókod?  <img src="{% static 'images/register-icon.png' %}">  <a href="{% url 'register' %}">Regisztráció</a>
+			<div id="error-messages">
+				{% for error_message in messages %}
+					{{error_message}}
+				{% endfor %}
 			</div>
 
 		</div>
-
+		<div id="redirect-register">
+			Nincs fiókod?  <img src="{% static 'images/register-icon.png' %}">  <a href="{% url 'register' %}">Regisztráció</a>
+		</div>
 	</div>
 
 	<!-- Egérmozgásra mozgó háttérképet tartalmazó div -->
-	<div class="background-image-container">
-	</div>
+	<div class="background-image-container" />
+
 
 
 	<!-- A fekete átmosást segítő div -->
@@ -176,6 +321,33 @@ html, body{
 
 	}
 
+
+
+	$("#id_username").on("input", function(){
+		var errorField = document.getElementById("error-messages")
+		errorField.style.display = "none"
+	})
+	$("#id_password").on("input", function(){
+		var errorField = document.getElementById("error-messages")
+		errorField.style.display = "none"
+	})
+
+	// csrf token az elso input index
+	var inputFields = document.getElementsByTagName("input")
+	inputFields[1].placeholder='Karakter név';
+	inputFields[2].placeholder='Jelszó';
+
+
+
+
+	const audio = new Audio()
+	audio.src = "{% static 'audios/button_click.mp3' %}"
+
+	$("#login-form").submit(function() {
+	    audio.play()
+
+	    return true; // false hogyha cancel form
+	});
 </script>
 
 

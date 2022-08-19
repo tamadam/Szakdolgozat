@@ -61,7 +61,7 @@ def login_page_view(request):
 			login(request, user)
 			return redirect('home_page')
 		else:
-			messages.info(request, 'Invalid creditentals')
+			messages.info(request, 'Hibás adatok!')
 
 
 	context = {}

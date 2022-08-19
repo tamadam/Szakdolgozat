@@ -6,6 +6,7 @@ from .models import Account, Character
 #customize usercreation form, ez ellenorzi alapbol hogy letezik e a user es jo e a jelszo
 class AccountRegistrationForm(UserCreationForm):
 	character_type = forms.ChoiceField(choices=Character.ROLES)
+	email = forms.EmailField(max_length=128,  error_messages = {'invalid': 'Helytelen email cím'}) # felülírjuk az alapértelmezett django hibaüzenetet arra, amikor az email formai helyességét vizsgálja
 
 	class Meta:
 		model = Account
