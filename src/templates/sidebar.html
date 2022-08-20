@@ -71,7 +71,7 @@
     <li id="user-info-li"><a href="{% url 'profile' user_id=request.user.id %}"><img src="{% static 'images/blank_profile_image.png' %}" id="side_bar_profile_image"></a>
     <span id="gold-count"></span></li>
     <li><a href="{% url 'home_page' %}">Fogadó</a></li>
-    <li><a href="#">Aréna</a></li>
+    <li><a href="{% url 'game:arena' %}">Aréna</a></li>
     <li><a href="#">Fegyverbolt</a></li>
     <li><a href="#">Varázsbolt</a></li>
     <li><a href="{% url 'profile' user_id=request.user.id %}">Karakter</a></li>

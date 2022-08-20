@@ -7,7 +7,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver	
 
 from core.constants import *
-
+from operator import attrgetter
 from team.models import Team, Membership
 
 class CustomAccountManager(BaseUserManager):
@@ -66,7 +66,6 @@ class Account(AbstractBaseUser):
 	last_login		= models.DateTimeField(verbose_name = 'last login', auto_now = True)
 
 
-	#hide_email
 
 	# override the default behaviour since we inherit from AbstractBaseUser
 	is_admin		= models.BooleanField(default=False)
@@ -110,6 +109,20 @@ class Account(AbstractBaseUser):
 
 
 
+class CharacterManager(models.Manager):
+	def get_all_characters_in_ordered_list_without_admins(self):
+		characters = [Character.objects.get(account=user) for user in Account.objects.exclude(is_admin=True)]
+
+		try:
+			characters = sorted(characters, key=lambda character: character.account.date_joined) # először date szerint orderelünk
+			characters = sorted(characters, key=attrgetter('honor','level'), reverse=True) # utana a mar rendezett listat honor és level szerint
+		except:
+			characters = sorted(characters, key=attrgetter('honor','level', 'account.username'), reverse=True)  # minimális az esély arra, hogy 2 felhasználó ms-re pontosan 
+														# egyszerre regisztráljon, de ilyen esetben ez egy alternativ rendezési lehetőség,
+														# a sorrend lényegén nem fog változtatni
+		return characters
+
+
 
 
 class Character(models.Model):
@@ -141,7 +154,11 @@ class Character(models.Model):
 
 	gold 			= models.DecimalField(verbose_name='gold', max_digits=20, decimal_places=0, default=100)
 	
+	current_xp 		= models.DecimalField(verbose_name='xp', max_digits=20, decimal_places=0, default=0) # jelenlegi xp pont
+	next_level_xp	= models.DecimalField(verbose_name='next level xp', max_digits=20, decimal_places=0, default=150) # következő szint eléréshez szükséges xp pont
 
+
+	objects 		= CharacterManager()
 
 
 	def __str__ (self):
@@ -154,7 +171,9 @@ class Character(models.Model):
 class CharacterHistory(models.Model):
 	account = models.OneToOneField(Account, on_delete=models.CASCADE, primary_key=True) 
 
-	matches_played	= models.DecimalField(verbose_name='matches played', max_digits=19, decimal_places=0, default = 0)
+	fights_played	= models.DecimalField(verbose_name='fights played', max_digits=19, decimal_places=0, default = 0)
+	fights_won		= models.DecimalField(verbose_name='fights won', max_digits=19, decimal_places=0, default = 0)
+	fights_lost		= models.DecimalField(verbose_name='fights lost', max_digits=19, decimal_places=0, default = 0)
 	#more attributes coming soon
 
 

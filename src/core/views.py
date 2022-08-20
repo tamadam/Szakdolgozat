@@ -89,7 +89,7 @@ def increase_attribute_value(request, *args, **kwargs):
 	return HttpResponse(json.dumps(context), content_type='application/json')
 
 
-
+# beepitve mar a modellben, törlendo
 def get_all_characters_without_admins():
 	"""
 	users = Account.objects.exclude(is_admin=True)
@@ -105,6 +105,7 @@ def get_all_characters_without_admins():
 
 @login_required(login_url='login')
 def users_search_view(request):
+	"""
 	characters = get_all_characters_without_admins()
 
 	#characters = sorted(characters, key=lambda character: character.level, reverse=True)
@@ -117,10 +118,13 @@ def users_search_view(request):
 		characters = sorted(characters, key=attrgetter('honor','level', 'account.username'), reverse=True)  # minimális az esély arra, hogy 2 felhasználó ms-re pontosan 
 													# egyszerre regisztráljon, de ilyen esetben ez egy alternativ rendezési lehetőség,
 													# a sorrend lényegén nem fog változtatni
-
+	"""
+	# EZ IS A MODELLBEN VAN MAR BEEPITVE
 	#for character in characters:
 		#dates_tmp.append(character.account.date_joined)
 	#print(characters)
+
+	characters = Character.objects.get_all_characters_in_ordered_list_without_admins()
 
 	teams = Team.objects.all()
 

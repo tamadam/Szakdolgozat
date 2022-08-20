@@ -1,0 +1,40 @@
+
+<!-- AJAXHOZ KELL JQUERY IMPORT -->
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+<p>Easy</p>
+{{user_id}}
+<button id="finish">Vege a jateknak</button>
+
+<!-- UGYANAZ A KOD 3 HELYEN -->
+<script>
+
+	var userID = "{{user_id}}"
+
+
+	$( "#finish" ).click(function() {
+		increaseCharacterXP()
+	});
+
+	function increaseCharacterXP(){
+		console.log("increase")
+		info_packet = {
+			"csrfmiddlewaretoken": "{{csrf_token}}",
+			"user_id": "{{user_id}}",
+			"game_type": "easy",
+		}
+		$.ajax({
+
+			dataType: "json",
+			url: "{% url 'game:finished_game' %}",
+			data: info_packet,
+
+			success: function(data) {
+				console.log('SUCCESS')
+			},
+			error: function(data) {
+				console.log('ERROR')
+			},
+		})
+	}
+</script>

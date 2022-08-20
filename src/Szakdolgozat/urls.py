@@ -34,7 +34,9 @@ from public_chat.views import (
     public_chat_page_view,
     )
 
-
+from game.views import (
+    easy_game_view,
+    )
 
 
 
@@ -70,7 +72,8 @@ urlpatterns = [
     # team app urls
     path('csapat/', include('team.urls', namespace='team')),
 
-
+    # game app urls
+    path('jatek/', include('game.urls', namespace='game')),
 ]
 
 # tell django where these staticfiles exists; urls host those resources

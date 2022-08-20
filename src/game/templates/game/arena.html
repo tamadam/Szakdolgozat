@@ -1,0 +1,90 @@
+
+<style>
+#fight-with-opponent {
+	display: none;
+}
+
+#opponent-choice {
+	display: block;
+}
+</style>
+
+
+
+
+<div class="main">
+	<p>Arena</p>
+<!-- AJAXHOZ KELL JQUERY IMPORT -->
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+<!-- JQUERY UI slide effecthez -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+
+	<!-- Ellenfél választás -->
+	<div id="opponent-choice">
+		<button id="left-opponent">{{left_character}}</button>
+		<button id="right-opponent">{{right_character}}</button>
+	</div>
+	<!-- Kiválasztott ellenfél elleni harc -->
+	<div id="fight-with-opponent">
+		<div id="left-character-side"></div>
+		<div id="right-character-side"></div>
+	</div>
+</div>
+
+
+<script>
+
+	var opponent = null
+	var opponentID = null
+
+	$("#left-opponent").click(function() {
+		opponent = "{{left_character}}"
+		opponentID = "{{left_character_id}}"
+		//console.log(opponentID)
+		switchToFightScreen()
+
+	})
+	$("#right-opponent").click(function() {
+		opponent = "{{right_character}}"
+		opponentID = "{{right_character_id}}"
+		//console.log(opponentID)
+		switchToFightScreen()
+	})
+
+
+	function switchToFightScreen(){
+		document.getElementById("opponent-choice").style.display = "none"
+		document.getElementById("fight-with-opponent").style.display = "block"
+		document.getElementById("left-character-side").innerHTML = "{{current_character}}"
+		document.getElementById("right-character-side").innerHTML = opponent
+
+		simulateFight()
+	}
+
+
+	function simulateFight(){
+		console.log("fight")
+		info_packet = {
+			"csrfmiddlewaretoken": "{{csrf_token}}",
+			"attacker_user_id": "{{current_character_id}}",
+			"defender_user_id": opponentID
+		}
+		$.ajax({
+
+			dataType: "json",
+			url: "{% url 'game:arena_fight' %}",
+			data: info_packet,
+
+			success: function(data) {
+				console.log('SUCCESS')
+			},
+			error: function(data) {
+				console.log('ERROR')
+			},
+		})
+	}
+
+
+</script>
+
