@@ -109,67 +109,90 @@ def finished_game(request):
 
 def arena_view(request):
 	context = {}
-	user_id = request.user.id
 
-	characters = Character.objects.get_all_characters_in_ordered_list_without_admins()
+	user_to_attack_id = request.GET.get(('ellenfel_id')) # a profilon keresztül
+	user_id = request.user.id # a támadó user
 	current_character = Character.objects.get(account=user_id)
 
-	characters_count = len(characters)
-	current_character_index = None
-	left_side = None
-	right_side = None
-	left_side_id = None
-	right_side_id = None
-	# az adminok nem lesznek benne
-	if current_character in characters:
-		for i, value in enumerate(characters):
-			if current_character == value:
-				current_character_index = i
-		# legalább 3 karakternek lennie kell az arénához
-		if characters_count >= 3:
-			if current_character_index is not None:
-				if current_character_index == 0:
-					# ha 0, akkor ő az első, ezért a két mögötte lévőt tesszük az arénába
-					left_side = characters[current_character_index + 1] 
-					right_side = characters[current_character_index + 2]
-
-				elif current_character_index == characters_count - 1:
-					# ha characters_count - 1-el egyenlő, azt jelenti, ő az utolsó, a két előtte lévőt kérjük
-					left_side = characters[current_character_index - 1]
-					right_side = characters[current_character_index - 2]
-
-				else:
-					# ha se nem első, se nem utolsó, akkor van egy előtte és utána lévő, ezeket tesszük az arénába
-					left_side = characters[current_character_index + 1]
-					right_side = characters[current_character_index - 1]
-
-				#print(left_side, right_side)
-				left_side_id = left_side.account.id
-				right_side_id = right_side.account.id
-				#print("IDK: ", left_side_id, right_side_id)
-			else:
-				# ha valamiért a current_character_index None, akkor csak menjen tovább a program
-				# elvileg ez sem lehetséges
-				pass
-		else:
-			# ha csak 1 vagy 2 karakter van akkor mi történjen
-			# ha 0 karakter van, akkor csak az admin léphet be, viszont azt már fentebb lekezeljük
-			# így nem fordulhat elő, hogy ide jusson a program, hogyha nincs karakter
+	if user_to_attack_id:
+		try:
+			user_to_attack = Character.objects.get(account=user_to_attack_id)
+		except:
+			user_to_attack = None
 			pass
 
-
+		context = {
+			'left_character': '',
+			'left_character_id': '',
+			'right_character': '',
+			'right_character_id': '',
+			'current_character': current_character,
+			'current_character_id': current_character.account.id,
+			'is_user_to_attack': True,
+			'user_to_attack_id': user_to_attack_id,
+			'user_to_attack': user_to_attack,
+		}
 	else:
-		# adminoknak mi történjen
-		pass
+		characters = Character.objects.get_all_characters_in_ordered_list_without_admins()
 
-	context = {
-		'left_character': left_side,
-		'left_character_id': left_side_id,
-		'right_character': right_side,
-		'right_character_id': right_side_id,
-		'current_character': current_character,
-		'current_character_id': current_character.account.id,
-	}
+
+		characters_count = len(characters)
+		current_character_index = None
+		left_side = None
+		right_side = None
+		left_side_id = None
+		right_side_id = None
+		# az adminok nem lesznek benne
+		if current_character in characters:
+			for i, value in enumerate(characters):
+				if current_character == value:
+					current_character_index = i
+			# legalább 3 karakternek lennie kell az arénához
+			if characters_count >= 3:
+				if current_character_index is not None:
+					if current_character_index == 0:
+						# ha 0, akkor ő az első, ezért a két mögötte lévőt tesszük az arénába
+						left_side = characters[current_character_index + 1] 
+						right_side = characters[current_character_index + 2]
+
+					elif current_character_index == characters_count - 1:
+						# ha characters_count - 1-el egyenlő, azt jelenti, ő az utolsó, a két előtte lévőt kérjük
+						left_side = characters[current_character_index - 1]
+						right_side = characters[current_character_index - 2]
+
+					else:
+						# ha se nem első, se nem utolsó, akkor van egy előtte és utána lévő, ezeket tesszük az arénába
+						left_side = characters[current_character_index + 1]
+						right_side = characters[current_character_index - 1]
+
+					#print(left_side, right_side)
+					left_side_id = left_side.account.id
+					right_side_id = right_side.account.id
+					#print("IDK: ", left_side_id, right_side_id)
+				else:
+					# ha valamiért a current_character_index None, akkor csak menjen tovább a program
+					# elvileg ez sem lehetséges
+					pass
+			else:
+				# ha csak 1 vagy 2 karakter van akkor mi történjen
+				# ha 0 karakter van, akkor csak az admin léphet be, viszont azt már fentebb lekezeljük
+				# így nem fordulhat elő, hogy ide jusson a program, hogyha nincs karakter
+				pass
+
+
+		else:
+			# adminoknak mi történjen
+			pass
+
+		context = {
+			'left_character': left_side,
+			'left_character_id': left_side_id,
+			'right_character': right_side,
+			'right_character_id': right_side_id,
+			'current_character': current_character,
+			'current_character_id': current_character.account.id,
+			'is_user_to_attack': False,
+		}
 
 
 	return render(request, 'game/arena.html', context)

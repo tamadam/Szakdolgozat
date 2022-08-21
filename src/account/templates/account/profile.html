@@ -6,6 +6,7 @@
 
 
 {% include 'private_chat/create_or_return_private_chat_room.html' %}
+{% include 'game/attack_choosen_player.html' %}
 
 <div class="main">
 
@@ -32,6 +33,7 @@
 		<div class="d-flex flex-row align-items-center btn btn-primary m-2 px-4" onclick="createOrReturnPrivateChat('{{user_id}}')">
 			<span class="message-btn-text">Message</span>
 		</div>
+		<p onclick="attackChoosenPlayer('{{user_id}}')">Támadás</p>
 	{% endif %}
 	{{character_type}}
 </div>

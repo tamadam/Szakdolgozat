@@ -1,0 +1,13 @@
+<script type="text/javascript">
+	
+	function attackChoosenPlayer(userID){ //id akit támadunk
+		console.log("ATTACK CHOOSEN PLAYER")
+		var url = "{% url 'game:arena' %}?ellenfel_id=" + userID 
+		var win = window.location.replace(url) //open same page
+		win.focus()
+	}
+
+
+
+
+</script>

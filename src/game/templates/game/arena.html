@@ -147,6 +147,8 @@
 
 <script>
 
+
+
 	var opponent = null
 	var opponentID = null
 
@@ -156,24 +158,46 @@
 	var defenderHealthValuesLength = null
 	var winner = null // ebbe lesz a csata nyertese
 
+
+
+	$(document).ready(function() {
+		{% if is_user_to_attack %}
+			var anotherPlayer = "{{user_to_attack}}"
+			console.log(anotherPlayer)
+			opponent = anotherPlayer
+			opponentID = "{{user_to_attack_id}}"
+			switchToFightScreen(false, true)
+		{% else %}
+			console.log("yeyno")
+		{% endif%}
+	});
+
+
+
+
 	$("#left-opponent").click(function() {
 		opponent = "{{left_character}}"
 		opponentID = "{{left_character_id}}"
 		//console.log(opponentID)
-		switchToFightScreen(true)
+		switchToFightScreen(true, false)
 
 	})
 	$("#right-opponent").click(function() {
 		opponent = "{{right_character}}"
 		opponentID = "{{right_character_id}}"
 		//console.log(opponentID)
-		switchToFightScreen(false)
+		switchToFightScreen(false, false)
 	})
 
 
-	function switchToFightScreen(showLeftPlayer){
+	function switchToFightScreen(showLeftPlayer, anotherPlayer){
 		document.getElementById("opponent-choice").style.display = "none"
 		document.getElementById("fight-with-opponent").style.display = "block"
+
+		if (anotherPlayer){
+			document.getElementById("player2-right").innerHTML = opponent
+		}
+
 		//document.getElementById("left-character-side").innerHTML = "{{current_character}}"
 		if (showLeftPlayer){
 			$("#player2-left").css("display", "block")
