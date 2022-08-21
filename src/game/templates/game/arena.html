@@ -1,18 +1,110 @@
+{% extends 'base.html' %}
 
+{% load static %}
+
+{% block content %}
 <style>
+/* ARENA FIGHT SCENE */
 #fight-with-opponent {
+	display: none;
+	background: green;
+	width: 100%;
+	height: 100%;
+}
+
+
+#right-character-side {
+
+	float: right;
+	width: 40%;
+}
+
+
+#left-character-side {
+	
+	width: 40%;
+
+}
+
+
+#health-bar-container {
+    text-align: center;
+    background-color: black;
+    width: 100%;
+    /*margin: 0 auto;*/
+    position: relative;
+}
+
+.health-bar {
+    background-color: red;
+    height: 20px;
+    width:100%;
+}
+
+.health-bar-text {
+    font-size: .9em;
+    position: absolute;
+    margin: 0;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color:white;
+}
+
+
+/* a jobb oldalon a választott player adatait jelenítjuk meg */
+#player2-left {
 	display: none;
 }
 
+#player2-right {
+	display: none;
+}
+
+
+/* felugró ablak css */
+.cover {
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(175, 174, 174, 0.2); 
+    display: none; 
+}
+
+.message {
+    position: relative; 
+    border: 3px solid black;
+    margin: 0 auto;
+    height: 20%; 
+    width: 20%;
+    background-color: white; 
+
+}
+
+
+/* ARENA CHOICE SCENE */
 #opponent-choice {
 	display: block;
 }
+
+
+
+
+
 </style>
 
 
 
 
 <div class="main">
+	<div class="cover">
+	 	<div class="message" id="after-match-message">
+			Vege a meccsnek
+	 	</div>
+	</div>
 	<p>Arena</p>
 <!-- AJAXHOZ KELL JQUERY IMPORT -->
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
@@ -27,8 +119,28 @@
 	</div>
 	<!-- Kiválasztott ellenfél elleni harc -->
 	<div id="fight-with-opponent">
-		<div id="left-character-side"></div>
-		<div id="right-character-side"></div>
+		<div id="right-character-side">
+			<div id="player2">
+				<div id="player2-left"><h4>{{left_character}}</h4></div>
+				<div id="player2-right"><h4>{{right_character}}</h4></div>
+				<div id="health-bar-container">
+					<div class="health-bar">
+						<p class="health-bar-text" id="player2-percentage">100%</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="left-character-side">
+			<div id="player1">
+				<h4>{{current_character}}</h4>
+				<div id="health-bar-container">
+					<div class="health-bar">
+						<p class="health-bar-text" id="player1-percentage">100%</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
 	</div>
 </div>
 
@@ -38,26 +150,40 @@
 	var opponent = null
 	var opponentID = null
 
+	var attackerHealthValues = null
+	var defenderHealthValues = null
+	var attackerHealthValuesLength = null; 
+	var defenderHealthValuesLength = null
+	var winner = null // ebbe lesz a csata nyertese
+
 	$("#left-opponent").click(function() {
 		opponent = "{{left_character}}"
 		opponentID = "{{left_character_id}}"
 		//console.log(opponentID)
-		switchToFightScreen()
+		switchToFightScreen(true)
 
 	})
 	$("#right-opponent").click(function() {
 		opponent = "{{right_character}}"
 		opponentID = "{{right_character_id}}"
 		//console.log(opponentID)
-		switchToFightScreen()
+		switchToFightScreen(false)
 	})
 
 
-	function switchToFightScreen(){
+	function switchToFightScreen(showLeftPlayer){
 		document.getElementById("opponent-choice").style.display = "none"
 		document.getElementById("fight-with-opponent").style.display = "block"
-		document.getElementById("left-character-side").innerHTML = "{{current_character}}"
-		document.getElementById("right-character-side").innerHTML = opponent
+		//document.getElementById("left-character-side").innerHTML = "{{current_character}}"
+		if (showLeftPlayer){
+			$("#player2-left").css("display", "block")
+			$("#player2-right").css("display", "none")
+		}
+		else {
+			$("#player2-right").css("display", "block")
+			$("#player2-left").css("display", "none")
+		}
+
 
 		simulateFight()
 	}
@@ -77,7 +203,18 @@
 			data: info_packet,
 
 			success: function(data) {
-				console.log('SUCCESS')
+				console.log('attacker_health_values')
+				console.log(data.attacker_health_values)
+				console.log('defender_health_values')
+				console.log(data.defender_health_values)
+				attackerHealthValues = data.attacker_health_values
+				defenderHealthValues = data.defender_health_values
+				attackerHealthValuesLength = attackerHealthValues.length
+				defenderHealthValuesLength = defenderHealthValues.length
+				// kiszedjuk a winnert egy globalis valtozoba
+				winner = data.user_win
+				simulateDefenderHealthBar();    
+				setTimeout(simulateAttackerHealthBar, 1000)
 			},
 			error: function(data) {
 				console.log('ERROR')
@@ -85,6 +222,127 @@
 		})
 	}
 
+// HEALTH BAR PART //
+
+
+
+// var array = [3000, 2000, 1500, 500, 30]; ---> attackerHealthValues
+var defenderHealthPercent = 100;
+var attackerHealthPercent = 100;
+
+var bars = $(".health-bar");
+
+var indexDefender = 0;
+var indexAttacker = 0;
+
+
+
+var defenderFinished = false
+var attackerFinished = false
+
+
+function simulateDefenderHealthBar() {      
+    
+	setTimeout(function() {  
+  		console.log("SIMULATE-DEFENDER")
+        defenderHealthPercent = calculatePercent(defenderHealthValues, indexDefender)
+        bars.eq(0).animate({width:defenderHealthPercent +"%"}, 800)   
+        document.getElementById("player2-percentage").innerHTML = defenderHealthPercent + "%";
+
+        indexDefender++;               
+        if (indexDefender < defenderHealthValuesLength - 1) {     
+        	simulateDefenderHealthBar();          
+        }
+        else {
+        	defenderFinished = true
+        	console.log(defenderFinished)
+        }                     
+	}, 2000)
+
+}
+
+
+
+
+function simulateAttackerHealthBar() {      
+    
+	setTimeout(function() {  
+  	  	console.log("SIMULATE-ATTACKER")
+        attackerHealthPercent = calculatePercent(attackerHealthValues, indexAttacker)
+        bars.eq(1).animate({width:attackerHealthPercent +"%"}, 800)   
+        document.getElementById("player1-percentage").innerHTML = attackerHealthPercent + "%";
+
+        indexAttacker++;               
+        if (indexAttacker < attackerHealthValuesLength - 1) {     
+        	simulateAttackerHealthBar();          
+        }  
+        else {
+        	attackerFinished = true
+        	console.log(attackerFinished)
+        }                        
+	}, 2000)
+
+}
+
+
+
+
+
+
+function calculatePercent(arrayOfHealthValues, currentIndex){
+    var firstElement = arrayOfHealthValues[0];
+    var length = arrayOfHealthValues.length
+    if (currentIndex < length - 1){
+        var nextElement = arrayOfHealthValues[currentIndex + 1];
+        var healthPercent = (nextElement / firstElement) * 100;
+
+        healthPercent = Math.round(healthPercent);
+        console.log(healthPercent);
+
+        return healthPercent;
+    }
+
+    return 0 // TODO, mit adjon vissza ha nem jó az if
+
+}
+
+
+
+var interval = setInterval(function(){
+	if (attackerFinished && defenderFinished){
+		console.log(winner.username) //kiiratjuk a winnert
+		showEndingMessage()
+		clearInterval(interval)
+	}
+}, 1000)
+
+// ----------
+
+
+function showEndingMessage(){
+	if (winner.username == "{{current_character}}"){
+		document.getElementById("after-match-message").innerHTML = "Győztél"
+	}
+	else{
+		document.getElementById("after-match-message").innerHTML = "Vesztettél"
+	}
+
+	$(".cover").css("display", "block");
+}
+
+
+$(".cover").on("click", function(event){
+	if(event.target !== this){
+		console.log("marad")
+		return
+	}
+	console.log("elrejt")
+	$(".cover").css("display", "none")
+})
+
 
 </script>
 
+
+
+{% endblock %}

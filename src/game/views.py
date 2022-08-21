@@ -1,9 +1,17 @@
 from django.shortcuts import render
 from account.models import Account, Character, CharacterHistory
 
+from game.models import Arena
+
 from django.http import JsonResponse
 from core.constants import *
 import math
+
+from django.core import serializers
+import json
+
+from account.utils import EncodeAccountObject
+
 
 def easy_game_view(request):
 	context = {}
@@ -169,12 +177,17 @@ def arena_view(request):
 
 def decide_winner(attacker, defender):
 	attacker_role = attacker.character_type
-	attacker_health = attacker.health_point * 240
+	attacker_health = attacker.health_point * 30
 	#attacker_luck_value = attacker.fortune
 	
 	defender_role = defender.character_type
-	defender_health = defender.health_point * 240
+	defender_health = defender.health_point * 30
 	#defender_luck_value = defender.fortune
+
+	attacker_health_value_list = []
+	defender_health_value_list = []
+	attacker_health_value_list.append(attacker_health)
+	defender_health_value_list.append(defender_health)
 
 	print('KEZDO ÉLETERO: ATTACKER - DEFENDER', attacker_health, defender_health)
 
@@ -251,23 +264,40 @@ def decide_winner(attacker, defender):
 
 	
 	while True:
-		if attacker_health <= 0:
-			break
+		# mindig a támadó kezd tehát mindig a védekező sérül először
+		defender_health -= attacker_main_attr_value * 10
+
+
+
 		if defender_health <= 0:
+			defender_health_value_list.append('0')
 			did_attacker_win = True
 			break
-		
-		defender_health -= attacker_main_attr_value * 10
+
+		defender_health_value_list.append(defender_health)
+
+		# ha nem halt meg a védekező, akkor ő jön, a támadó sebződik
+
 		attacker_health -= defender_main_attr_value * 10
 
-		print('DEF HEALTH', defender_health)
-		print('ATTACK HEALTH', attacker_health)
 
+		if attacker_health <= 0:
+			attacker_health_value_list.append('0')
+			break
+
+
+		attacker_health_value_list.append(attacker_health)
+		#print('DEF HEALTH', defender_health)
+		#print('ATTACK HEALTH', attacker_health)
+
+
+	#print('ATTACKER HEALTH LIST', attacker_health_value_list)
+	#print('DEFENDER_HEALTH_LIST', defender_health_value_list)
 
 	if did_attacker_win:
-		return attacker
+		return attacker, attacker_health_value_list, defender_health_value_list
 
-	return defender
+	return defender, attacker_health_value_list, defender_health_value_list
 
 
 
@@ -277,6 +307,8 @@ def arena_fight(request):
 
 	attacker_user_id = None
 	defender_user_id = None
+
+	user_win = None
 
 	try:
 		attacker_user_id=request.GET.get('attacker_user_id')
@@ -290,7 +322,7 @@ def arena_fight(request):
 	defender_user = Character.objects.get(account=defender_user_id)
 
 
-	winner = decide_winner(attacker_user, defender_user)
+	winner, attacker_health_values, defender_health_values = decide_winner(attacker_user, defender_user)
 
 	attacker_user_history = CharacterHistory.objects.get(account=attacker_user_id)
 	defender_user_history = CharacterHistory.objects.get(account=defender_user_id)
@@ -299,8 +331,23 @@ def arena_fight(request):
 	defender_user_history.fights_played += 1
 
 
+	#add arena matches
+	Arena.objects.create_arena_match(attacker_user, defender_user, 	json.dumps([int(num) for num in attacker_health_values]), json.dumps([int(num) for num in defender_health_values]), winner)
+
+
+
+	print('hey')
+	#print(json.dumps(attacker_health_values))
+	print('ho')
+
 	print('GYŐZTES', winner)
+	serialized_winner = serializers.serialize('json', [winner.account])
+	print('ATTACKER', attacker_health_values)
+	print('DEFENDER', defender_health_values)
+	print(type(attacker_health_values))
 	if winner == attacker_user:
+		user_win = 'attacker'
+
 		# becsületpont
 		attacker_user.honor += 20
 		defender_user.honor -= 20
@@ -311,6 +358,9 @@ def arena_fight(request):
 		attacker_user_history.fights_won += 1
 		defender_user_history.fights_lost += 1
 	elif winner == defender_user:
+		user_win = 'defender'
+
+
 		defender_user.honor += 20
 		attacker_user.honor -= 20
 		if attacker_user.honor < 0:
@@ -326,8 +376,17 @@ def arena_fight(request):
 	defender_user.save()
 	defender_user_history.save()
 
+
+	s = EncodeAccountObject()
+
+	account_object = {}
+	account_object['winner_id'] = s.serialize([winner.account])[0]
+	#print(json.loads(json.dumps(account_object['winner_id'])))
 	data = {
 		'message': 'Success',
+		'attacker_health_values': attacker_health_values,
+		'defender_health_values': defender_health_values,
+		'user_win': account_object['winner_id'], #átadjuk az account objectet jsonre serializaljuk eloszor
 	}
 
 	return JsonResponse(data)
