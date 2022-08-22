@@ -1,38 +1,281 @@
-{% extends 'base.html' %}
+{% extends 'base_new.html' %}
 
 {% load static %}
 
 {% block content %}
 <style>
+@font-face {
+	font-family: 'Kanit-Regular';
+	src: local('Kanit-Regular'),
+	url("{% static 'fonts/Kanit-Regular.ttf' %}");
+}
+
+@font-face {
+	font-family: 'Kanit-Bold';
+	src: local('Kanit-Bold'),
+	url("{% static 'fonts/Kanit-Bold.ttf' %}");
+}
+
+@font-face {
+	font-family: 'Kanit-Light';
+	src: local('Kanit-Light'),
+	url("{% static 'fonts/Kanit-Light.ttf' %}");
+}
+
+
+body {
+	font-family: 'Kanit-Regular';
+	font-size: 1.8vh;
+	overflow: hidden;
+	user-select: none;
+}
+
+
+#arena-content-page {
+	background: url("{% static 'images/arena-background.jpg' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	height: 100%;
+	width: 100%;
+	min-width: 1000px;
+	min-height: 600px;
+}
+
 /* ARENA FIGHT SCENE */
 #fight-with-opponent {
 	display: none;
-	background: green;
-	width: 100%;
-	height: 100%;
+	height: 30%;
+	padding: 5px;
 }
 
 
 #right-character-side {
 
-	float: right;
-	width: 40%;
+	flex: 1;
+	width: 50%;
+	height: 100%;
+	min-height: 300px;
+	min-width: 300px;
+	max-height: 600px;
+	max-width: 600px;
+
+	background: url("{% static 'images/blank_profile_image.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	/*
+	To scale the background image to fit inside the div:
+	background-size: contain;
+	*/
+	/*To scale the background image to cover the whole div:*/
+	background-size: cover;
+
+	background-color: lightgrey;
+	text-align: center;
+	position: relative;
+	margin-right: 20%;
+	margin-left: 4%;
+	border: 6px solid transparent;
+	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
+	border-width: 0 3 0 0px;
+	transition: box-shadow 0.4s;
+	/*box-shadow: rgba(240, 28, 28, 0.6) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;*/
 }
 
 
 #left-character-side {
+
+	flex: 1;
+	width: 50%;
+	height: 100%;
+	min-height: 300px;
+	min-width: 300px;
+	max-height: 600px;
+	max-width: 600px;
+	background: url("{% static 'images/blank_profile_image.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+
+	background-color: lightgrey;
 	
-	width: 40%;
+	text-align: center;
+	position: relative;
+	margin-right: 4%;
+	margin-left: 20%;
+	border: 6px solid transparent;
+	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
+	border-width: 0 3 0 0px;
+	transition: box-shadow 0.4s;
 
 }
 
+.characters-details{
+	display: none;
+	height: 30%;
+	padding: 5px;
+	margin-top: 5%;
+
+
+}
+
+#left-detail {
+
+	flex: 1;
+	width: 50%;
+	height: 100%;
+	min-height: 300px;
+	min-width: 300px;
+	max-height: 600px;
+	max-width: 600px;
+
+	background-color: lightgrey;
+	text-align: center;
+	position: relative;
+	margin-right: 4%;
+	margin-left: 20%;
+
+	border: 6px solid transparent;
+	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
+	border-width: 0 3 0 0px;
+
+	display: flex;
+}
+
+#right-detail {
+
+
+	flex: 1;
+	width: 50%;
+	height: 100%;
+	min-height: 300px;
+	min-width: 300px;
+	max-height: 600px;
+	max-width: 600px;
+
+	background-color: lightgrey;
+	text-align: center;
+	position: relative;
+	margin-right: 20%;
+	margin-left: 4%;
+	border: 6px solid transparent;
+
+	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
+
+	display: flex;
+}
+
+
+#left-detail #role-picture {
+	flex: 1;
+	width: 50%;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+
+}
+
+#left-detail #character-attrs{
+	flex: 1;
+	width: 50%;
+}
+
+
+
+#right-detail #role-picture {
+	flex: 1;
+	width: 50%;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+
+}
+
+#right-detail #character-attrs{
+	flex: 1;
+	width: 50%;
+}
+
+
+
+
+
+#left-character-side #player-name{
+	margin: 0 auto;
+}
+
+#right-character-side #player-name{
+	margin: 0 auto;
+}
+
+#player {
+	background-color: red;
+	margin: 0 auto;
+}
+
+
+#left-tool{
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	color:red;
+	top:0;
+
+}
+/* align item right and vertical middle */
+#left-tool img {
+	position: absolute;
+	width: 20%;
+	top: 50%;
+	right: -20%;
+	transform: translate(-50%, -50%);
+	opacity: 0;
+	visibility: none;
+}
+
+
+#right-tool{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	color: yellow;
+
+}
+#right-tool img {
+	position: absolute;
+	width: 20%;
+	top: 50%;
+	left: 0%;
+	transform: translate(-50%, -50%);
+	opacity: 0;
+	visibility: none;
+
+}
+
+
+#player-name{
+	font-weight: bold;
+	font-size: 2.0vh;
+	background-image: url("{% static 'images/button-back.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+
+	width: 30%;
+	min-width: 200px;	
+	height: auto;
+	color: black;
+}
 
 #health-bar-container {
     text-align: center;
     background-color: black;
     width: 100%;
     /*margin: 0 auto;*/
-    position: relative;
+    position: absolute;
+    bottom: 0;
+
 }
 
 .health-bar {
@@ -65,22 +308,28 @@
 
 /* felugró ablak css */
 .cover {
-    position: fixed; 
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
+    top: 0;
+    left: 0;
+    position: fixed; 
     background-color: rgba(175, 174, 174, 0.2); 
     display: none; 
+	align-items: ;
+	z-index: 2;
+
 }
 
 .message {
     position: relative; 
-    border: 3px solid black;
-    margin: 0 auto;
+	border: 6px solid transparent;
+	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
+	border-width: 0 3 0 0px;
+    margin: auto;
     height: 20%; 
     width: 20%;
     background-color: white; 
+    padding: 10px;
 
 }
 
@@ -93,61 +342,370 @@
 
 
 
+#navigation {
+	display: flex;
+	justify-content: center;
+	position: relative;
+	margin-top: 4%;
+	width: 100%;
+	height: 20%;
+	text-align: center;
+
+}
+
+.nav-buttons {
+	width: 20%;
+
+}
+
+
+
+#navigation div {
+	background-image: url("{% static 'images/button-back.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+
+	width: 10%;
+	min-width: 200px;	
+	height: 14%;
+	border: none;
+	outline: none;
+	font-family: 'Kanit-Regular';
+	font-size: 1.8vh;
+
+
+}
+
+
+#navigation div:hover {
+	background-image: url("{% static 'images/button-back-red.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: #b8a529;
+
+}
+
+#skip-button {
+	display: none;
+}
+
+#player-name-content {
+    margin:auto;
+    margin-top: -2vh;
+    margin-bottom: 2vh;
+    text-align: center;
+    padding:5px;
+    width: 20%;
+    min-width: 300px;
+}
+
+
+#left-character-detail{
+	display: none;
+	height: 100%;
+}
+
+#right-character-detail{
+	display: none;
+	height: 100%;
+}
+
+
+
+
+
+
+.attribute-values-in-arena {
+	display: flex; 
+    justify-content: center;
+	align-items: center;
+	color: red;
+	height: 20%;
+
+
+}
+
+#arena-main-title{
+	width: 100%;
+	height: fit-content;
+	padding: 10px;
+	margin: 0 auto;
+	text-align: center;
+	font-family: 'Kanit-Bold';
+	font-size: 2vh;
+
+}
+
+
+#cover-button {
+	
+	background: url("{% static 'images/button-back.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	padding: 6px;
+	min-width: 15%;
+
+	border: none;
+	color: black;
+	font-family: "Kanit-Regular";
+	font-size: 1.8vh;
+	font-weight: bold;
+
+
+	bottom: 0;
+	right: 0;
+	left: 0;
+	position: absolute;
+	width: 40%;
+	margin: 0 auto;
+
+}
+
+
+
+#cover-button:hover {
+	
+	background: url("{% static 'images/button-back-red.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: #b8a529;
+
+}
+
+
+#info-after-match {
+	height: 100%;
+	width: 100%;
+	position: relative;
+	text-align: center;
+
+}
+
+.loader-container {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 2;
+}
+
+
 
 </style>
-
-
-
-
-<div class="main">
-	<div class="cover">
-	 	<div class="message" id="after-match-message">
-			Vege a meccsnek
-	 	</div>
+<div id="arena-content-page">
+	<div id="arena-main-title">
+		<p>ARÉNA</p>
 	</div>
-	<p>Arena</p>
-<!-- AJAXHOZ KELL JQUERY IMPORT -->
-<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 
-<!-- JQUERY UI slide effecthez -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+
+
+		<div class="cover">
+		 	<div class="message">
+				<div id="info-after-match">
+
+					<p id="after-match-message">Vege a meccsnek</p>
+
+					<button id="cover-button">Rendben</button>
+
+				</div>
+
+		 	</div>
+		</div>
+
 
 	<!-- Ellenfél választás -->
 	<div id="opponent-choice">
 		<button id="left-opponent">{{left_character}}</button>
 		<button id="right-opponent">{{right_character}}</button>
 	</div>
+
+
 	<!-- Kiválasztott ellenfél elleni harc -->
 	<div id="fight-with-opponent">
-		<div id="right-character-side">
-			<div id="player2">
-				<div id="player2-left"><h4>{{left_character}}</h4></div>
-				<div id="player2-right"><h4>{{right_character}}</h4></div>
-				<div id="health-bar-container">
-					<div class="health-bar">
-						<p class="health-bar-text" id="player2-percentage">100%</p>
-					</div>
+
+		<div id="left-character-side">
+			<div id="player-name-content">
+				<h4 id="player-name">{{current_character}}</h4>
+			</div>
+
+			<div id="left-tool"><img src="{% static 'images/sword.png' %}"></div>
+
+			<div id="health-bar-container">
+				<div class="health-bar">
+					<p class="health-bar-text" id="player1-percentage">100%</p>
 				</div>
 			</div>
+
+
 		</div>
-		<div id="left-character-side">
-			<div id="player1">
-				<h4>{{current_character}}</h4>
-				<div id="health-bar-container">
-					<div class="health-bar">
-						<p class="health-bar-text" id="player1-percentage">100%</p>
-					</div>
+
+
+
+
+		<div id="right-character-side">
+
+			<!-- Ezek közül mindig csak a választott karakter jelenik meg -->
+			<div id="player2-left">
+				<div id="player-name-content">
+					<h4 id="player-name">{{left_character}}</h4>
 				</div>
+			</div>
+			<div id="player2-right">
+				<div id="player-name-content">
+					<h4 id="player-name" name="another-character">{{right_character}}</h4>
+				</div>
+			</div>
+
+			<div id="right-tool"><img src="{% static 'images/sword_other.png' %}"></div>
+
+			<div id="health-bar-container">
+				<div class="health-bar">
+					<p class="health-bar-text" id="player2-percentage">100%</p>
+				</div>
+			</div>
+
+		</div>
+
+
+	</div>
+	<div class="characters-details">
+		<!-- a támadó karakter -->
+		<div id="left-detail">
+			<div id="role-picture">
+
+			</div>
+			<div id="character-attrs">
+				<span class="attribute-values-in-arena">Erő:{{current_character.strength}}</span>
+				<span class="attribute-values-in-arena">Ügyesség:{{current_character.skill}}</span>
+				<span class="attribute-values-in-arena">Értelem: {{current_character.intelligence}}</span>
+				<span class="attribute-values-in-arena">Kitartás: {{current_character.health_point}}</span>
+				<span class="attribute-values-in-arena">Szerencse: {{current_character.fortune}}</span>
 			</div>
 		</div>
 
+		<div id="right-detail">
+			<div id="role-picture">
+
+			</div>
+			<div id="character-attrs">
+				{% if is_user_to_attack %}
+					<span class="attribute-values-in-arena">Erő: {{user_to_attack.strength}}</span>
+					<span class="attribute-values-in-arena">Ügyesség: {{user_to_attack.skill}}</span>
+					<span class="attribute-values-in-arena">Értelem: {{user_to_attack.intelligence}}</span>
+					<span class="attribute-values-in-arena">Kitartás: {{user_to_attack.health_point}}</span>
+					<span class="attribute-values-in-arena">Szerencse: {{user_to_attack.fortune}}</span>
+				{% else %}
+					<div id="left-character-detail">
+						<span class="attribute-values-in-arena">Erő: {{left_character.strength}}</span>
+						<span class="attribute-values-in-arena">Ügyesség: {{left_character.skill}}</span>
+						<span class="attribute-values-in-arena">Értelem: {{left_character.intelligence}}</span>
+						<span class="attribute-values-in-arena">Kitartás: {{left_character.health_point}}</span>
+						<span class="attribute-values-in-arena">Szerencse: {{left_character.fortune}}</span>
+					</div>
+					<div id="right-character-detail">
+						<span class="attribute-values-in-arena">Erő: {{right_character.strength}}</span>
+						<span class="attribute-values-in-arena">Ügyesség: {{right_character.skill}}</span>
+						<span class="attribute-values-in-arena">Értelem: {{right_character.intelligence}}</span>
+						<span class="attribute-values-in-arena">Kitartás: {{right_character.health_point}}</span>
+						<span class="attribute-values-in-arena">Szerencse: {{right_character.fortune}}</span>
+					</div>
+				{% endif %}
+			</div>
+
+			
+		</div>
+
+
 	</div>
+
+	<div id="navigation">
+
+		<div class="nav-buttons" id="skip-button">Kihagyás</div><br>
+		<div class="nav-buttons" id="go-to-main-page">Vissza</div>
+	</div>
+</div>
+
+<div class="loader-container">
+	
 </div>
 
 
 <script>
 
+	const audio = new Audio()
+	audio.src = "{% static 'audios/button_click.mp3' %}"
 
+	const audioFight1 = new Audio()
+	audioFight1.src = "{% static 'audios/fight1.mp3' %}"
+
+	const audioFight2 = new Audio()
+	audioFight2.src = "{% static 'audios/fight2.mp3' %}"
+
+	$(window).on("load", function(){
+		$(".loader-container").fadeOut("slow")
+
+
+	})
+
+
+
+
+
+    $("#cover-button").click(function () {
+    	audio.play()
+		$(".cover").css("display", "none")
+    })
+
+
+
+    $("#go-to-main-page").click(function() {
+    	audio.play()
+    	setTimeout(function(){
+			var url = "{% url 'home_page' %}"
+			var win = window.location.replace(url) 
+			win.focus()
+    	}, 150) // hogy lehessen hallani a hangot
+
+    })
+
+
+
+	function setBackgroundToDescription(){
+		{% if current_character.character_type == "warrior" %}
+			$("#left-detail #role-picture").css("background-image", "url('{% static 'images/swordsman.png' %}')")
+		{% elif current_character.character_type == "mage" %}
+			$("#left-detail #role-picture").css("background-image", "url('{% static 'images/wizard.png' %}')")
+		{% elif current_character.character_type == "scout" %}		
+			$("#left-detail #role-picture").css("background-image", "url('{% static 'images/archer.png' %}')")
+		{% else %}
+			$("#left-detail #role-picture").css("background-image", "url('{% static 'images/swordsman.png' %}')")
+		{% endif %}
+
+	}
+
+
+
+
+
+
+
+	$("#skip-button").on("click", function(){
+		audio.play()
+		clearTimeout(attackTimeout)
+		clearTimeout(defTimeout)
+		clearTimeout(attackTimeoutSecond)
+		showFinalHealthBars()
+		showEndingMessage()
+	})
 
 	var opponent = null
 	var opponentID = null
@@ -178,36 +736,94 @@
 	$("#left-opponent").click(function() {
 		opponent = "{{left_character}}"
 		opponentID = "{{left_character_id}}"
+		$("#right-character-side").css("background-image", "url('{{left_character_profile_image}}')");
+
+		$(".loader-container").fadeIn("fast")
 		//console.log(opponentID)
-		switchToFightScreen(true, false)
+		setTimeout(function(){
+			switchToFightScreen(true, false)
+		}, 300)
 
 	})
 	$("#right-opponent").click(function() {
 		opponent = "{{right_character}}"
 		opponentID = "{{right_character_id}}"
+		$("#right-character-side").css("background-image", "url('{{right_character_profile_image}}')");
 		//console.log(opponentID)
-		switchToFightScreen(false, false)
+		$(".loader-container").fadeIn("fast")
+		setTimeout(function () {
+			switchToFightScreen(false, false)
+		}, 300)
+
 	})
 
 
 	function switchToFightScreen(showLeftPlayer, anotherPlayer){
+		$(".loader-container").fadeOut("slow")
+		setBackgroundToDescription() //csak a current userhez
 		document.getElementById("opponent-choice").style.display = "none"
-		document.getElementById("fight-with-opponent").style.display = "block"
+		document.getElementById("fight-with-opponent").style.display = "flex"
+		$(".characters-details").css("display", "flex")
+		$("#skip-button").css("display", "block")
+
+		$("#left-character-side").css("background-image", "url('{{current_character_profile_image}}')");
 
 		if (anotherPlayer){
-			document.getElementById("player2-right").innerHTML = opponent
-		}
+			$("#player2-right #player-name-content #player-name").html(opponent)
 
-		//document.getElementById("left-character-side").innerHTML = "{{current_character}}"
-		if (showLeftPlayer){
-			$("#player2-left").css("display", "block")
-			$("#player2-right").css("display", "none")
+
+			$("#right-character-side").css("background-image", "url('{{user_to_attack_profile_image}}')");
+			$("#player2-right").css("display", "block")
+			$("#right-character-detail").css("display", "block")
+			$("#player2-left").css("display", "none")
+			{% if user_to_attack.character_type == "warrior" %}
+				$("#right-detail #role-picture").css("background-image", "url('{% static 'images/swordsman.png' %}')")
+			{% elif user_to_attack.character_type == "mage" %}
+				$("#right-detail #role-picture").css("background-image", "url('{% static 'images/wizard.png' %}')")
+			{% elif user_to_attack.character_type == "scout" %}		
+				$("#right-detail #role-picture").css("background-image", "url('{% static 'images/archer.png' %}')")
+			{% else %}
+				$("#right-detail #role-picture").css("background-image", "url('{% static 'images/swordsman.png' %}')")
+			{% endif %}
+
 		}
 		else {
-			$("#player2-right").css("display", "block")
-			$("#player2-left").css("display", "none")
+
+			//document.getElementById("left-character-side").innerHTML = "{{current_character}}"
+			if (showLeftPlayer){
+				$("#player2-left").css("display", "block")
+				$("#left-character-detail").css("display", "block")
+				$("#player2-right").css("display", "none")
+				{% if left_character.character_type == "warrior" %}
+					$("#right-detail #role-picture").css("background-image", "url('{% static 'images/swordsman.png' %}')")
+				{% elif left_character.character_type == "mage" %}
+					$("#right-detail #role-picture").css("background-image", "url('{% static 'images/wizard.png' %}')")
+				{% elif left_character.character_type == "scout" %}		
+					$("#right-detail #role-picture").css("background-image", "url('{% static 'images/archer.png' %}')")
+				{% else %}
+					$("#right-detail #role-picture").css("background-image", "url('{% static 'images/swordsman.png' %}')")
+				{% endif %}
+			}
+			else {
+				$("#player2-right").css("display", "block")
+				$("#right-character-detail").css("display", "block")
+				$("#player2-left").css("display", "none")
+				{% if right_character.character_type == "warrior" %}
+					$("#right-detail #role-picture").css("background-image", "url('{% static 'images/swordsman.png' %}')")
+				{% elif right_character.character_type == "mage" %}
+					$("#right-detail #role-picture").css("background-image", "url('{% static 'images/wizard.png' %}')")
+				{% elif right_character.character_type == "scout" %}		
+					$("#right-detail #role-picture").css("background-image", "url('{% static 'images/archer.png' %}')")
+				{% else %}
+					$("#right-detail #role-picture").css("background-image", "url('{% static 'images/swordsman.png' %}')")
+				{% endif %}
+			}
+
+
 		}
 
+	
+		$(".loader-container").fadeOut("slow")
 
 		simulateFight()
 	}
@@ -238,7 +854,7 @@
 				// kiszedjuk a winnert egy globalis valtozoba
 				winner = data.user_win
 				simulateDefenderHealthBar();    
-				setTimeout(simulateAttackerHealthBar, 1000)
+				attackTimeoutSecond = setTimeout(simulateAttackerHealthBar, 1000)
 			},
 			error: function(data) {
 				console.log('ERROR')
@@ -247,6 +863,34 @@
 	}
 
 // HEALTH BAR PART //
+var bars = $(".health-bar");
+
+function showFinalHealthBars(){
+	console.log("showing")
+	var defenderFirstHealthValue = defenderHealthValues[0]
+	var defenderLastHealthValue = defenderHealthValues[defenderHealthValuesLength-1]
+	var attackerFirstHealthValue = attackerHealthValues[0]
+	var attackerLastHealthValue = attackerHealthValues[attackerHealthValuesLength-1]
+
+	var attackerFinalPercent = Math.round((attackerLastHealthValue / attackerFirstHealthValue) * 100)
+    document.getElementById("player1-percentage").innerHTML = attackerFinalPercent + "%";
+
+
+    var defenderFinalPercent = Math.round((defenderLastHealthValue / defenderFirstHealthValue) * 100)
+    console.log("deffinal " + defenderFinalPercent)
+    console.log("attackfinal" + attackerFinalPercent)
+    document.getElementById("player2-percentage").innerHTML = defenderFinalPercent + "%";
+
+    bars.eq(0).css("width", attackerFinalPercent +"%") 
+	bars.eq(1).css("width", defenderFinalPercent +"%")
+
+	// animacio meg mindig tarthat valahol, ezert ez a biztonsagi beallitas, 300ms-nel mar nem jo
+    setTimeout(function() {
+   		bars.eq(0).css("width", attackerFinalPercent +"%") 
+		bars.eq(1).css("width", defenderFinalPercent +"%")
+    }, 600)
+
+}
 
 
 
@@ -254,7 +898,7 @@
 var defenderHealthPercent = 100;
 var attackerHealthPercent = 100;
 
-var bars = $(".health-bar");
+
 
 var indexDefender = 0;
 var indexAttacker = 0;
@@ -265,12 +909,37 @@ var defenderFinished = false
 var attackerFinished = false
 
 
+var defTimeout = null
+var attackTimeout = null
+var attackTimeoutSecond = null //kezdesnel hogy kesobb inditsa el
+
+var cancelAttackerHealthBar = false
+var cancelDefenderHealthBar = false
+
 function simulateDefenderHealthBar() {      
-    
-	setTimeout(function() {  
+	defTimeout = setTimeout(function() {  
   		console.log("SIMULATE-DEFENDER")
         defenderHealthPercent = calculatePercent(defenderHealthValues, indexDefender)
-        bars.eq(0).animate({width:defenderHealthPercent +"%"}, 800)   
+        if (defenderHealthPercent == 0){
+        	clearTimeout(attackTimeout) // eleg csak ezt, a secondattackhealth csak egyszer indul el, az elso utesnel
+        	showEndingMessage()
+        }
+        bars.eq(1).animate({width:defenderHealthPercent +"%"}, 800)   
+
+        audioFight1.play()
+        $("#right-character-side").css({
+        	boxShadow: "rgba(240, 28, 28, 0.6) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset"
+        })
+        $("#left-tool img").css({opacity: 0.0, visibility:"visible"}).animate({opacity: 1.0}, 400, function() {
+        	$("#left-tool img").css({opacity: 1.0, visibility:"visible"}).animate({opacity: 0.0}, 400)
+        });
+
+
+        setTimeout(function(){
+			$("#right-character-side").css({
+			boxShadow: "none"
+        	})  	
+        }, 300)
         document.getElementById("player2-percentage").innerHTML = defenderHealthPercent + "%";
 
         indexDefender++;               
@@ -280,7 +949,10 @@ function simulateDefenderHealthBar() {
         else {
         	defenderFinished = true
         	console.log(defenderFinished)
-        }                     
+        }         
+
+
+
 	}, 2000)
 
 }
@@ -289,11 +961,26 @@ function simulateDefenderHealthBar() {
 
 
 function simulateAttackerHealthBar() {      
-    
-	setTimeout(function() {  
+	attackTimeout = setTimeout(function() {  
   	  	console.log("SIMULATE-ATTACKER")
         attackerHealthPercent = calculatePercent(attackerHealthValues, indexAttacker)
-        bars.eq(1).animate({width:attackerHealthPercent +"%"}, 800)   
+        if (attackerHealthPercent == 0){ //ha egy csapas vagyunk az ellenfelnek 
+        	clearTimeout(defTimeout)
+        	showEndingMessage()
+        }
+        bars.eq(0).animate({width:attackerHealthPercent +"%"}, 800) 
+        audioFight1.play()
+        $("#left-character-side").css({
+        	boxShadow: "rgba(240, 28, 28, 0.6) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset"
+        })  
+        $("#right-tool img").css({opacity: 0.0, visibility:"visible"}).animate({opacity: 1.0}, 400, function() {
+        	$("#right-tool img").css({opacity: 1.0, visibility:"visible"}).animate({opacity: 0.0}, 400)
+        });
+        setTimeout(function(){
+			$("#left-character-side").css({
+			boxShadow: "none"
+        	})  	
+        }, 300)
         document.getElementById("player1-percentage").innerHTML = attackerHealthPercent + "%";
 
         indexAttacker++;               
@@ -351,13 +1038,13 @@ function showEndingMessage(){
 		document.getElementById("after-match-message").innerHTML = "Vesztettél"
 	}
 
-	$(".cover").css("display", "block");
+	$(".cover").css("display", "flex");
+	$("#skip-button").css("display", "none")
 }
 
 
 $(".cover").on("click", function(event){
 	if(event.target !== this){
-		console.log("marad")
 		return
 	}
 	console.log("elrejt")

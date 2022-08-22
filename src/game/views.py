@@ -106,6 +106,15 @@ def finished_game(request):
 	return JsonResponse(data)
 
 
+def check_profile_image(character):
+	if character.account.profile_image:
+		profile_image = character.account.profile_image.url
+	else:
+		profile_image = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
+
+	return profile_image
+
+
 
 def arena_view(request):
 	context = {}
@@ -114,12 +123,16 @@ def arena_view(request):
 	user_id = request.user.id # a támadó user
 	current_character = Character.objects.get(account=user_id)
 
+	current_character_profile_image = check_profile_image(current_character)
+
 	if user_to_attack_id:
 		try:
 			user_to_attack = Character.objects.get(account=user_to_attack_id)
 		except:
 			user_to_attack = None
 			pass
+
+		user_to_attack_profile_image = check_profile_image(user_to_attack) 
 
 		context = {
 			'left_character': '',
@@ -128,9 +141,11 @@ def arena_view(request):
 			'right_character_id': '',
 			'current_character': current_character,
 			'current_character_id': current_character.account.id,
+			'current_character_profile_image': current_character_profile_image,
 			'is_user_to_attack': True,
 			'user_to_attack_id': user_to_attack_id,
 			'user_to_attack': user_to_attack,
+			'user_to_attack_profile_image': user_to_attack_profile_image,
 		}
 	else:
 		characters = Character.objects.get_all_characters_in_ordered_list_without_admins()
@@ -168,6 +183,8 @@ def arena_view(request):
 					#print(left_side, right_side)
 					left_side_id = left_side.account.id
 					right_side_id = right_side.account.id
+					left_side_profile_image = check_profile_image(left_side)
+					right_side_profile_image = check_profile_image(right_side)
 					#print("IDK: ", left_side_id, right_side_id)
 				else:
 					# ha valamiért a current_character_index None, akkor csak menjen tovább a program
@@ -187,11 +204,15 @@ def arena_view(request):
 		context = {
 			'left_character': left_side,
 			'left_character_id': left_side_id,
+			'left_character_profile_image': left_side_profile_image,
+			'right_character_profile_image': right_side_profile_image,
 			'right_character': right_side,
 			'right_character_id': right_side_id,
 			'current_character': current_character,
 			'current_character_id': current_character.account.id,
+			'current_character_profile_image': current_character_profile_image,
 			'is_user_to_attack': False,
+
 		}
 
 
