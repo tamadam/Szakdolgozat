@@ -1,6 +1,7 @@
 from django.urls import path
 
 from game.views import (
+	game_choice_view,
 	easy_game_view,
 	medium_game_view,
 	hard_game_view,
@@ -12,6 +13,7 @@ from game.views import (
 app_name = 'game'
 
 urlpatterns = [
+	path('', game_choice_view, name='game_choice'),
 	path('konnyu/', easy_game_view, name='easy_game'),
 	path('kozepes/', medium_game_view, name='medium_game'),
 	path('nehez/', hard_game_view, name='hard_game'),

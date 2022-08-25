@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_new.html' %}
 
 {% load static %}
 
@@ -7,9 +7,679 @@
 
 {% include 'private_chat/create_or_return_private_chat_room.html' %}
 {% include 'game/attack_choosen_player.html' %}
+<style>
 
-<div class="main">
+@font-face {
+	font-family: 'Kanit-Regular';
+	src: local('Kanit-Regular'),
+	url("{% static 'fonts/Kanit-Regular.ttf' %}");
+}
 
+@font-face {
+	font-family: 'Kanit-Bold';
+	src: local('Kanit-Bold'),
+	url("{% static 'fonts/Kanit-Bold.ttf' %}");
+}
+
+@font-face {
+	font-family: 'Kanit-Light';
+	src: local('Kanit-Light'),
+	url("{% static 'fonts/Kanit-Light.ttf' %}");
+}
+
+
+body {
+	font-family: 'Kanit-Regular';
+	font-size: 2vh;
+}
+
+.loader-container {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 2;
+
+}
+
+#profile-content-page{
+	width: 100%;
+	height: 100%;
+	background: url("{% static 'images/character-background.jpg' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	max-width: 1900px;
+	user-select: none;
+
+
+}
+
+/* 3 DIV A RAJZOLT KÉP ALAPJÁN */
+
+/* ELSŐ DIV */
+#profile-title {
+
+	width: 100%;
+	height: 12%;
+	text-align: center;
+	display: flex;
+	flex-direction: row;
+
+
+}
+
+#profile-title-left,
+#profile-title-right {
+	display: flex;
+	width: 14%;
+}
+
+#profile-title-right{
+	justify-content: flex-end;
+}
+
+#profile-title-center{
+	display: flex;
+	width: 72%;
+	justify-content: center;
+	align-items: center; 
+
+
+}
+
+#profile-title-center span {
+	font-family: 'Kanit-Regular';
+	font-size: 6vh;
+	color: black;
+	background-color: white;
+	background: url("{% static 'images/button-back.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	width: 20%;
+}
+
+#main-page-button {
+	display: flex;
+	justify-content: center;
+	align-items: center; 
+	width: 100%;
+	height: 100%;
+
+}
+
+#main-page-button img{
+	width: 36%;
+	height: 36;
+	max-width: 100%;
+	max-height: 100%;
+
+}
+
+
+
+
+
+#profile-title-main-text{
+	display: flex;
+	justify-content: center;
+	align-items: center; 
+	width: 100%;
+	height: 40%;	
+}
+
+
+
+.go-to-main-page:active {
+	content:url("{% static 'images/previous-button-purple.png' %}");
+}
+
+
+/* MÁSODIK DIV*/
+
+#profile-details {
+
+
+	width: 50%;
+	height: 72%;
+	margin: 0 auto;
+}
+
+
+#profile-container{
+	height: 100%;
+	width: 100%;
+	display: flex;
+	border: 10px solid transparent;
+
+  	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
+}
+
+#profile-container-left{
+	background-color: rgba(0,0,0,0.4);
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	border-width: 0 5px 0 0;
+	border-style: solid;
+  	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
+
+}
+
+
+#profile-container-left-profile-image{
+	height: 60%;
+	background-color: lightblue;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	border-width: 0 0 4.4px 0;
+	border-style: solid;
+  	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
+
+}
+
+#profile-container-left-attributes{
+	height: 40%;
+	/*background-color: lightgreen;*/
+	display: flex;
+	flex-wrap: wrap;
+}
+
+#profile-container-left-attributes .character-info-item {
+	flex: 100%;
+	display: flex;
+	width: 100%;
+	align-items: center;
+	margin: 1% 2% 1% 2%;
+	padding: 0 2% 0 2%;
+
+	background-color: lightgrey;
+	background: url("{% static 'images/grey-sand.jpg' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+
+	border: 2px solid black;
+}
+
+
+
+.character-info-item-name{
+	flex: 3;
+
+}
+
+.character-info-item-value{
+	flex: 1;
+}
+
+.character-info-item-increase-button{
+	flex: 1;
+	text-align: right;
+	margin: 0 auto;
+	align-items: center;
+}
+
+
+.character-info-item-increase-button img{
+	max-width: 40%;
+	max-height: 40%;
+}
+
+
+
+.increase-attribute-button:active {
+	content:url("{% static 'images/add-button-active.png' %}");
+}
+
+
+#profile-container-right{
+
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+
+}
+
+#profile-container-right-description{
+	flex: 2;
+
+	border-width: 0 0 4px 0;
+	border-style: solid;
+  	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
+	background-color: rgba(0,0,0,0.8);
+}
+
+
+
+
+#profile-container-right-team{
+	flex: 1;
+
+	background-color: lightcyan;
+
+	border-width: 0 0 4px 0;
+	border-style: solid;
+  	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
+
+  	display: flex;
+  	flex-direction: row;
+
+}
+
+#team-content{
+	flex: 2;
+	width: 100%;
+	height: 100%;
+}
+
+
+
+
+#team-icon {
+	flex: 1;
+	background: url("{% static 'images/team-icon.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+#profile-container-right-is-owner{
+	flex: 2;
+
+	background-color: lightsalmon
+
+
+}
+
+#description-text-area {
+	width: 100%;
+	height: 100%;
+	resize: none;
+	margin: 2px;
+	border: none;
+	outline: none;
+	background: none;
+
+
+	color: #fae455;
+	font-family: 'Kanit-Light';
+	font-size: 2vh;
+
+	white-space: pre-wrap;
+
+
+}
+
+#description-text-area::placeholder {
+	color: #fae455;
+
+}
+
+
+
+
+/* HARMADIK DIV */
+
+#profile-stat {
+
+
+	width: 100%;
+	height: 16%;
+	display: flex;
+
+}
+
+#stat1, #stat2, #stat3, #stat4{
+	flex: 1;
+}
+
+
+#stat1-content, #stat2-content, #stat3-content, #stat4-content {
+	display: flex;
+	justify-content: center;
+	align-items: center; 
+	width: 100%;
+	height: 100%;	
+}
+
+</style>
+
+
+<div id="profile-content-page">
+
+	<!-- ELSŐ DIV -->
+	<div id="profile-title">
+		<div id="profile-title-left">
+			<div id="main-page-button">
+				<img src="{% static 'images/previous-button.png' %}" alt="Vissza" class="go-to-main-page" onmouseover="changeColor(this)" onmouseout="resetColor(this)">
+			</div>
+		</div>
+		<div id="profile-title-center">
+			<div id="profile-title-main-text">
+				<span>{{username}}</span>
+			</div>
+		</div>
+		<div id="profile-title-right"></div>
+	</div>
+
+	<!-- MÁSODIK DIV -->
+	<div id="profile-details">
+		<div id="profile-container">
+			<div id="profile-container-left">
+				<div id="profile-container-left-profile-image">
+					<!-- a profilkép a háttér -->
+				</div>
+				<div id="profile-container-left-attributes">
+					<div class="character-info-item">
+						<div class="character-info-item-name">Erő</div>
+						<div class="character-info-item-value" id="strength-value">{{strength}}</div>
+						<div class="character-info-item-increase-button">
+							<img src="{% static 'images/add-button.png' %}" alt="Plusz" onmouseover="changeColorAdd(this)" onmouseout="resetColorAdd(this)" onclick="increaseAttribute('{{user_id}}', 'strength')" class="increase-attribute-button" id="add-strength">
+						</div>
+					</div>
+					<div class="character-info-item">
+						<div class="character-info-item-name">Ügyesség</div>
+						<div class="character-info-item-value" id="skill-value">{{skill}}</div>
+						<div class="character-info-item-increase-button">
+							<img src="{% static 'images/add-button.png' %}" alt="Plusz" onmouseover="changeColorAdd(this)" onmouseout="resetColorAdd(this)" onclick="increaseAttribute('{{user_id}}', 'skill')" class="increase-attribute-button" id="add-skill">
+						</div>
+					</div>
+					<div class="character-info-item">
+						<div class="character-info-item-name">Értelem</div>
+						<div class="character-info-item-value" id="intelligence-value">{{intelligence}}</div>
+						<div class="character-info-item-increase-button">
+							<img src="{% static 'images/add-button.png' %}" alt="Plusz" onmouseover="changeColorAdd(this)" onmouseout="resetColorAdd(this)" onclick="increaseAttribute('{{user_id}}', 'intelligence')" class="increase-attribute-button" id="add-intelligence">
+						</div>
+					</div>
+					<div class="character-info-item">
+						<div class="character-info-item-name">Kitartás</div>
+						<div class="character-info-item-value" id="health_point-value">{{health_point}}</div>
+						<div class="character-info-item-increase-button">
+							<img src="{% static 'images/add-button.png' %}" alt="Plusz" onmouseover="changeColorAdd(this)" onmouseout="resetColorAdd(this)" onclick="increaseAttribute('{{user_id}}', 'health_point')" class="increase-attribute-button" id="add-health_point">
+						</div>
+					</div>
+					<div class="character-info-item">
+						<div class="character-info-item-name">Szerencse</div>
+						<div class="character-info-item-value" id="fortune-value">{{fortune}}</div>
+						<div class="character-info-item-increase-button">
+							<img src="{% static 'images/add-button.png' %}" alt="Plusz" onmouseover="changeColorAdd(this)" onmouseout="resetColorAdd(this)" onclick="increaseAttribute('{{user_id}}', 'fortune')" class="increase-attribute-button" id="add-fortune">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="profile-container-right">
+				<div id="profile-container-right-description">
+					<textarea id="description-text-area" maxlength="150"></textarea>
+
+				</div>
+				<div id="profile-container-right-team">
+					<div id="team-content">
+						{% if team == None %}
+							<!-- ha nincs csapata -->
+							<div id="team-content-no-team">
+								<span>Jelenleg nincs csapata</span>
+							</div>
+						{% else %}
+							<!-- ha van csapata -->
+						{% endif %}
+					</div>
+					<div id="team-icon">
+						<!-- Csapat ikon CSS-ben háttérként beállítva -->
+					</div>
+				</div>
+				<div id="profile-container-right-is-owner">
+					Támadás
+					Edit
+					Üzenet küldés
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- HARMADIK DIV -->
+	<div id="profile-stat">
+		<div id="stat1">
+			<div id="stat1-content">Stat1</div>
+		</div>
+		<div id="stat2">
+			<div id="stat2-content">Stat2</div>
+		</div>
+		<div id="stat3">
+			<div id="stat3-content">Stat3</div>
+		</div>
+		<div id="stat4">
+			<div id="stat4-content">Stat4</div>
+		</div>
+	</div>
+
+
+</div>	
+
+<div class="loader-container">
+</div>
+
+
+<script>
+	const audio = new Audio()
+	audio.src = "{% static 'audios/button_click.mp3' %}"
+
+
+	$(window).on("load", function(){
+		$("#profile-container-left-profile-image").css("background-image", "url({{profile_image}}")
+
+
+
+		/* ------ TEXTAREA CHECK ------ */
+
+		// ha nem a saját oldalát nézi, ne tudjon írni a descriptionbe
+		{% if not is_owner %}
+			$("#description-text-area").prop("disabled", true)	
+		{% endif %}
+
+		//ha van description, jelenítse meg, ha nincs akkor ha a tulaj nézi, placeholder, ha nem üres string
+		{% if description %}
+			$("#description-text-area").val("{{description}}")	
+		{% else %}
+			{% if is_owner %}
+				$("#description-text-area").attr("placeholder", "Adj meg leírást...")	
+			{% else %}
+				$("#description-text-area").val("")	
+			{% endif %}
+		{% endif %}
+
+	
+		/* ---------------------------- */
+
+
+
+		$(".loader-container").fadeOut("slow")
+
+
+	})
+
+	// megakadalyozzuk a new line-t : todo: kicserelni ezt hogy lehessen new line
+    $("#description-text-area").keypress(function(event) {
+        if (event.keyCode == 13) {
+            event.preventDefault();
+        }
+    });
+
+
+	// a textareabol kilépést követően mentjük a leírást
+	$("#description-text-area").focusout(function(){
+
+
+
+		var textAreaContent = $("#description-text-area").val()
+
+		info_packet = {
+			"csrfmiddlewaretoken": "{{csrf_token}}",
+			"user_id": "{{user_id}}",	
+			"description": textAreaContent,
+		}
+		
+		$.ajax({
+			dataType: "json",
+			url: "{% url 'account:save_description' %}",
+			data: info_packet,
+			success: function(data) {
+				console.log('SUCCESS - ' + data.message)
+
+			},
+			error: function(data) {
+				console.log('ERROR')
+			},
+		}) 
+	})
+
+
+	$(".go-to-main-page").click(function(){
+    	audio.play()
+
+    	setTimeout(function(){
+	    	try {
+
+				var url = "{% url 'home_page' %}"
+				var win = window.location.replace(url) 
+				win.focus()
+			}
+			catch(error){
+				console.log(error)
+			}
+
+    	}, 100)
+    	$(".loader-container").fadeIn("fast")
+	})
+
+
+	function changeColorAdd(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/add-button-hover.png' %}")
+	}
+
+	function resetColorAdd(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/add-button.png' %}")
+	}
+
+
+
+	function changeColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/previous-button-red.png' %}")
+	}
+
+	function resetColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/previous-button.png' %}")
+	}
+
+
+	function setIncreasedAttribute(attributeType, newAttributeValue, newGoldValue) {
+		console.log(attributeType)
+		if (attributeType == "strength"){
+			document.getElementById("strength-value").innerHTML = newAttributeValue
+			//document.getElementById("gold-value").innerHTML = newGoldValue
+		}
+		if (attributeType == "skill"){
+			document.getElementById("skill-value").innerHTML = newAttributeValue
+			//document.getElementById("gold-value").innerHTML = newGoldValue
+		}
+		if (attributeType == "intelligence"){
+			document.getElementById("intelligence-value").innerHTML = newAttributeValue
+			//document.getElementById("gold-value").innerHTML = newGoldValue
+		}
+		if (attributeType == "health_point"){
+			document.getElementById("health_point-value").innerHTML = newAttributeValue
+			//document.getElementById("gold-value").innerHTML = newGoldValue
+		}
+		if (attributeType == "fortune"){
+			document.getElementById("fortune-value").innerHTML = newAttributeValue
+			//document.getElementById("gold-value").innerHTML = newGoldValue
+		}
+	}
+
+
+
+	function increaseAttribute(userID, attributeType){
+  		audio.currentTime = 0;
+		audio.play()
+
+		info_packet = {
+			"csrfmiddlewaretoken": "{{csrf_token}}",
+			"user_id": userID,
+			"attribute_type": attributeType,
+		}
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			url: "{% url 'account:increase_attribute_value' %}",
+			data: info_packet,
+			success: function(data) {
+				console.log('SUCCESS')
+				if (data.message == "Success"){
+					setIncreasedAttribute(data.attr_type, data.new_attr_value, data.new_gold_value)
+				}
+				else if (data.message == "Out of gold"){
+					console.log("nincs eleg aranyad")
+					//$(".increase-attribute-button").attr("src", "{% static 'images/add-button-inactive.png' %}")
+
+
+				}
+				else{
+					alert('Something went wrong')
+				}
+			},
+			error: function(data) {
+				console.log('ERROR')
+			},
+		})
+	}
+
+
+	function increaseAttr(userId, attributeType){
+		payload = {
+			"csrfmiddlewaretoken": "{{csrf_token}}",
+			"user_id": userId,
+			"attribute_type": attributeType,
+		}
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			url: "{% url 'account:increase_attribute_value' %}",
+			data: payload,
+			timeout: 5000,
+			success: function(data) {
+				console.log('SUCCESS')
+				if (data.message == "Success"){
+					setIncreasedAttr(data.attr_type, data.new_attr_value, data.new_gold_value)
+				}
+				else if (data.message == "Out of gold"){
+					alert("nincs eleg aranyad")
+				}
+				else{
+					alert('Something went wrong')
+				}
+			},
+			error: function(data) {
+				console.log('ERROR')
+			},
+		})
+	}
+
+
+
+</script>
+
+{% endblock %}
+
+
+<!--
 	<p>Profile</p>
 	{{username}}<br>
 	{{ user_id }} <br>
@@ -17,12 +687,7 @@
 	{{level}}<br>
 	{{gold}}<br>
 
-<!--
-	{% if request.user.profile_image %}
-		<img src="{{ profile_image }}">
-	{% else %}
-		<img src="{% static 'images/blank_profile_image.png' %}">
-	{% endif %}-->
+
 	<img src="{{ profile_image }}">
 
 	{% if is_owner %}
@@ -30,15 +695,10 @@
 		<a href="{% url 'account:edit' user_id=user_id%}">Módosítás</a>
 	{% else %}
 		<p>Nem tulajdonos</p>
-		<div class="d-flex flex-row align-items-center btn btn-primary m-2 px-4" onclick="createOrReturnPrivateChat('{{user_id}}')">
+		<div onclick="createOrReturnPrivateChat('{{user_id}}')">
 			<span class="message-btn-text">Message</span>
 		</div>
 		<p onclick="attackChoosenPlayer('{{user_id}}')">Támadás</p>
 	{% endif %}
 	{{character_type}}
-</div>
-
-
-
-
-{% endblock %}
+-->

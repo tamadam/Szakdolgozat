@@ -23,6 +23,8 @@
 
 <style>
 
+
+
 * {
 	margin: 0;
 	padding: 0;
@@ -32,18 +34,30 @@
 	width: 100vw;
 	height: 100vh;
 	background-color: blanchedalmond;
+
+}
+
+.main-container{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	width: 100%;
+	background-color: black;
 }
 
 </style>
 <body>
 	<div class="main">
+		<div class="main-container">
+			
 
 		<!-- PAGE CONTENT --> 
 		{% block content %}
 
 		{% endblock %}
 
-
+		</div>
 	</div>
 
 </body>

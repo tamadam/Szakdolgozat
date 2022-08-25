@@ -13,6 +13,13 @@ import json
 from account.utils import EncodeAccountObject
 
 
+def game_choice_view(request):
+	context = {}
+
+	return render(request, 'game/game_choice.html', context)
+
+
+
 def easy_game_view(request):
 	context = {}
 

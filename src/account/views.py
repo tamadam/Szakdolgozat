@@ -19,6 +19,9 @@ from django.conf import settings
 import os
 import re
 
+
+from core.constants import *
+
 @anonymous_user
 def register_page_view(request):
 	form = AccountRegistrationForm()
@@ -90,28 +93,46 @@ def profile_view(request, *args, **kwargs):
 	if request.user.id == account.id: 
 		owner_of_the_profile = True
 
-	context = {
-		'username': account.username,
-		'user_id': account.id,
-		'level': account.character.level,
-		'strength': account.character.strength,
-		#'profile_image': account.profile_image.url,
-		'character_type': account.character.character_type,
-		'is_owner': owner_of_the_profile,
-		'gold': account.character.gold,
-	}
 
 	# ha az adott felhasználói profilnak van profilképe állítsa be amúgy az alap
 	if account.profile_image:
-		context['profile_image'] = account.profile_image.url
+		profile_image = account.profile_image.url
 		#print(account.get_profile_image_filename())
 	else:
-		context['profile_image'] = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
+		profile_image = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
+
+	if not len(account.team_set.all()) == 0:
+		team = account.team_set.all()[0]
+	else:
+		team = None
+
+	context = {
+		'user_id': account.id,
+		'username': account.username,
+		'date_joined': account.date_joined,
+		'last_login': account.last_login,
+		'description': account.description,
+		'profile_image': profile_image,
+		'character_type': account.character.character_type,
+		'level': account.character.level,
+		'strength': account.character.strength,
+		'skill': account.character.skill,
+		'intelligence': account.character.intelligence,
+		'health_point': account.character.health_point,
+		'fortune': account.character.fortune,
+		'rank': account.character.rank,
+		'honor': account.character.honor,
+		'gold': account.character.gold,
+		'current_xp': account.character.current_xp,
+		'next_level_xp': account.character.next_level_xp,
+		'team': team,
+		'is_owner': owner_of_the_profile,
+
+	}
 
 
 
 
-	
 
 	return render(request, 'account/profile.html', context)
 
@@ -201,6 +222,79 @@ def validate_password_realtime(request):
 					is_strong = True
 
 	return JsonResponse({'is_strong': is_strong})
+
+
+
+
+def increase_attribute_value(request, *args, **kwargs):
+	data = {}
+	if request.method == 'POST':	
+		user_id = request.POST.get('user_id')
+		attr_type = request.POST.get('attribute_type')
+		user = Character.objects.get(account=user_id)
+		print('USERNAME ', user.account.username, ' ATTR ', attr_type)
+
+		if (user.gold)- DEFAULT_ATTRIBUTE_INCREASE_VALUE >= 0: 
+			if attr_type == 'strength':
+				user.strength += 1
+				user.gold -= DEFAULT_ATTRIBUTE_INCREASE_VALUE
+				user.save()
+				data['new_attr_value'] = str(user.strength)
+
+			elif attr_type == 'skill':
+				user.skill += 1
+				user.gold -= DEFAULT_ATTRIBUTE_INCREASE_VALUE
+				user.save()
+				data['new_attr_value'] = str(user.skill)
+
+			elif attr_type == 'intelligence':
+				user.intelligence += 1
+				user.gold -= DEFAULT_ATTRIBUTE_INCREASE_VALUE
+				user.save()
+				data['new_attr_value'] = str(user.intelligence)
+
+			elif attr_type == 'health_point':
+				user.health_point += 1
+				user.gold -= DEFAULT_ATTRIBUTE_INCREASE_VALUE
+				user.save()
+				data['new_attr_value'] = str(user.health_point)
+
+
+			elif attr_type == 'fortune':
+				user.fortune += 1
+				user.gold -= DEFAULT_ATTRIBUTE_INCREASE_VALUE
+				user.save()
+				data['new_attr_value'] = str(user.fortune)
+
+			data['new_gold_value'] = str(user.gold)
+			data['message'] = 'Success'
+			data['attr_type'] = attr_type
+		else: 
+			data['message'] = 'Out of gold'
+
+
+	return JsonResponse(data)
+
+
+def save_description(request):
+	data = {}
+	user_id = request.GET.get('user_id')
+	description = request.GET.get('description')
+
+	try:
+		user = Account.objects.get(id=user_id)
+		user.description = description
+		user.save()
+		data['message'] = 'Success'
+	except Exception as exception:
+		print(exception)
+		data['message'] = 'Error'
+		pass
+
+
+
+	return JsonResponse(data)
+
 
 
 

@@ -45,10 +45,8 @@ Szerencse: <p id="fortune-value">{{fortune}} </p>
 Arany: <p id="gold-value">{{gold}}<br></p>
 </div>
 
-<div id="game">
-	<a href="{% url 'game:easy_game' %}">Könnyű játék</a>
-	<a href="{% url 'game:medium_game' %}">Közepes játék</a>
-	<a href="{% url 'game:hard_game' %}">Nehéz játék</a>
+<div id="game-choice">
+	<a href="{% url 'game:game_choice' %}">Játék választó</a>
 </div>
 </div>
 

@@ -65,7 +65,7 @@ class Account(AbstractBaseUser):
 	date_joined		= models.DateTimeField(verbose_name = 'date joined', auto_now_add = True)
 	last_login		= models.DateTimeField(verbose_name = 'last login', auto_now = True)
 
-
+	description 	= models.TextField(verbose_name='description', max_length=200, null=True, blank=True)
 
 	# override the default behaviour since we inherit from AbstractBaseUser
 	is_admin		= models.BooleanField(default=False)
@@ -145,7 +145,7 @@ class Character(models.Model):
 	health_point	= models.DecimalField(verbose_name='health point', max_digits=19, decimal_places=0, default = 10) #életerő
 	fortune 		= models.DecimalField(verbose_name='fortune', max_digits=19, decimal_places=0, default = 8) #szerencse
 
-	shield 			= models.DecimalField(verbose_name='shield', max_digits=19, decimal_places=0, default = 0) #páncél
+	#shield 			= models.DecimalField(verbose_name='shield', max_digits=19, decimal_places=0, default = 0) #páncél
 
 
 	rank			= models.DecimalField(verbose_name='rank', max_digits=19, decimal_places=0, blank = True, null = True) #helyezes
