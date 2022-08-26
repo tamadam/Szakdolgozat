@@ -103,8 +103,10 @@ def profile_view(request, *args, **kwargs):
 
 	if not len(account.team_set.all()) == 0:
 		team = account.team_set.all()[0]
+		member_count = len(team.users.all())
 	else:
 		team = None
+		member_count = None
 
 	context = {
 		'user_id': account.id,
@@ -126,6 +128,7 @@ def profile_view(request, *args, **kwargs):
 		'current_xp': account.character.current_xp,
 		'next_level_xp': account.character.next_level_xp,
 		'team': team,
+		'team_member_count': member_count,
 		'is_owner': owner_of_the_profile,
 
 	}

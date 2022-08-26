@@ -7,6 +7,7 @@
 
 {% include 'private_chat/create_or_return_private_chat_room.html' %}
 {% include 'game/attack_choosen_player.html' %}
+
 <style>
 
 @font-face {
@@ -179,17 +180,51 @@ body {
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
-	border-width: 0 0 4.4px 0;
-	border-style: solid;
-  	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
+  	position: relative;
+  	flex: 12;
+}
+
+
+#health-bar-container {
+    text-align: center;
+    background-color: black;
+    width: 100%;
+    /*margin: 0 auto;*/
+
+    flex: 1;
+
 
 }
+
+
+
+
+.health-bar {
+    background-color: green;
+    height: 100%;
+    width: 0%;
+
+}
+
+
+.health-bar-text {
+    font-size: 1em;
+    position: relative;
+    top: -100%;
+    color:white;
+    display: inline;
+}
+
 
 #profile-container-left-attributes{
 	height: 40%;
 	/*background-color: lightgreen;*/
 	display: flex;
 	flex-wrap: wrap;
+	border-width: 4.4px 0 0 0;
+	border-style: solid;
+  	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
+
 }
 
 #profile-container-left-attributes .character-info-item {
@@ -231,6 +266,7 @@ body {
 .character-info-item-increase-button img{
 	max-width: 40%;
 	max-height: 40%;
+	vertical-align: middle;
 }
 
 
@@ -292,12 +328,98 @@ body {
 	background-size: cover;
 }
 
+
+#team-content-no-team {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+
+}
+
+
+
 #profile-container-right-is-owner{
 	flex: 2;
 
-	background-color: lightsalmon
+	background-color: rgba(0,0,0,0.8);
+
+	display: flex;
+	flex-direction: column;
+
+	color: #fae455;
+
+}
+
+#is-owner-related-buttons{
+	flex: 6;
+	display: flex;
+	flex-direction: column;
+}
+
+#is-owner-related-buttons-first{
+	flex: 2;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+
+}
 
 
+#buttons-first-container{
+	width: 50%;
+	height: 40%;
+	text-align: center;
+}
+
+#buttons-first-container img{
+	max-width: 80%;
+	max-height: 80%;
+	vertical-align: middle;
+}
+
+#buttons-first-container span{
+	vertical-align: middle;
+}
+
+
+
+#is-owner-related-buttons-second{
+	flex: 1;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+}
+
+
+#buttons-second-container{
+	width: 50%;
+	height: 40%;
+	text-align: center;
+}
+
+#buttons-second-container img{
+	max-width: 80%;
+	max-height: 80%;
+	vertical-align: middle;
+}
+
+#buttons-second-container span{
+	vertical-align: middle;
+}
+
+
+
+#basic-info{
+	flex: 1;
 }
 
 #description-text-area {
@@ -351,11 +473,15 @@ body {
 	height: 100%;	
 }
 
+
+/* ------ */
+
+
+
 </style>
 
 
 <div id="profile-content-page">
-
 	<!-- ELSŐ DIV -->
 	<div id="profile-title">
 		<div id="profile-title-left">
@@ -377,6 +503,14 @@ body {
 			<div id="profile-container-left">
 				<div id="profile-container-left-profile-image">
 					<!-- a profilkép a háttér -->
+
+				</div>
+				<div id="health-bar-container">
+					<!--<div class="health-bar-text">{{level}}. szint</div>-->
+					<div class="health-bar">
+						<!-- színezett háttérel mutatja hány % -->
+					</div>
+					<p class="health-bar-text">{{level}}. szint</p>
 				</div>
 				<div id="profile-container-left-attributes">
 					<div class="character-info-item">
@@ -430,6 +564,15 @@ body {
 							</div>
 						{% else %}
 							<!-- ha van csapata -->
+							<div id="team-name">
+								<span>{{team}}</span>
+							</div>
+							<div id="team-member-count">
+								<span>Csapattagok száma: {{team_member_count}}</span>
+							</div>
+							<div id="show-team-container">
+								<div id="show-team-button">Csapat megtekintése</div>
+							</div>
 						{% endif %}
 					</div>
 					<div id="team-icon">
@@ -437,9 +580,35 @@ body {
 					</div>
 				</div>
 				<div id="profile-container-right-is-owner">
-					Támadás
-					Edit
-					Üzenet küldés
+					<div id="is-owner-related-buttons">
+						{% if is_owner %}
+							<div id="is-owner-related-buttons-first">
+								<div id="buttons-first-container">
+									<img src="{% static 'images/profile-edit-icon.png' %}" alt="szerk-ikon">
+									<span>Profil szerkesztése</span>			
+								</div>
+							</div>
+							<div id="is-owner-related-buttons-second">
+								<div id="buttons-second-container">
+									<img src="{% static 'images/coin.png' %}" alt="arany-ikon">
+									<span> Arany: {{gold}}</span>
+								</div>
+							</div>
+						{% else %}
+							<div id="is-owner-related-buttons-first">
+								Támadás
+							</div>
+							<div id="is-owner-related-buttons-second">
+								Üzenet küldés
+							</div>
+						{% endif %}
+					</div>
+					<div id="basic-info">
+						{% if not is_owner %}
+							<span id="last-login-date">Utoljára itt {{last_login}}</span><br>
+						{% endif %}
+						<span id="register-date">Csatlakozott {{date_joined}}</span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -459,6 +628,7 @@ body {
 		<div id="stat4">
 			<div id="stat4-content">Stat4</div>
 		</div>
+
 	</div>
 
 
@@ -476,7 +646,14 @@ body {
 	$(window).on("load", function(){
 		$("#profile-container-left-profile-image").css("background-image", "url({{profile_image}}")
 
-
+		/* ---- PROGRESS BAR SETUP ---- */
+		var currentXP = "{{current_xp}}"
+		var nextLevelXP = "{{next_level_xp}}"
+		var currentPercent = (currentXP / nextLevelXP) * 100
+		console.log(currentPercent)
+		$(".health-bar").css("width", currentPercent +"%")
+		
+		/* ---------------------------- */
 
 		/* ------ TEXTAREA CHECK ------ */
 
@@ -505,6 +682,45 @@ body {
 
 
 	})
+
+
+	$("#buttons-first-container").on("mouseover", function(){
+		$("#buttons-first-container img").attr("src","{% static 'images/profile-edit-icon-hover.png' %}");
+		$("#buttons-first-container").css("color","#f70044");
+	})
+
+
+	$("#buttons-first-container").on("mouseout", function(){
+		$("#buttons-first-container img").attr("src","{% static 'images/profile-edit-icon.png' %}");
+		$("#buttons-first-container").css("color","#fae455");
+	})
+
+
+	$("#buttons-first-container").click( function() {
+    	audio.play()
+
+    	setTimeout(function(){
+	    	try {
+
+				var url = "{% url 'account:edit' user_id=user_id %}"
+				var win = window.location.replace(url) 
+				win.focus()
+			}
+			catch(error){
+				console.log(error)
+			}
+
+    	}, 100)
+    	$(".loader-container").fadeIn("fast")
+	})
+
+
+	$("#show-team-button").click(function(){
+		var url = "{% url 'team:individual_team_view' team_id=7347328438423 %}".replace("7347328438423", "{{team.id}}");
+		var win = window.open(url, "_self")
+		win.focus()
+	})
+
 
 	// megakadalyozzuk a new line-t : todo: kicserelni ezt hogy lehessen new line
     $("#description-text-area").keypress(function(event) {
@@ -561,6 +777,16 @@ body {
 	})
 
 
+
+
+	function changeColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/previous-button-red.png' %}")
+	}
+
+	function resetColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/previous-button.png' %}")
+	}
+
 	function changeColorAdd(imageElement){
 		imageElement.setAttribute("src", "{% static 'images/add-button-hover.png' %}")
 	}
@@ -571,13 +797,6 @@ body {
 
 
 
-	function changeColor(imageElement){
-		imageElement.setAttribute("src", "{% static 'images/previous-button-red.png' %}")
-	}
-
-	function resetColor(imageElement){
-		imageElement.setAttribute("src", "{% static 'images/previous-button.png' %}")
-	}
 
 
 	function setIncreasedAttribute(attributeType, newAttributeValue, newGoldValue) {
