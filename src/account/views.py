@@ -108,6 +108,11 @@ def profile_view(request, *args, **kwargs):
 		team = None
 		member_count = None
 
+	character_history = CharacterHistory.objects.get(account=account.id)
+	character_fights_played = character_history.fights_played
+	character_fights_won = character_history.fights_won
+	character_fights_lost = character_history.fights_lost
+
 	context = {
 		'user_id': account.id,
 		'username': account.username,
@@ -130,7 +135,9 @@ def profile_view(request, *args, **kwargs):
 		'team': team,
 		'team_member_count': member_count,
 		'is_owner': owner_of_the_profile,
-
+		'fights_count': character_fights_played,
+		'fights_won_count': character_fights_won,
+		'fights_lost_count': character_fights_lost,
 	}
 
 

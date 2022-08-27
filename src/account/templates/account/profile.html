@@ -315,8 +315,30 @@ body {
 	flex: 2;
 	width: 100%;
 	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 }
 
+
+#show-team-container{
+	padding: 10px;
+	background: url("{% static 'images/button-back.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	font-weight: bold;
+}
+
+#show-team-container:hover{
+	padding: 10px;
+	background: url("{% static 'images/button-back-red.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: #fae455;
+}
 
 
 
@@ -371,9 +393,12 @@ body {
 
 
 #buttons-first-container{
-	width: 50%;
 	height: 40%;
 	text-align: center;
+	display: flex;
+	justify-content: center; 
+	align-items: center; 
+	width: fit-content;
 }
 
 #buttons-first-container img{
@@ -383,6 +408,32 @@ body {
 }
 
 #buttons-first-container span{
+	vertical-align: middle;
+}
+
+
+
+
+#no-owner-buttons-first-container{
+	height: 40%;
+	text-align: center;
+	display: flex;
+	justify-content: center; 
+	align-items: center; 
+	width: fit-content;
+}
+
+#no-owner-buttons-first-container:hover{
+	color: #f70044;
+}
+
+#no-owner-buttons-first-container img{
+	max-width: 80%;
+	max-height: 80%;
+	vertical-align: middle;
+}
+
+#no-owner-buttons-first-container span{
 	vertical-align: middle;
 }
 
@@ -401,9 +452,12 @@ body {
 
 
 #buttons-second-container{
-	width: 50%;
 	height: 40%;
 	text-align: center;
+	display: flex;
+	justify-content: center; 
+	align-items: center; 
+	width: fit-content;
 }
 
 #buttons-second-container img{
@@ -413,6 +467,31 @@ body {
 }
 
 #buttons-second-container span{
+	vertical-align: middle;
+}
+
+
+#no-owner-buttons-second-container{
+
+	height: 40%;
+	text-align: center;
+	display: flex;
+	justify-content: center; 
+	align-items: center; 
+	width: fit-content;
+}
+
+#no-owner-buttons-second-container:hover{
+	color: #f70044;
+}
+
+#no-owner-buttons-second-container img{
+	max-width: 80%;
+	max-height: 80%;
+	vertical-align: middle;
+}
+
+#no-owner-buttons-second-container span{
 	vertical-align: middle;
 }
 
@@ -462,16 +541,74 @@ body {
 
 #stat1, #stat2, #stat3, #stat4{
 	flex: 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
 }
+
+
 
 
 #stat1-content, #stat2-content, #stat3-content, #stat4-content {
 	display: flex;
 	justify-content: center;
 	align-items: center; 
-	width: 100%;
-	height: 100%;	
+	height: 50%;	
+	width: 50%;
+
+
 }
+
+#stat1-content{
+	background-image: url("{% static 'images/stat1.png' %}");
+	background-position: center;
+	background-size: cover;
+}
+
+#stat2-content{
+	background-image: url("{% static 'images/stat2.png' %}");
+	background-position: center;
+	background-size: cover;
+}
+
+
+#stat3-content{
+	background-image: url("{% static 'images/stat3.png' %}");
+	background-position: center;
+	background-size: cover;
+}
+
+
+#stat4-content{
+	background-image: url("{% static 'images/stat1.png' %}");
+	background-position: center;
+	background-size: cover;
+}
+
+
+
+#stat1-content p, #stat2-content p, #stat3-content p, #stat4-content p{
+	opacity: 0;
+	transition: 0.8s;
+	font-size: 1.8em;
+	color:white;
+	transform: scale(0);
+
+}
+
+
+#stat1-content:hover, #stat2-content:hover, #stat3-content:hover, #stat4-content:hover {
+	box-shadow: 0 0 0 200px rgba(0, 0, 0, 0.9) inset;
+}
+
+#stat1-content:hover p, #stat2-content:hover p, #stat3-content:hover p, #stat4-content:hover p{
+	opacity: 1;
+	transform: scale(1);
+}
+
+
+
 
 
 /* ------ */
@@ -591,15 +728,23 @@ body {
 							<div id="is-owner-related-buttons-second">
 								<div id="buttons-second-container">
 									<img src="{% static 'images/coin.png' %}" alt="arany-ikon">
-									<span> Arany: {{gold}}</span>
+									<span>
+										Arany: <span id="gold-value">{{gold}}</span>
+									</span>
 								</div>
 							</div>
 						{% else %}
 							<div id="is-owner-related-buttons-first">
-								Támadás
+								<div id="no-owner-buttons-first-container">
+									<img src="{% static 'images/attack.png' %}" alt="tamadas-ikon">
+									<span>Támadás</span>			
+								</div>
 							</div>
 							<div id="is-owner-related-buttons-second">
-								Üzenet küldés
+								<div id="no-owner-buttons-second-container">
+									<img src="{% static 'images/message.png' %}" alt="uzenet-ikon">
+									<span> Üzenet küldése </span>
+								</div>
 							</div>
 						{% endif %}
 					</div>
@@ -617,16 +762,25 @@ body {
 	<!-- HARMADIK DIV -->
 	<div id="profile-stat">
 		<div id="stat1">
-			<div id="stat1-content">Stat1</div>
+			<div id="stat1-content">
+				<!--<img src="{% static 'images/attack.png' %}" alt="tamadas-ikon">-->
+				<p>{{fights_count}}</p>
+			</div>
 		</div>
 		<div id="stat2">
-			<div id="stat2-content">Stat2</div>
+			<div id="stat2-content">
+				<p>{{fights_won_count}}</p>
+			</div>
 		</div>
 		<div id="stat3">
-			<div id="stat3-content">Stat3</div>
+			<div id="stat3-content">
+				<p>{{fights_lost_count}}</p>
+			</div>
 		</div>
 		<div id="stat4">
-			<div id="stat4-content">Stat4</div>
+			<div id="stat4-content">
+				<p>{{fights_count}}</p>
+			</div>
 		</div>
 
 	</div>
@@ -677,6 +831,11 @@ body {
 		/* ---------------------------- */
 
 
+		/* Ha nem a tulaj nézi a profilt, ne tudja növelni az attribítumokat */
+		{% if not is_owner %}
+			$(".character-info-item-increase-button").css("display", "none")	
+		{% endif %}
+
 
 		$(".loader-container").fadeOut("slow")
 
@@ -715,10 +874,22 @@ body {
 	})
 
 
-	$("#show-team-button").click(function(){
-		var url = "{% url 'team:individual_team_view' team_id=7347328438423 %}".replace("7347328438423", "{{team.id}}");
-		var win = window.open(url, "_self")
-		win.focus()
+	$("#show-team-container").click(function(){
+    	audio.play()
+
+    	setTimeout(function(){
+	    	try {
+
+				var url = "{% url 'team:individual_team_view' team_id=7347328438423 %}".replace("7347328438423", "{{team.id}}");
+				var win = window.open(url, "_self")
+				win.focus()
+			}
+			catch(error){
+				console.log(error)
+			}
+
+    	}, 200)
+    	$(".loader-container").fadeIn("fast")
 	})
 
 
@@ -772,7 +943,7 @@ body {
 				console.log(error)
 			}
 
-    	}, 100)
+    	}, 200)
     	$(".loader-container").fadeIn("fast")
 	})
 
@@ -803,24 +974,22 @@ body {
 		console.log(attributeType)
 		if (attributeType == "strength"){
 			document.getElementById("strength-value").innerHTML = newAttributeValue
-			//document.getElementById("gold-value").innerHTML = newGoldValue
 		}
 		if (attributeType == "skill"){
 			document.getElementById("skill-value").innerHTML = newAttributeValue
-			//document.getElementById("gold-value").innerHTML = newGoldValue
 		}
 		if (attributeType == "intelligence"){
 			document.getElementById("intelligence-value").innerHTML = newAttributeValue
-			//document.getElementById("gold-value").innerHTML = newGoldValue
 		}
 		if (attributeType == "health_point"){
 			document.getElementById("health_point-value").innerHTML = newAttributeValue
-			//document.getElementById("gold-value").innerHTML = newGoldValue
 		}
 		if (attributeType == "fortune"){
 			document.getElementById("fortune-value").innerHTML = newAttributeValue
-			//document.getElementById("gold-value").innerHTML = newGoldValue
+
 		}
+
+		document.getElementById("gold-value").innerHTML = newGoldValue
 	}
 
 
@@ -893,21 +1062,30 @@ body {
 
 
 
+	$("#no-owner-buttons-first-container").click(function(){
+		audio.play()
+		setTimeout(function(){
+			attackChoosenPlayer("{{user_id}}") // include-olva van ez a függvény
+		},200)
+    	$(".loader-container").fadeIn("fast")
+	})
+
+	$("#no-owner-buttons-second-container").click(function(){
+		audio.play()
+		setTimeout(function(){
+			createOrReturnPrivateChat("{{user_id}}") // include-olva van ez a függvény
+		},200)
+    	$(".loader-container").fadeIn("fast")
+
+	})
+
+
 </script>
 
 {% endblock %}
 
 
 <!--
-	<p>Profile</p>
-	{{username}}<br>
-	{{ user_id }} <br>
-	{{ strength }}<br>
-	{{level}}<br>
-	{{gold}}<br>
-
-
-	<img src="{{ profile_image }}">
 
 	{% if is_owner %}
 		<p>Tulajdonos</p>
