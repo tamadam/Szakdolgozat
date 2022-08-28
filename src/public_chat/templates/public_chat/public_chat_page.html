@@ -25,6 +25,28 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 }
 
 
+/* SCROLLBAR BEÁLLÍTÁSOK */
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background-color: darkgrey;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+	box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
 
 
 
@@ -46,10 +68,32 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 
 .main-public-chat-title{
 	flex: 1;
+	display: flex;
+	width: 100%;
+	height: 10%;
+	font-family: "Kanit-Regular";
+	font-size: 2vh;
+}
+
+#main-public-chat-title-left{
+	width: 14%;
+}
+
+#main-public-chat-title-center{
+	width: 72%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+
+}
+
+#main-public-chat-title-right{
+	width: 14%;
 }
 
 .chat-container{
-	flex: 1;
+	flex: 2;
 	display: flex;
 	flex-direction: column;
 	font-family: "Kanit-Regular";
@@ -67,17 +111,44 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 	font-size: 0.9em;
 	background-color: rgba(255, 255, 255, 0.6);
 
+
 }
 
 .send-new-message-container{
 	display: flex;
+	width: 100%;
+
 }
 
 .send-new-message-textarea{
-	flex: 1;
+	width: 95%;
 	flex-basis: auto; 
+	resize: none;
+
+	padding: 4px;
+	font-size: 1em;
 }
 
+.send-new-message-textarea:focus{
+	outline-color: orange;
+}
+
+#send-new-message-button{
+	width: 5%;
+	padding: 10px;
+	background-color: #e4c885;
+
+}
+
+#send-new-message-button:hover{
+	opacity: 0.4;
+
+}
+
+#send-new-message-button img{
+	max-width: 100%;
+	max-height: 100%;
+}
 
 
 .new-chat-message-container:hover{
@@ -154,14 +225,119 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 }
 
 #error-message-div{
-
+	flex: 1;
 	color: red;
+
+}
+
+#error-message-text{
+	visibility: hidden;
+
 }
 
 .footer-public-chat{
-	flex: 2;
+	flex: 1;
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	font-family: "Kanit-Regular";
+	font-size: 1.8vh;
 }
 
+#online-users-id{
+	width: 50%;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+}
+
+#online-users-id img{
+	max-width: 86%;
+	max-height: 86%;
+}
+
+#online-users-id-img{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#online-users-id-span{
+
+}
+
+#online-users-name-id{
+	width: 50%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+#online-users-name-id img{
+	max-width: 86%;
+	max-height: 86%;
+}
+
+
+
+#online-users-name-id-img{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#online-users-name-id-span{
+	text-align: center;
+}
+
+
+
+.loader-container {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 10;
+	color: white;
+	font-family: "Kanit-Regular";
+	font-size: 1.8vh;
+
+}
+
+
+
+#main-page-button {
+	display: flex;
+	justify-content: center;
+	align-items: center; 
+	width: 100%;
+	height: 100%;
+
+}
+
+#main-page-button img{
+	width: 40%;
+	height: 40;
+	max-width: 100%;
+	max-height: 100%;
+
+}
+
+
+
+
+.go-to-main-page:active {
+	content:url("{% static 'images/previous-button-purple.png' %}");
+}
 
 </style>
 
@@ -181,17 +357,22 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 	{% endif %}
 	-->
 	<div class="main-public-chat-title">
-		<h1>Közösségi chat</h1>
-		<h3>Subtitle</h3>
+		<div id="main-public-chat-title-left">
+			<div id="main-page-button">
+				<img src="{% static 'images/previous-button.png' %}" alt="Vissza" class="go-to-main-page" onmouseover="changeColor(this)" onmouseout="resetColor(this)">
+			</div>
+		</div>
+		<div id="main-public-chat-title-center">
+			<div>
+				<h1>Közösségi chat</h1>
+				<h3>Beszélgess bárkivel a szerveren!</h3>
+			</div>
+		</div>
+		<div id="main-public-chat-title-right">	
+		</div>
 	</div>
 
 
-	<div id="online-users-id">
-		<!-- Online felhasználók száma -->
-	</div>
-	<div id="online-users-name-id">
-		<!-- Online felhasználók neve -->
-	</div>
 
 
 	<div class="chat-container">
@@ -202,14 +383,40 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 		<div class="send-new-message-container">
 			<!-- Ide lehet írni az új üzenetet és beküldeni -->
 			<textarea class="send-new-message-textarea" id="send-new-message-textarea_id"></textarea>
-			<button id="send-new-message-button">Küldés</button>
+			<div id="send-new-message-button">
+				<img src="{% static 'images/send-message-icon.png' %}" alt="küldés">
+			</div>	
 		</div>
-	</div>
-	<div class="footer-public-chat">
 		<div id="error-message-div">
 			<!-- Hibaüzenetek chatelés közben -->
+			<span id="error-message-text">Hiba!</span>
 
-		</div>		
+		</div>	
+	</div>
+	<div class="footer-public-chat">
+		<div id="online-users-id">
+			<!-- Online felhasználók száma -->
+
+			<div id="online-users-id-span">10</div>
+			<div id="online-users-id-img">
+				<img src= "{% static 'images/people-in-chat.png' %}" alt="online-felhasznalok-szama">
+			</div>
+
+
+		</div>
+		<div id="online-users-name-id">
+			<!-- Online felhasználók neve -->
+			<div id="online-users-name-id-span">
+				Online felhasználók neve:<br>
+				<span id="user-names-online">0</span>
+			</div>
+			<div id="online-users-name-id-img">
+				<img src= "{% static 'images/user-list.png' %}" alt="online-felhasznalok-neve">
+			</div>
+		</div>
+	</div>
+	<div class="loader-container">
+		<span id="loading-message"></span>
 	</div>
 
 
@@ -219,6 +426,55 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 
 
 <script type="text/javascript">
+
+
+
+	const audio = new Audio()
+	audio.src = "{% static 'audios/button_click.mp3' %}"
+
+	var fadeOutLoaderScreen = null
+
+	$(window).on("load", function(){
+		
+		$("#loading-message").html("Publikus chatszoba betöltése...")
+		// alapból a websocket kapcsolat létrehozása utána fade outolja ki, de ha valami hiba lenne, akkor 
+		// 2600ms utan mindenkepp 
+		fadeOutLoaderScreen = setTimeout(function(){
+			$(".loader-container").fadeOut("slow")
+			$("#loading-message").html("")
+		}, 2600)
+
+	})
+
+
+
+
+	$(".go-to-main-page").click(function(){
+    	audio.play()
+
+    	setTimeout(function(){
+	    	try {
+
+				var url = "{% url 'home_page' %}"
+				var win = window.location.replace(url) 
+				win.focus()
+			}
+			catch(error){
+				console.log(error)
+			}
+
+    	}, 200)
+    	$(".loader-container").fadeIn("fast")
+	})
+
+
+	function changeColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/previous-button-red.png' %}")
+	}
+
+	function resetColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/previous-button.png' %}")
+	}
 
 	// Docs : https://javascript.info/websocket
 
@@ -245,6 +501,13 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 	// websocket megnyitása
 	public_chat_room_socket.onopen = function(event) {
 		console.log("Connection successfully created");
+
+		setTimeout(function(){
+			clearTimeout(fadeOutLoaderScreen) // tesztek alapján az se baj ha nem clear-eli
+			$("#loading-message").html("")
+			$(".loader-container").fadeOut("slow")
+
+		}, 400)
 
 	};
 
@@ -314,11 +577,14 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 
 	function showEmptyMessageError(message){
 
-		document.getElementById("error-message-div").innerHTML = message
-
+		var errorMessageText = document.getElementById("error-message-text").innerHTML = message
+		$("#error-message-text").css("visibility", "visible")
 		setTimeout(function(){
-			document.getElementById("error-message-div").classList.add('error-message-div-hidden');
-		}, 1000)
+			$("#error-message-text").css("visibility", "hidden")
+		},1500)
+
+
+
 	}
 
 
@@ -343,6 +609,13 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 
 
 	document.getElementById("send-new-message-button").onclick = function(event) {
+		audio.play()
+
+		// az aljára ugorjon ha írok a chatbe
+		var chatMessage = document.getElementById("chat_messages_id");
+		chatMessage.scrollTop = chatMessage.scrollHeight
+		
+
 		var rawInputMessage = document.getElementById("send-new-message-textarea_id"); 	// html formátum
 		var message = rawInputMessage.value;										// a bevitt szöveg
 
@@ -760,14 +1033,33 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 	// ONLINE LÉVŐ FELHASZNÁLÓK SZÁMÁNAK A BEÁLLÍTÁSA //
 
 	function setNumberOfOnlineUsers(num){
-		online = document.getElementById("online-users-id")
+		
+		//online = document.getElementById("online-users-id-span")
+		$("#online-users-id-span").html("Online felhasználók száma: " + num)
 
-		online.innerHTML = 'Online lévők száma: ' + num
+		//online.innerHTML = 'Online lévők száma: ' + num
+		
 	}
 
 	function setNameOfOnlineUsers(listOfUsers){
+		/*
 		onlineNames = document.getElementById("online-users-name-id")
 		onlineNames.innerHTML = 'Online lévők neve: ' + listOfUsers
+		*/
+
+		var onlineUsersName = ""
+		for (var i=0; i<listOfUsers.length; i++){
+			onlineUsersName = onlineUsersName.concat(",", listOfUsers[i])
+		}
+
+		onlineUsersName = onlineUsersName.substring(1)
+		var count = onlineUsersName.length
+
+		if (count >= 30){
+			onlineUsersName = onlineUsersName.slice(0, 30) + "..."
+		}
+
+		$("#user-names-online").html(onlineUsersName)
 	}
 
 	// <<<-------------------------------------------------->>> //
