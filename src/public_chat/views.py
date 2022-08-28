@@ -3,13 +3,18 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
 from core.constants import *
+from account.models import Account
 
 
 @login_required(login_url='login')
 def public_chat_page_view(request):
+
+	account = Account.objects.get(id=request.user.id)
+
 	context = {
 		'debug_mode': settings.DEBUG,
 		'room_id': PUBLIC_CHAT_ROOM_ID, 
+		'account': account,
 	}
 
 	return render(request, 'public_chat/public_chat_page.html', context)

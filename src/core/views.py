@@ -10,8 +10,12 @@ from django.http import HttpResponse
 from core.constants import *
 from team.models import Team
 
+from django.core.serializers.python import Serializer
+from django.core.paginator import Paginator
+from django.core.serializers import serialize
 
 
+from account.utils import EncodeAccountObject
 
 @login_required(login_url='login')
 def home_page_view(request):
@@ -134,8 +138,17 @@ def users_search_view(request):
 		}
 
 
+	try_pagination()
+
 	return render(request, 'core/search_users.html', context)
 
+
+def try_pagination():
+	p = Paginator(Account.objects.all(), 2)
+
+	s = EncodeAccountObject()
+
+	print(s.serialize(p.page(1).object_list))
 """
 def list_accounts(request):
 	characters = Account.objects.exclude(is_admin=True)

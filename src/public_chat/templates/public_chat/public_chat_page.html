@@ -1,63 +1,167 @@
-{% extends 'base.html' %}
+{% extends 'base_new.html' %}
 
 {% load static %}
 {% block content %}
 
 
-<style type="text/css">
-.chat-messages {
-	height: 500px;
-	overflow-x: hidden;
-	overflow-y: auto;
-	padding: 10px;
-	background-color: #fff;
-	font-size: 0.9em;
-	flex-direction: column-reverse;
-	position: center;
+<style>
+
+@font-face {
+font-family: 'Kanit-Regular';
+src: local('Kanit-Regular'),
+url("{% static 'fonts/Kanit-Regular.ttf' %}");
 }
 
+@font-face {
+	font-family: 'Kanit-Bold';
+	src: local('Kanit-Bold'),
+	url("{% static 'fonts/Kanit-Bold.ttf' %}");
+}
+
+@font-face {
+	font-family: 'Kanit-Light';
+	src: local('Kanit-Light'),
+	url("{% static 'fonts/Kanit-Light.ttf' %}");
+}
+
+
+
+
+
+#public-chat-page{
+
+	background: url("{% static 'images/paper-old.jpg' %}");	
+
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-color: white;
+	height: 100%;
+	width: 100%;
+	max-width: 1900px;
+
+	display: flex;
+	flex-direction: column;
+}
+
+.main-public-chat-title{
+	flex: 1;
+}
+
+.chat-container{
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	font-family: "Kanit-Regular";
+	font-size: 1.8vh;
+	width: 50%;
+	height: 60%;
+	margin: 0 auto;
+}
+
+.chat-messages {
+	display: flex;
+	flex-direction: column-reverse;
+	overflow-x: hidden;
+	overflow-y: auto;
+	font-size: 0.9em;
+	background-color: rgba(255, 255, 255, 0.6);
+
+}
+
+.send-new-message-container{
+	display: flex;
+}
+
+.send-new-message-textarea{
+	flex: 1;
+	flex-basis: auto; 
+}
+
+
+
+.new-chat-message-container:hover{
+	background-color: #f6dfad;
+}
+
+
 .profile-image {
-	width: 33px;
-	height: 33px;
-	margin-top: 0px;
-	margin-bottom: auto;
+	max-height: 2em;
+	max-width: 2em;
+	border-radius: 50%;
+
+
 }
 
 .profile-image:hover{
-    cursor: pointer;
+	cursor: pointer;
 }
-.username-span:hover{
-    cursor: pointer;
+
+.username-field-right{
+	display: flex;
+	align-items: center;
+	justify-content: start;
+	width: 95%;
+	font-weight: bold;
 }
-.username-span{
-    font-weight: 600;
-    margin-top: 0px;
-    margin-bottom: auto;
-    margin-left: 5px;
-    margin-right: 5px;
+
+.username-field-right:hover{
+	cursor: pointer;
 }
-.msg-p{
-    font-weight: 450;
-    margin-top: 5px;
-    margin-bottom: auto;
-    margin-left: 5px;
-    margin-right: 5px;
+
+
+
+.message-text {
+
+	display: flex;
+	align-items: center;
+	justify-content: start;
+	flex: 1;
+
     /* tordeli a hosszu sorokat*/
     white-space: normal;
     -ms-word-break: break-all;
-    word-break: break-all;
+    word-break: break-all;	
+
+
 }
-.message-container{
+
+.new-chat-message-container:hover .tooltip-span{
+	visibility: visible;
+
+}
+
+
+.tooltip-span{
+	visibility: hidden;
+	margin: 2%;
+	color: grey;
+
+}
+
+.chat-message-structure-others{
     margin-top: 10px;
     justify-content: start;
 }
 
-.errorMessageHidden{
+.chat-message-structure-own{
+    margin-top: 10px;
+    justify-content: end;
+}
+
+.error-message-div-hidden{
 	display: none;
 }
-.errorMessageExist{
-	display: block;
+
+#error-message-div{
+
+	color: red;
 }
+
+.footer-public-chat{
+	flex: 2;
+}
+
 
 </style>
 
@@ -65,40 +169,51 @@
 
 
 
-<!-- variables: 3rész: chat-log(chat-messages) az üzenetek megjelenitese, chat-messages-input-container(send-message-textarea-container) a chatszöveg bevitele, 
-	id_chat_message_submit (send-message-submit-button)üzenete küldése-->
 
 <!-- CHAT FELÜLET : üzenetek és üzenetküldési area gombbal-->
-<div class="main">
+<div id="public-chat-page">
+	<!--
+	{% if debug_mode %}
+	PUBLIC CHAT oldal:
+	if its not debug mode: hide it, amugy jelenjen meg
 
-{% if debug_mode %}
-PUBLIC CHAT oldal:
-<!-- if its not debug mode: hide it, amugy jelenjen meg-->
-{% endif %}
-<span class="{% if not debug_mode %}d-none{% endif %} page-number" id="id_page_number">1</span>
+		<span class="page-number" id="id_page_number">1</span>
+	{% endif %}
+	-->
+	<div class="main-public-chat-title">
+		<h1>Közösségi chat</h1>
+		<h3>Subtitle</h3>
+	</div>
 
-<div id="online-users-id">
 
-</div>
-<div id="online-users-name-id">
-	
-	
-</div>
-	<div class="d-flex flex-column">
-		<div class="d-flex chat-messages" id="chat_messages_id">
-			
+	<div id="online-users-id">
+		<!-- Online felhasználók száma -->
+	</div>
+	<div id="online-users-name-id">
+		<!-- Online felhasználók neve -->
+	</div>
+
+
+	<div class="chat-container">
+		<!-- CHAT ÜZENETEK -->
+		<div class="chat-messages" id="chat_messages_id">
+			<!-- A szobában lévő üzeneket tartalmazza -->
 		</div>
-		<div class="d-flex send-message-textarea-container">
-			<textarea class="flex-grow-1 send-message-textarea" id="send-message-textarea_id"></textarea>
-			<button class="btn btn-primary send-message-submit-button">
-				<span id="send-message-submit_id" class="material-icons">send
-				</span>
-			</button>
+		<div class="send-new-message-container">
+			<!-- Ide lehet írni az új üzenetet és beküldeni -->
+			<textarea class="send-new-message-textarea" id="send-new-message-textarea_id"></textarea>
+			<button id="send-new-message-button">Küldés</button>
 		</div>
 	</div>
-	<div id="errorMessage">
-		
+	<div class="footer-public-chat">
+		<div id="error-message-div">
+			<!-- Hibaüzenetek chatelés közben -->
+
+		</div>		
 	</div>
+
+
+
 </div>
 <!-- -------------- -->
 
@@ -107,7 +222,13 @@ PUBLIC CHAT oldal:
 
 	// Docs : https://javascript.info/websocket
 
+	var currentUserID = "{{account.id}}"
+	var previousUserID = null
+	var messageID = 0
+
 	// WEBSOCKET BEÁLLÍTÁS FOLYAMATA KEZDETE //
+
+
 
 	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
 
@@ -156,32 +277,7 @@ PUBLIC CHAT oldal:
 
 		if (data.message_type == 0){
 			appendChatMessage(data, true, true)
-			/*
-			var elements = document.getElementsByClassName("d-flex chat-messages")
-			for(let e of elements){
-				console.log(e)
-				let ido = e.getElementById('sentMessagesId')
-				ido.innerHTML = 'ido'
-			}
-			elements.innerHTML = 'idozito'
-			
-			console.log(data)
-			var elements = document.getElementsByClassName("sentMessagesTime")
-			for(let e of elements){
-				console.log(e)
-				e.innerHTML = 'ido'
-			}
-			
-			let result = event.data.includes("sending_time")
-			console.log(result)
-			if (result){
-				var elements = document.getElementsByClassName("sentMessagesTime")
-				for(let e of elements){
-					console.log(e)
-					e.innerHTML = event.data.sendingTime
-			}
-			}
-			*/
+
 
 		}
 		else if (data.message_type == 5){
@@ -214,29 +310,14 @@ PUBLIC CHAT oldal:
 	};
 
 
-	// jelenlegi állapota a websocket kapcsolatnak 
-	/*
-	if (public_chat_room_socket.readyState == WebSocket.OPEN){
-		console.log("PublicChatRoomSocket OPEN");
-	}
-	else if (public_chat_room_socket == WebSocket.CLOSED) {
-		console.log("PublicChatRoomSocket CLOSED");
-	} 
-	else if (public_chat_room_socket == WebSocket.CONNECTING) {
-		console.log("PublicChatRoomSocket CONNECTING...");
-	} 
-	else if (public_chat_room_socket == WebSocket.CLOSING) {
-		console.log("PublicChatRoomSocket CLOSING...");
-	} 
-	*/
 
 
 	function showEmptyMessageError(message){
 
-		document.getElementById("errorMessage").innerHTML = message
+		document.getElementById("error-message-div").innerHTML = message
 
 		setTimeout(function(){
-			document.getElementById("errorMessage").classList.add('errorMessageHidden');
+			document.getElementById("error-message-div").classList.add('error-message-div-hidden');
 		}, 1000)
 	}
 
@@ -250,19 +331,19 @@ PUBLIC CHAT oldal:
 
 	// ÜZENET KÜLDÉS KEZDETE //
 
-	document.getElementById("send-message-textarea_id").focus();
-	document.getElementById("send-message-textarea_id").onkeyup = function(event) {
+	document.getElementById("send-new-message-textarea_id").focus();
+	document.getElementById("send-new-message-textarea_id").onkeyup = function(event) {
 		if (event.keyCode == 13 && event.shiftKey){
 			// új sor, küldés nélkül, textarea automatikusan kezeli
 		}
 		else if (event.keyCode == 13 && !event.shiftKey){
-			document.getElementById("send-message-submit_id").click();
+			document.getElementById("send-new-message-button").click();
 		}
 	}
 
 
-	document.getElementById("send-message-submit_id").onclick = function(event) {
-		var rawInputMessage = document.getElementById("send-message-textarea_id"); 	// html formátum
+	document.getElementById("send-new-message-button").onclick = function(event) {
+		var rawInputMessage = document.getElementById("send-new-message-textarea_id"); 	// html formátum
 		var message = rawInputMessage.value;										// a bevitt szöveg
 
 		// üzenet küldése a consumernek, receive_json hívódik meg a consumerben
@@ -292,43 +373,229 @@ PUBLIC CHAT oldal:
 		profile_image = data["profile_image"]
 		sendingTime = data["sending_time"]
 
-		var msg = message + "\n";
-		var username = usernameReceived + ": "; 
+		var messageReceived = message + "\n";
+		//var username = usernameReceived + ": "; 
+		var username = usernameReceived; 
 
-		createChatMessageElement(userId, username, message_id, msg, profile_image, sendingTime, maintainPosition, isNewMessage);
+		createChatMessageElement(userId, username, message_id, messageReceived, profile_image, sendingTime, maintainPosition, isNewMessage);
 	}
 
 		// TODO : REWRITE THIS WHOLE THING
 	function createChatMessageElement(userId, username, message_id, message, profile_image, sendingTime, maintainPosition, isNewMessage){
 		var chatMessage = document.getElementById("chat_messages_id");
 
-		var newMessageDiv = document.createElement("div")
-		newMessageDiv.classList.add("d-flex")
-		newMessageDiv.classList.add("flex-row")
-		newMessageDiv.classList.add("message-container") //css
 
+
+		// egy adott chat üzenet, amelyben minden benne van: profilkép, üzenet stb.
+		var newChatMessage = document.createElement("div")
+		newChatMessage.style.display = "flex"
+		newChatMessage.style.flexDirection = "column"
+		newChatMessage.style.width = "100%"
+		newChatMessage.classList.add("new-chat-message-container")
+		newChatMessage.setAttribute("id", "messageID-" + messageID)
+		
+
+
+		//newChatMessage.style.alignItems = "flex-end"
+		//messageField.style.backgroundColor = "green"
+
+		// a felhasználó neve
+		var newChatMessageTop = document.createElement("div")
+		newChatMessageTop.style.flex = "1"
+		newChatMessageTop.style.display = "flex"
+		newChatMessageTop.style.flexDirection = "row"
+		newChatMessageTop.classList.add("new-chat-message-top")
+
+
+		// a felhasználó profilképe és az üzenet
+		var newChatMessageBody = document.createElement("div")
+		newChatMessageBody.style.flex = "1"
+		newChatMessageBody.style.display = "flex"
+		newChatMessageBody.style.flexDirection = "row"
+		newChatMessageBody.classList.add("new-chat-message-body")
+
+
+		// placeholder esetleges további bővítésekhez
+		var newChatMessageBottom = document.createElement("div")
+		newChatMessageBottom.style.flex = "1"
+		newChatMessageBottom.classList.add("new-chat-message-bottom")
+
+
+		// TOP 
+
+		// ez csak placeholder
+		var usernameFieldLeft = document.createElement("div") 
+		usernameFieldLeft.style.display = "flex"
+		usernameFieldLeft.style.width = "5%"
+
+
+		// tényleges felhasználónév
+		var usernameFieldRight = document.createElement("p")
+		usernameFieldRight.classList.add("username-field-right")
+		usernameFieldRight.innerHTML = username
+		usernameFieldRight.addEventListener("click", function(event){
+			selectUser(userId)
+		})
+
+		if (userId == currentUserID){
+			usernameFieldRight.style.justifyContent = "end"
+			usernameFieldRight.style.visibility = "hidden"
+		}
+
+
+
+		newChatMessageTop.appendChild(usernameFieldLeft)
+		newChatMessageTop.appendChild(usernameFieldRight)
+
+		// BODY 
+
+		// profilkép 
+		var newChatMessageBodyProfilePicture = document.createElement("div")
+		newChatMessageBodyProfilePicture.style.display = "flex"
+		newChatMessageBodyProfilePicture.style.justifyContent = "center"
+		//newChatMessageBodyProfilePicture.style.alignItems = "center"
+		newChatMessageBodyProfilePicture.style.marginTop = "auto"
+		newChatMessageBodyProfilePicture.style.width = "5%"
+		newChatMessageBodyProfilePicture.style.zIndex = "2"
+
+		var newChatMessageBodyProfilePictureImg = document.createElement("img")
+		newChatMessageBodyProfilePictureImg.classList.add("profile-image")
+		newChatMessageBodyProfilePictureImg.src = "{% static 'images/blank_profile_image.png' %}"
+		newChatMessageBodyProfilePictureImg.addEventListener("click", function(event) {
+			selectUser(userId)
+		})
+
+		var profileImageID = "profileImage " + message_id 
+		newChatMessageBodyProfilePictureImg.id = profileImageID
+
+		newChatMessageBodyProfilePicture.appendChild(newChatMessageBodyProfilePictureImg)
+
+		// üzenet
+		var messageFieldDiv = document.createElement("div")
+		messageFieldDiv.classList.add("message-text")
+
+		var messageField = document.createElement("p")
+		//messageField.classList.add("message-text")
+
+		//messageField.style.backgroundColor = "#b4cfec"
+		messageField.style.backgroundImage = "linear-gradient(orange, yellow)"
+		messageField.style.borderRadius = "20px"
+		messageField.style.padding = "10px"
+		messageField.style.maxWidth = "75%"
+		messageField.innerHTML = message
+
+		var tooltipSpan = document.createElement("span")
+		tooltipSpan.innerHTML = sendingTime
+		tooltipSpan.classList.add("tooltip-span")
+
+		if (userId == currentUserID){
+			messageFieldDiv.appendChild(tooltipSpan)
+			messageFieldDiv.appendChild(messageField)
+
+		}
+		else{
+			messageFieldDiv.appendChild(messageField)
+			messageFieldDiv.appendChild(tooltipSpan)
+		}
+
+		if (userId == currentUserID){
+			messageFieldDiv.style.justifyContent = "end"
+			//messageField.style.backgroundColor = "#82cafa"
+			messageField.style.backgroundImage = "linear-gradient(brown, orange)"
+			messageField.style.fontWeight = "bold"
+			newChatMessageBody.appendChild(messageFieldDiv)		
+			newChatMessageBody.appendChild(newChatMessageBodyProfilePicture)
+		}
+		else{
+			newChatMessageBody.appendChild(newChatMessageBodyProfilePicture)
+			newChatMessageBody.appendChild(messageFieldDiv)
+		}
+		// BOTTOM
+
+		var bottomField = document.createElement("p")
+		bottomField.style.flex = "1"
+		bottomField.style.width = "100%"
+		bottomField.style.visibility = "hidden"
+		bottomField.style.fontSize = "0.2em"
+		bottomField.innerHTML = "Láthatatlan szöveg - esetleges bővítéshez: pl. ki látta stb."
+
+		newChatMessageBottom.appendChild(bottomField)
+
+
+
+
+
+		// az elkészült top-body-bottom div-ek hozzáadása a fő tárolóhoz
+		newChatMessage.appendChild(newChatMessageTop)
+		newChatMessage.appendChild(newChatMessageBody)
+		newChatMessage.appendChild(newChatMessageBottom)
+
+		if (previousUserID == userId){
+			console.log("igen")
+			/*
+			var id = "#messageID-" + (messageID-1)
+			console.log(id)
+			$(id + " .new-chat-message-top").css("display", "none")
+			$(id + " .new-chat-message-bottom").css("display", "none")
+			$(".profile-image").css("visibility", "hidden")
+			*/
+		}
+		else{
+			//firtMessageFromUser = messageID
+			console.log("nem")
+		}
+
+		previousUserID = userId
+				messageID++
+
+
+		/*
+		$(".new-chat-message-container .new-chat-message-top").css("display", "none")
+		
+		$(".new-chat-message-container .new-chat-message-bottom").css("display", "none")
+		
+		$(".new-chat-message-container .profile-image").css("visibility", "hidden")
+
+		*/
+
+
+		/*
+		//1
+		var newMessageDiv = document.createElement("div")
+		newMessageDiv.style.display = "flex"
+		newMessageDiv.style.flexDirection = "row"
+		//newMessageDiv.classList.add("d-flex")
+		//newMessageDiv.classList.add("flex-row")
+	
+
+
+
+		//2
 		var profileImage = document.createElement("img")
 		profileImage.addEventListener("click", function(evenet){
 			selectUser(userId)
 		})
 		profileImage.classList.add("profile-image")
-		profileImage.classList.add("rounded-circle")
-		profileImage.classList.add("img-fluid")
+		//profileImage.classList.add("rounded-circle")
+		//profileImage.classList.add("img-fluid")
 		profileImage.src = "{% static 'images/blank_profile_image.png' %}"
 		var profileImageId = "profile_image_id" + message_id 
 		profileImage.id = profileImageId
-		newMessageDiv.appendChild(profileImage)
+		//newMessageDiv.appendChild(profileImage)
 
-
+		//3
 		var div1 = document.createElement("div")
-		div1.classList.add("d-flex")
-		div1.classList.add("flex-column")
+		div1.style.display = "flex"
+		div1.style.flexDirection = "column"
+		//div1.classList.add("d-flex")
+		//div1.classList.add("flex-column")
 
-		div1.classList.add("all_mess")
-
+		//4
 		var div2 = document.createElement("div")
-		div2.classList.add("d-flex")
-		div2.classList.add("flex-row")
+		div2.style.display = "flex"
+		div2.style.flexDirection = "row"
+		//div2.classList.add("d-flex")
+		//div2.classList.add("flex-row")
 
 		var usernameSpan = document.createElement("span")
 		usernameSpan.addEventListener("click", function(evenet){
@@ -336,30 +603,59 @@ PUBLIC CHAT oldal:
 		})
 		usernameSpan.classList.add('username-span')
 		usernameSpan.innerHTML = username
-		div2.appendChild(usernameSpan)
+
+		//div2.appendChild(usernameSpan)
 
 		// sending_time hozzáadása
 
 		var sendingTimeSpan = document.createElement("span")
 
+		sendingTimeSpan.style.display = "flex"
 		sendingTimeSpan.innerHTML = sendingTime
-		sendingTimeSpan.classList.add("sendingTimeSpanClass")
-		sendingTimeSpan.classList.add("d-flex")
-		sendingTimeSpan.classList.add("align-items-center")
+		//sendingTimeSpan.classList.add("sendingTimeSpanClass")
+		//sendingTimeSpan.classList.add("d-flex")
+		//sendingTimeSpan.classList.add("align-items-center")
 
-		sendingTimeSpan.classList.add("sentMessagesTime")
+		//sendingTimeSpan.classList.add("sentMessagesTime")
 
 
-		div2.appendChild(sendingTimeSpan)
+		//div2.appendChild(sendingTimeSpan)
 
-		div1.appendChild(div2)
+		//div1.appendChild(div2)
 
 		var msgP = document.createElement("p")
 		msgP.innerHTML = message
 		msgP.classList.add("msg-p")
-		div1.appendChild(msgP)
+		//div1.appendChild(msgP)
 
-		newMessageDiv.appendChild(div1)
+		//newMessageDiv.appendChild(div1)
+
+
+
+		if (userId == currentUserID){
+			newMessageDiv.classList.add("chat-message-structure-own") //css
+			div2.style.justifyContent = "end"
+			div2.appendChild(usernameSpan)
+			//div2.appendChild(sendingTimeSpan)
+			div1.appendChild(div2)
+			div1.appendChild(msgP)
+			newMessageDiv.appendChild(div1)
+			newMessageDiv.appendChild(profileImage)
+
+
+		}
+		else{
+			newMessageDiv.classList.add("chat-message-structure-others") //css
+			newMessageDiv.appendChild(profileImage)
+			div2.appendChild(usernameSpan)
+			//div2.appendChild(sendingTimeSpan)
+			div1.appendChild(div2)
+			div1.appendChild(msgP)
+			newMessageDiv.appendChild(div1)
+		}
+
+
+
 
 
 		if(isNewMessage){
@@ -369,11 +665,21 @@ PUBLIC CHAT oldal:
 			chatMessage.appendChild(newMessageDiv)
 		}
 
+	*/
+
+		if(isNewMessage){
+			chatMessage.insertBefore(newChatMessage, chatMessage.firstChild)
+		}
+		else {
+			chatMessage.appendChild(newChatMessage)
+		}
+
 		if(!maintainPosition){
 			chatMessage.scrollTop = chatMessage.scrollHeight
 		}
 
-		loadProfilePicture(profile_image, profileImageId) // profile_image az input
+
+		loadProfilePicture(profile_image, profileImageID) // profile_image az input
 
 	}
 
@@ -402,7 +708,7 @@ PUBLIC CHAT oldal:
 			publicChatPageNumber = pageNumber
 		}
 
-		document.getElementById("id_page_number").innerHTML = publicChatPageNumber
+		//document.getElementById("id_page_number").innerHTML = publicChatPageNumber
 		console.log(publicChatPageNumber)
 	}
 
