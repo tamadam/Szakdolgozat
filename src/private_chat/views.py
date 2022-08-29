@@ -102,11 +102,17 @@ def private_chat_page_view(request, *args, **kwargs):
 
 	messages_and_users = sorted(messages_and_users, key=lambda x: x['recent_message_sending_time'], reverse=True)
 
+	try:
+		account = Account.objects.get(id=request.user.id)
+	except:
+		account = None
+		pass
 
 
 
 	context['debug_mode'] = settings.DEBUG
 	context['messages_and_users'] = messages_and_users
+	context['account'] = account
 
 	return render(request, 'private_chat/private_chat_room.html', context)
 

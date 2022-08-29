@@ -85,7 +85,7 @@ class PrivateChatRoomConsumer(AsyncJsonWebsocketConsumer):
 				if len(message.lstrip()) != 0: 
 					await self.send_chat_message_to_room(room_id, message)
 				else:
-					raise ClientError('EMPTY_MESSAGE', 'Empty message not allowed')
+					raise ClientError('EMPTY_MESSAGE', 'Üres üzenet küldése nem lehetséges!')
 			elif command == 'join':
 				await self.join_room(room_id)
 			elif command == 'leave':

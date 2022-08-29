@@ -124,7 +124,7 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 	width: 95%;
 	flex-basis: auto; 
 	resize: none;
-
+	font-family: "Kanit-Light";
 	padding: 4px;
 	font-size: 1em;
 }
@@ -220,9 +220,6 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
     justify-content: end;
 }
 
-.error-message-div-hidden{
-	display: none;
-}
 
 #error-message-div{
 	flex: 1;
@@ -266,7 +263,8 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 }
 
 #online-users-id-span{
-
+	text-align: center;
+	font-weight: bold;
 }
 
 #online-users-name-id{
@@ -292,6 +290,7 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 
 #online-users-name-id-span{
 	text-align: center;
+	font-weight: bold;
 }
 
 
@@ -382,7 +381,7 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 		</div>
 		<div class="send-new-message-container">
 			<!-- Ide lehet írni az új üzenetet és beküldeni -->
-			<textarea class="send-new-message-textarea" id="send-new-message-textarea_id"></textarea>
+			<textarea class="send-new-message-textarea" id="send-new-message-textarea-id"></textarea>
 			<div id="send-new-message-button">
 				<img src="{% static 'images/send-message-icon.png' %}" alt="küldés">
 			</div>	
@@ -397,7 +396,10 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 		<div id="online-users-id">
 			<!-- Online felhasználók száma -->
 
-			<div id="online-users-id-span">10</div>
+			<div id="online-users-id-span">
+				Online felhasználók száma:<br>
+				<span id="user-count-online">0</span>
+			</div>
 			<div id="online-users-id-img">
 				<img src= "{% static 'images/people-in-chat.png' %}" alt="online-felhasznalok-szama">
 			</div>
@@ -501,9 +503,8 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 	// websocket megnyitása
 	public_chat_room_socket.onopen = function(event) {
 		console.log("Connection successfully created");
-
+		clearTimeout(fadeOutLoaderScreen) // tesztek alapján az se baj ha nem clear-eli
 		setTimeout(function(){
-			clearTimeout(fadeOutLoaderScreen) // tesztek alapján az se baj ha nem clear-eli
 			$("#loading-message").html("")
 			$(".loader-container").fadeOut("slow")
 
@@ -597,8 +598,8 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 
 	// ÜZENET KÜLDÉS KEZDETE //
 
-	document.getElementById("send-new-message-textarea_id").focus();
-	document.getElementById("send-new-message-textarea_id").onkeyup = function(event) {
+	document.getElementById("send-new-message-textarea-id").focus();
+	document.getElementById("send-new-message-textarea-id").onkeyup = function(event) {
 		if (event.keyCode == 13 && event.shiftKey){
 			// új sor, küldés nélkül, textarea automatikusan kezeli
 		}
@@ -616,7 +617,7 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 		chatMessage.scrollTop = chatMessage.scrollHeight
 		
 
-		var rawInputMessage = document.getElementById("send-new-message-textarea_id"); 	// html formátum
+		var rawInputMessage = document.getElementById("send-new-message-textarea-id"); 	// html formátum
 		var message = rawInputMessage.value;										// a bevitt szöveg
 
 		// üzenet küldése a consumernek, receive_json hívódik meg a consumerben
@@ -1035,7 +1036,7 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 	function setNumberOfOnlineUsers(num){
 		
 		//online = document.getElementById("online-users-id-span")
-		$("#online-users-id-span").html("Online felhasználók száma: " + num)
+		$("#user-count-online").html(num)
 
 		//online.innerHTML = 'Online lévők száma: ' + num
 		

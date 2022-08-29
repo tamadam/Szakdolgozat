@@ -9,7 +9,11 @@ from account.models import Account
 @login_required(login_url='login')
 def public_chat_page_view(request):
 
-	account = Account.objects.get(id=request.user.id)
+	try:
+		account = Account.objects.get(id=request.user.id)
+	except:
+		account = None
+		pass
 
 	context = {
 		'debug_mode': settings.DEBUG,
