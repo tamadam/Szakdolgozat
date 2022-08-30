@@ -1,178 +1,500 @@
-{% extends 'base.html' %}
+{% extends 'base_new.html' %}
 
 {% load static %}
 
 {% block content %}
 
 <style type="text/css">
-	.chat-log {
-		height: 500px;
-		overflow-x: hidden;
-		overflow-y: auto;
-		padding: 10px;
-		background-color: #fff;
-		font-size: 0.9em;
-		flex-direction: column-reverse;
-	}
-	.chat-message-input-container{
-		outline: none;
-		box-shadow: none;
-	}
-	.chat-message-input{
-		outline: none;
-		border: 1px solid #fff;
-		border-top: 2px solid var(--main-background-color);
-		
-	}
-	.message-container{
-		margin-top: 10px;
-		justify-content: start;
-	}
-	.username-span{
-		font-weight: 600;
-		margin-top: 0px;
-		margin-bottom: auto;
-		margin-left: 5px;
-		margin-right: 5px;
-	}
-	.friend-message-span{
-		font-weight: 380;
-		margin-top: 0px;
-		margin-bottom: auto;
-		margin-left: 5px;
-		margin-right: 5px;
-		font-size: 0.6em;
-		color: var(--light-primary-text-color);
-	}
-	.timestamp-span{
-		font-weight: 400;
-		font-size: 0.8em;
-		color: var(--secondary-text-color);
-	}
-	.timestamp-span:hover{
-		cursor: pointer;
-	}
-	.msg-p{
-		font-weight: 450;
-		margin-top: 5px;
-		margin-bottom: auto;
-		margin-left: 5px;
-		margin-right: 5px;
-		white-space: normal;
-		-ms-word-break: break-all;
-		word-break: break-all;
-	}
-	.profile-image{
-		width: 33px;
-		height: 33px;
-		margin-top: 0px;
-		margin-bottom: auto;
-	}
-	.profile-image-small{
-		width: 25px;
-		height: 25px;
-		margin-top: 0px;
-		margin-bottom: auto;
-		margin-right: 5px;
-	}
-	.profile-image:hover{
-		cursor: pointer;
-	}
-	.profile-image-small:hover{
-		cursor: pointer;
-	}
-	.username-span:hover{
-		cursor: pointer;
-	}
-	.material-icons:hover{
-		cursor: pointer;
-	}
-	.card {
-		border-radius: 12px;
-	}
-	
-	#id_chatroom_loading_spinner{
-		position: absolute;
-	}
-	.friend-container:hover{
-		background: var(--main-background-color);
-		cursor: pointer;
-	}
-	.friends-list-container{
-		max-height: 500px;
-		overflow-y: scroll;
-	}
+
+@font-face {
+	font-family: 'Kanit-Regular';
+	src: local('Kanit-Regular'),
+	url("{% static 'fonts/Kanit-Regular.ttf' %}");
+}
+
+@font-face {
+	font-family: 'Kanit-Bold';
+	src: local('Kanit-Bold'),
+	url("{% static 'fonts/Kanit-Bold.ttf' %}");
+}
+
+@font-face {
+	font-family: 'Kanit-Light';
+	src: local('Kanit-Light'),
+	url("{% static 'fonts/Kanit-Light.ttf' %}");
+}
+
+/* SCROLLBAR BEÁLLÍTÁSOK */
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background-color: darkgrey;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+	box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
+
+
+#team-content-page{
+	width: 100%;
+	height: 100%;
+	background-color: white;
+	font-family: "Kanit-Regular";
+	font-size: 1.8vh;
+	display: flex;
+	flex-direction: column;
+	max-width: 1900px;
+
+}
+
+#team-header{
+	height: 20%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#team-body{
+	height: 60%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+#team-footer{
+	height: 20%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#team-messages{
+	height: 100%;
+	max-height: 600px;
+	width: 50%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	position: relative;
+
+}
+
+#team-messages-cover{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	z-index: 3;
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 10px;
+}
+
+#body-details{
+	height: 100%;
+	width: 30%;
+}
+/*
+#private-chat-room-title-container{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	background-color: #e3cc4a;
+	border-top-left-radius: 20px;
+	border-top-right-radius: 20px;
+
+}
+*/
+
+#private-chat-room-title{
+
+
+}
+
+#private-chat-room-title:hover{
+	cursor: pointer;
+	color: grey;
+}
+
+
+#team-chat-container{
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	width: 100%;
+}
+
+.chat-messages {
+	display: flex;
+	flex-direction: column-reverse;
+	overflow-x: hidden;
+	overflow-y: auto;
+	font-size: 0.9em;
+	background-color: rgba(255, 255, 255, 0.6);
+	height: 88%;
+	max-height: 600px;
+
+}
+
+.send-new-message-container{
+	display: flex;
+	flex-direction: row; /* publicnal kimaradt */
+	width: 100%;
+	height: 10%;
+
+}
+
+.send-new-message-textarea{
+	width: 95%;
+	flex-basis: auto; 
+	resize: none;
+
+	padding: 4px;
+	font-size: 1em;
+	font-family: "Kanit-Light";
+}
+
+.send-new-message-textarea:focus{
+	outline-color: orange;
+}
+
+#send-new-message-button{
+	width: 5%;
+	padding: 10px;
+	background-color: #e4c885;
+	display: flex;
+	align-items: center;
+
+}
+
+#send-new-message-button:hover{
+	opacity: 0.4;
+
+}
+
+#send-new-message-button img{
+	max-width: 100%;
+	max-height: 100%;
+
+}
+
+#error-message-div{
+	height: 2%;
+	color: red;
+}
+
+#error-message-text{
+	visibility: hidden;
+}
+
+
+/* ezek a create chat message elementhez jönnek */
+.username-field-right{
+	display: flex;
+	align-items: center;
+	justify-content: start;
+	width: 95%;
+	font-weight: bold;
+}
+
+.username-field-right:hover{
+	cursor: pointer;
+}
+
+.profile-image{
+	width: 2em;
+	height: 2em;
+	border-radius: 50%;
+
+
+}
+
+.profile-image:hover{
+	cursor: pointer;
+
+
+}
+
+.message-text {
+
+	display: flex;
+	align-items: center;
+	justify-content: start;
+	flex: 1;
+
+    /* tordeli a hosszu sorokat*/
+    white-space: normal;
+    -ms-word-break: break-all;
+    word-break: break-all;	
+
+
+}
+
+.new-chat-message-container:hover{
+	background-color: #f6dfad;
+}
+
+
+.new-chat-message-container:hover .tooltip-span{
+	visibility: visible;
+
+}
+
+
+.tooltip-span{
+	visibility: hidden;
+	margin: 2%;
+	color: grey;
+
+}
+
+/* --- title */
+#team-title-left{
+	width: 14%;
+}
+
+#team-title-center{
+	width: 72%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+
+}
+
+#team-title-right{
+	width: 14%;
+}
+
+
+#main-page-button {
+	display: flex;
+	justify-content: center;
+	align-items: center; 
+	width: 100%;
+	height: 100%;
+
+}
+
+#main-page-button img{
+	width: 40%;
+	height: 40;
+	max-width: 100%;
+	max-height: 100%;
+
+}
+
+
+
+
+.go-to-main-page:active {
+	content:url("{% static 'images/previous-button-purple.png' %}");
+}
+
+/* -- */
+.loader-container {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 10;
+	color: white;
+	font-family: "Kanit-Regular";
+	font-size: 1.8vh;
+
+}
+
 </style>
 
 
 
-<div class="main">
-	<div id="team-details">
-	Id {{team.id}}
-	<h1>{{team.name}}</h1>
-	<h3>{{team.description}}</h3>
-	Csapattagok: 
-	{% for member in team_members %}
-		{{member.username}} 
-	{% endfor %}
-	</div>
-	<div id="join-or-leave-section">
-		{% if is_own_team %}
-			<button id="leave-team-button" onclick="leaveTeam('{{user_id}}')">Csapat elhagyása</button>
-		{% else %}
-			<button id="join-team-button" onclick="joinTeam('{{user_id}}', '{{team.id}}')">Csatlakozás</button>
-
-		{% endif %}
-		<div id="error-field">
-
+<div id="team-content-page">
+	<div id="team-header">
+		<div id="team-title-left">
+			<div id="main-page-button">
+				<img src="{% static 'images/previous-button.png' %}" alt="Vissza" class="go-to-main-page" onmouseover="changeColor(this)" onmouseout="resetColor(this)">
+			</div>
 		</div>
+		<div id="team-title-center">
+			<div>
+				<div id="team-details">
+				Id {{team.id}}
+				<h1>{{team.name}}</h1>
+
+				</div>
+
+			</div>
+		</div>
+		<div id="team-title-right">	
+		</div>
+
 	</div>
-	<!-- CHAT RÉSZ -->
-	{% if is_own_team %}
-		<div class="container">
-			<div class="row">
-				<div class="col-sm-9 m-0 p-2">
-					<div class="card" id="id_chatroom_card">
-						<!-- card header-->
-						<div class="d-flex flex-row align-items-center card-header" id="id_room_title">
-						<a class="d-flex flex-row" target="_blank" id="id_user_info_container">
-							<img class="profile-image rounded-circle img-fluid" id="id_other_user_profile_image" src="{% static 'images/blank_profile_image.png' %}">
-							<h3 class="ml-2" id="id_other_username"></h3>
-						</a>
-						
-						</div>
-						<!-- card body -->
-						<div class="card-body p-1">
-							<div class="d-flex flex-column" id="id_chat_log_container">
-							
-								<div class="d-flex flex-row justify-content-center" id="id_chatroom_loading_spinner_container">
-									<div class="spinner-border text-primary"  id="id_chatroom_loading_spinner" role="status"  style="display: none; ">
-										<span class="sr-only">Loading...</span>
-									</div>
-								</div>
-								<div class="d-flex chat-log" id="chat_messages_id">
-									
-								</div>
-								<span class="{% if not debug_mode %}d-none{% endif %} page-number" id="id_page_number">1</span>
-								
-								<!-- input for message -->
-								<div class="d-flex flex-row chat-message-input-container">
-									<textarea class="flex-grow-1 chat-message-input" id="send-message-textarea_id"></textarea>
-									<button class="btn btn-primary chat-message-submit-button">
-										<span id="send-message-submit_id" class="material-icons">send
-										</span>
-									</button>
-								</div>
-							</div>
+	<div id="team-body">
+		<!-- CHAT RÉSZ -->
+		{% if is_own_team %}
+			<div id="team-messages">
+				<div id="team-messages-cover">
+					<span id="loading-message"></span>	
+				</div>
+				<!--
+				<div id="private-chat-room-title-container">
+					<div id="private-chat-room-title">
+						<h3 id="private-chat-other-user-name">...</h3>
+					</div>
+				</div>
+				-->
+
+				<!-- eköré a div köré lehetne tenni 1 divet aminek paddingot allitunk-->
+				<div id="team-chat-container"> <!-- public chatnel ez a chat-containernek felel meg -->
+					<!--
+					LOADING SPINNER
+					<div class="d-flex flex-row justify-content-center" id="id_chatroom_loading_spinner_container">
+						<div class="spinner-border text-primary"  id="id_chatroom_loading_spinner" role="status"  style="display: none; ">
+							<span class="sr-only">Loading...</span>
 						</div>
 					</div>
+					
+					-->
+
+
+					
+					<div class="chat-messages" id="chat_messages_id">
+						
+					</div>
+
+
+					<div class="send-new-message-container">
+						<textarea class="send-new-message-textarea" id="send-new-message-textarea-id"></textarea>
+						<div id="send-new-message-button">
+							<img src="{% static 'images/send-message-icon.png' %}" alt="küldés">
+						</div>
+					</div>
+					
+					<div id="error-message-div">
+						<!-- Hibaüzenetek chatelés közben -->
+						<span id="error-message-text">Hiba!</span>
+
+					</div>	
+
+
+				</div>
+
+
+			</div>
+		{% endif %}
+		<div id="body-details">
+			details
+			<h3>{{team.description}}</h3>
+			Csapattagok: 
+			{% for member in team_members %}
+				{{member.username}} 
+			{% endfor %}
+
+			<div id="join-or-leave-section">
+				{% if is_own_team %}
+					<button id="leave-team-button" onclick="leaveTeam('{{user_id}}')">Csapat elhagyása</button>
+				{% else %}
+					<button id="join-team-button" onclick="joinTeam('{{user_id}}', '{{team.id}}')">Csatlakozás</button>
+
+				{% endif %}
+				<div id="error-field">
+
 				</div>
 			</div>
 		</div>
-	{% endif %}
+	</div>
+	<div id="team-footer">
+		footer
+	</div>
+	<div class="loader-container">
+	</div>
 </div>
 
 <script type="text/javascript">
+
+
+	var fadeOutLoaderScreen = null
+
+	$(window).on("load", function(){
+		$("#loading-message").html("Csapat üzeneteinek betöltése...")
+		// alapból a websocket kapcsolat létrehozása utána fade outolja ki, de ha valami hiba lenne, akkor 
+		// 2600ms utan mindenkepp 
+		
+		fadeOutLoaderScreen = setTimeout(function(){
+			$("#team-messages-cover").fadeOut("slow")
+			$("#loading-message").html("")
+		}, 2600)
+
+		// csapathoz csatlakozásnál reloadoljuk a page-t: ilyenkor nem akarjuk hogy a fadeout effect megjelenjen megint
+		// ezzel a funkcionalitassal meg tudjuk allapitani hogy az oldal most tölt be, vagy pedig a program által
+		// lett reloadolva
+		var reloading = sessionStorage.getItem("reloading");
+		if (reloading){
+			$(".loader-container").css("display", "none")
+			sessionStorage.removeItem("reloading");
+			console.log("it was a reload")
+		}
+		else{
+			$(".loader-container").fadeOut("slow")
+		}		
+
+
+	})
+
+	const audio = new Audio()
+	audio.src = "{% static 'audios/button_click.mp3' %}"
+
+	function changeColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/previous-button-red.png' %}")
+	}
+
+	function resetColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/previous-button.png' %}")
+	}
+
+
+	$(".go-to-main-page").click(function(){
+    	audio.play()
+
+    	setTimeout(function(){
+	    	try {
+
+				var url = "{% url 'home_page' %}"
+				var win = window.location.replace(url) 
+				win.focus()
+			}
+			catch(error){
+				console.log(error)
+			}
+
+    	}, 200)
+    	$(".loader-container").fadeIn("fast")
+	})
+
 
 
 	function joinTeam(userId, teamId){
@@ -197,7 +519,12 @@
 				timeout: 5000,
 				success: function(response) {
 					console.log('success')
+
+					sessionStorage.setItem("reloading", "true");
 					location.reload()
+
+
+
 
 				},
 				error: function(response) {
@@ -227,8 +554,10 @@
 			if (response.team_is_deleted)
 				location.href = "{% url 'team:user_team_view' %}"
 			else{
-				//location.reload()
-				location.href = "{% url 'team:user_team_view' %}"
+
+				sessionStorage.setItem("reloading", "true");
+				location.reload()
+				//location.href = "{% url 'team:user_team_view' %}"
 			}
 		},	
 		error: function(response){
@@ -237,6 +566,11 @@
 
 	})
 }
+
+
+
+
+
 
 // CHAT RÉSZ ----------------------------------
 
@@ -283,6 +617,14 @@
 		teamSocket.onopen = function(event) {
 			console.log("Connection successfully created");
 
+			clearTimeout(fadeOutLoaderScreen) // tesztek alapján az se baj ha nem clear-eli
+			setTimeout(function(){
+
+				$("#loading-message").html("")
+				$("#team-messages-cover").fadeOut("slow")
+
+				}, 400)
+
 		};
 
 		// felhasználó beléptetése az adott szobába miután a socket kapcsolat létrejött
@@ -305,6 +647,9 @@
 
 			if (data.error){ // az error a consumerstől jön ha üres az üzenet
 				console.log(data.message)
+				{% if is_own_team %}
+					showEmptyMessageError(data.message)
+				{% endif %}
 			}
 
 			if (data.join){
@@ -349,27 +694,37 @@
 		};
 	}
 
+	function showEmptyMessageError(message){
 
+		var errorMessageText = document.getElementById("error-message-text").innerHTML = message
+		$("#error-message-text").css("visibility", "visible")
+		setTimeout(function(){
+			$("#error-message-text").css("visibility", "hidden")
+		},1500)
+
+
+
+	}
 
 
 	// ÜZENET KÜLDÉS KEZDETE //
 
 	{% if is_own_team%} // ha nem a csapatat nezi ez a resz nem tud mukodni mivel nincs mit beallitani
 
-	document.getElementById("send-message-textarea_id").focus();
+	document.getElementById("send-new-message-textarea-id").focus();
 
-	document.getElementById("send-message-textarea_id").onkeyup = function(event) {
+	document.getElementById("send-new-message-textarea-id").onkeyup = function(event) {
 		if (event.keyCode == 13 && event.shiftKey){
 			// új sor, küldés nélkül, textarea automatikusan kezeli
 		}
 		else if (event.keyCode == 13 && !event.shiftKey){
-			document.getElementById("send-message-submit_id").click();
+			document.getElementById("send-new-message-button").click();
 		}
 	}
 
 
-	document.getElementById("send-message-submit_id").onclick = function(event) {
-		var rawInputMessage = document.getElementById("send-message-textarea_id"); 	// html formátum
+	document.getElementById("send-new-message-button").onclick = function(event) {
+		var rawInputMessage = document.getElementById("send-new-message-textarea-id"); 	// html formátum
 		var message = rawInputMessage.value;										// a bevitt szöveg
 
 		// üzenet küldése a consumernek, receive_json hívódik meg a consumerben
@@ -405,7 +760,7 @@
 			teamChatPageNumber = pageNumber
 		}
 
-		document.getElementById("id_page_number").innerHTML = teamChatPageNumber
+		//document.getElementById("id_page_number").innerHTML = teamChatPageNumber
 		console.log(teamChatPageNumber)
 	}
 
@@ -466,6 +821,7 @@
 
 
 // CHAT ÜZENETEK MEGJELENÍTÉSE KEZDETE // 
+	var currentUserID = "{{account.id}}"
 
 	function appendChatMessage(data, maintainPosition, isNewMessage){
 		userId = data["user_id"]
@@ -485,10 +841,155 @@
 
 
 	function createChatMessageElement(userId, username, message_id, message, profile_image, sendingTime, maintainPosition, isNewMessage){
-	var chatMessage = document.getElementById("chat_messages_id");
+
+		var chatMessage = document.getElementById("chat_messages_id");
 
 
-	var chatMessage = document.getElementById("chat_messages_id");
+		// egy adott chat üzenet, amelyben minden benne van: profilkép, üzenet stb.
+		var newChatMessage = document.createElement("div")
+		newChatMessage.style.display = "flex"
+		newChatMessage.style.flexDirection = "column"
+		newChatMessage.style.width = "100%"
+		newChatMessage.classList.add("new-chat-message-container")
+		//newChatMessage.setAttribute("id", "messageID-" + messageID)
+		
+
+
+		//newChatMessage.style.alignItems = "flex-end"
+		//messageField.style.backgroundColor = "green"
+
+		// a felhasználó neve
+		var newChatMessageTop = document.createElement("div")
+		newChatMessageTop.style.flex = "1"
+		newChatMessageTop.style.display = "flex"
+		newChatMessageTop.style.flexDirection = "row"
+		newChatMessageTop.classList.add("new-chat-message-top")
+
+
+		// a felhasználó profilképe és az üzenet
+		var newChatMessageBody = document.createElement("div")
+		newChatMessageBody.style.flex = "1"
+		newChatMessageBody.style.display = "flex"
+		newChatMessageBody.style.flexDirection = "row"
+		newChatMessageBody.classList.add("new-chat-message-body")
+
+
+		// placeholder esetleges további bővítésekhez
+		var newChatMessageBottom = document.createElement("div")
+		newChatMessageBottom.style.flex = "1"
+		newChatMessageBottom.classList.add("new-chat-message-bottom")
+
+
+		// TOP 
+
+		// ez csak placeholder
+		var usernameFieldLeft = document.createElement("div") 
+		usernameFieldLeft.style.display = "flex"
+		usernameFieldLeft.style.width = "5%"
+
+
+		// tényleges felhasználónév
+		var usernameFieldRight = document.createElement("p")
+		usernameFieldRight.classList.add("username-field-right")
+		usernameFieldRight.innerHTML = username
+		usernameFieldRight.addEventListener("click", function(event){
+			selectUser(userId)
+		})
+
+		if (userId == currentUserID){
+			usernameFieldRight.style.justifyContent = "end"
+			usernameFieldRight.style.visibility = "hidden"
+		}
+
+
+
+		newChatMessageTop.appendChild(usernameFieldLeft)
+		newChatMessageTop.appendChild(usernameFieldRight)
+
+		// BODY 
+
+		// profilkép 
+		var newChatMessageBodyProfilePicture = document.createElement("div")
+		newChatMessageBodyProfilePicture.style.display = "flex"
+		newChatMessageBodyProfilePicture.style.justifyContent = "center"
+		//newChatMessageBodyProfilePicture.style.alignItems = "center"
+		newChatMessageBodyProfilePicture.style.marginTop = "auto"
+		newChatMessageBodyProfilePicture.style.width = "5%"
+		newChatMessageBodyProfilePicture.style.zIndex = "2"
+
+		var newChatMessageBodyProfilePictureImg = document.createElement("img")
+		newChatMessageBodyProfilePictureImg.classList.add("profile-image")
+		newChatMessageBodyProfilePictureImg.src = "{% static 'images/blank_profile_image.png' %}"
+		newChatMessageBodyProfilePictureImg.addEventListener("click", function(event) {
+			selectUser(userId)
+		})
+
+		var profileImageID = "profileImage " + message_id 
+		newChatMessageBodyProfilePictureImg.id = profileImageID
+
+		newChatMessageBodyProfilePicture.appendChild(newChatMessageBodyProfilePictureImg)
+
+		// üzenet
+		var messageFieldDiv = document.createElement("div")
+		messageFieldDiv.classList.add("message-text")
+
+		var messageField = document.createElement("p")
+		//messageField.classList.add("message-text")
+
+		//messageField.style.backgroundColor = "#b4cfec"
+		messageField.style.backgroundImage = "linear-gradient(orange, yellow)"
+		messageField.style.borderRadius = "20px"
+		messageField.style.padding = "10px"
+		messageField.style.maxWidth = "75%"
+		messageField.innerHTML = message
+
+		var tooltipSpan = document.createElement("span")
+		tooltipSpan.innerHTML = sendingTime
+		tooltipSpan.classList.add("tooltip-span")
+
+		if (userId == currentUserID){
+			messageFieldDiv.appendChild(tooltipSpan)
+			messageFieldDiv.appendChild(messageField)
+
+		}
+		else{
+			messageFieldDiv.appendChild(messageField)
+			messageFieldDiv.appendChild(tooltipSpan)
+		}
+
+		if (userId == currentUserID){
+			messageFieldDiv.style.justifyContent = "end"
+			//messageField.style.backgroundColor = "#82cafa"
+			messageField.style.backgroundImage = "linear-gradient(brown, orange)"
+			messageField.style.fontWeight = "bold"
+			newChatMessageBody.appendChild(messageFieldDiv)		
+			newChatMessageBody.appendChild(newChatMessageBodyProfilePicture)
+		}
+		else{
+			newChatMessageBody.appendChild(newChatMessageBodyProfilePicture)
+			newChatMessageBody.appendChild(messageFieldDiv)
+		}
+		// BOTTOM
+
+		var bottomField = document.createElement("p")
+		bottomField.style.flex = "1"
+		bottomField.style.width = "100%"
+		bottomField.style.visibility = "hidden"
+		bottomField.style.fontSize = "0.2em"
+		bottomField.innerHTML = "Láthatatlan szöveg - esetleges bővítéshez: pl. ki látta stb."
+
+		newChatMessageBottom.appendChild(bottomField)
+
+
+
+
+
+		// az elkészült top-body-bottom div-ek hozzáadása a fő tárolóhoz
+		newChatMessage.appendChild(newChatMessageTop)
+		newChatMessage.appendChild(newChatMessageBody)
+		newChatMessage.appendChild(newChatMessageBottom)
+
+		/*
 
 		var newMessageDiv = document.createElement("div")
 		newMessageDiv.classList.add("d-flex")
@@ -548,20 +1049,20 @@
 		div1.appendChild(msgP)
 
 		newMessageDiv.appendChild(div1)
-
+		*/
 
 		if(isNewMessage){
-			chatMessage.insertBefore(newMessageDiv, chatMessage.firstChild)
+			chatMessage.insertBefore(newChatMessage, chatMessage.firstChild)
 		}
 		else {
-			chatMessage.appendChild(newMessageDiv)
+			chatMessage.appendChild(newChatMessage)
 		}
 
 		if(!maintainPosition){
 			chatMessage.scrollTop = chatMessage.scrollHeight
 		}
 
-		loadProfilePicture(profile_image, profileImageId) // profile_image az input
+		loadProfilePicture(profile_image, profileImageID) // profile_image az input
 
 	}
 

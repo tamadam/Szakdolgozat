@@ -168,6 +168,11 @@ def individual_team_view(request, *args, **kwargs):
 			#print('nincs csapata')
 			has_team = False
 
+	try:
+		account = Account.objects.get(id=request.user.id)
+	except:
+		account = None
+		pass
 
 
 	context = {
@@ -176,6 +181,7 @@ def individual_team_view(request, *args, **kwargs):
 		'is_own_team': is_own_team,
 		'has_team': has_team,
 		'user_id': user.id,
+		'account': account,
 	}
 
 	# CHAT RÉSZ ------------------------

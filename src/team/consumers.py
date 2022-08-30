@@ -77,7 +77,7 @@ class TeamConsumer(AsyncJsonWebsocketConsumer):
 				if len(message.lstrip()) != 0:
 					await self.send_chat_message_to_room(room_id, message)
 				else:
-					raise ClientError('EMPTY_MESSAGE', 'Empty message not allowed')
+					raise ClientError('EMPTY_MESSAGE', 'Üres üzenet küldése nem lehetséges!')
 			elif command == 'join':
 				await self.join_room(room_id)
 			elif command == 'leave':
@@ -93,7 +93,7 @@ class TeamConsumer(AsyncJsonWebsocketConsumer):
 
 					await self.send_previous_messages_payload(info_packet['messages'], info_packet['load_page_number'])
 				else:
-					raise ClientError('NO_MESSAGES', 'Something went wrong when getting PrivateChatRoom messages')
+					raise ClientError('NO_MESSAGES', 'Something went wrong when getting Team messages')
 		except ClientError as exception:
 			error = await handle_client_error(exception)
 			await self.send_json(error)
