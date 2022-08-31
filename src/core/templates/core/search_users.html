@@ -1,5 +1,5 @@
-{% extends 'base.html' %}
-
+{% extends 'base_new.html' %}
+{% load static %}
 {% block content %}
 
 <style type="text/css">
@@ -37,33 +37,310 @@
 }
 
 
+
+#display-search-users-page{
+	background-color: white;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	max-width: 1900px;
+}
+
+#search-users-title{
+	height: 20%;
+}
+
+#users{
+	height: 60%;
+	width: 50%;
+	overflow-y: scroll;
+	background-color: yellow;
+}
+
+#footer{
+	height: 20%;
+}
+
+.userDivPaginate {
+	background-color: lightblue;
+	min-height: 50px;
+	border-bottom: 2px solid black;
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+
+
+}
+
+.rank-field{
+	width: 10%;
+	background-color: grey;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+
+.character-type-field{
+	width: 20%;
+	background-color: yellow;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.character-type-field-img{
+	max-width: 100%;
+	max-height: 100%;
+}
+
+.username-field{
+	width: 40%;
+	background-color: red;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.level-field{
+	width: 12%;
+	background-color: green;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.honor-field{
+	width: 18%;
+	background-color: blue;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
 </style>
 
 
-<div class="main">
-	<button id="characters-button" onclick="hideAndUnhide('showCharacters')">Karakterek</button>
-	<button id="teams-button" onclick="hideAndUnhide('showTeams')">Csapatok</button>
-	<div id="characters-list">
-		<h1>Characters</h1>
-		<h3>Név, ID, Szint, Becsületpont</h3>
-		{% for character in characters %}
-		<!--user_id mivel a viewban azt varjuk-->
-		<p id="user-under-investigation" onclick="selectUser('{{character.account.id}}')">{{character}}-{{character.account.id}}
-		{{character.level}}-{{character.honor}}</p><br>
+<div id="display-search-users-page">
+	<div id="search-users-title">Klikk</div>
+	<div id="users">
 		
-		{% endfor %}
 	</div>
-	<div id="teams-list">
+	<div id="footer">
+		footer
+	</div>
+	<!--
+	<div id="rework">
 
-		<p>Csapatok</p>
-		{% for team in teams %}
-			<h3><p id="team-paragh" onclick="selectTeam('{{team.id}}')">{{team.name}}</p></h3>
-		{% endfor %}
+		<button id="characters-button" onclick="hideAndUnhide('showCharacters')">Karakterek</button>
+		<button id="teams-button" onclick="hideAndUnhide('showTeams')">Csapatok</button>
+		<div id="characters-list">
+			<h1>Characters</h1>
+			<h3>Név, ID, Szint, Becsületpont</h3>
+			{% for character in characters %}
+
+			<p id="user-under-investigation" onclick="selectUser('{{character.account.id}}')">{{character}}-{{character.account.id}}
+			{{character.level}}-{{character.honor}}</p><br>
+			
+			{% endfor %}
+		</div>
+		<div id="teams-list">
+
+			<p>Csapatok</p>
+			{% for team in teams %}
+				<h3><p id="team-paragh" onclick="selectTeam('{{team.id}}')">{{team.name}}</p></h3>
+			{% endfor %}
+		</div>
+
 	</div>
+	-->
+
+
+
+
+
 </div>
 
 
 <script type="text/javascript">
+
+	var usersPageNumber = 1
+
+	$(window).on("load", function(){
+		loadNextPartOfUsers()
+
+	})
+
+
+
+
+	function setPageNumber(pageNumber, loadedAllUsers){ // loadedAllMessages igaz, hogyha betöltötte az összes üzenetet és már nincs mit lekérdezni
+		if (loadedAllUsers){
+			usersPageNumber = -1
+		}
+		else {
+			usersPageNumber = pageNumber
+		}
+
+		//document.getElementById("id_page_number").innerHTML = publicChatPageNumber
+		console.log(usersPageNumber)
+	}
+
+
+
+
+
+	function loadNextPartOfUsers(){
+		let pageNumber = usersPageNumber
+		if (pageNumber != -1){
+			setPageNumber(-1, false)
+			goToAjax(pageNumber)
+		}
+	}
+
+
+	function goToAjax(pageNumber){
+		console.log('gotoajax')
+		payload = {
+			"csrfmiddlewaretoken": "{{csrf_token}}",
+			"page_number": pageNumber,
+
+		}
+		$.ajax({
+			dataType: "json",
+			url: "{% url 'core:load_users_pagination' %}",
+			data: payload,
+
+			success: function(data) {
+				console.log('SUCCESS')
+				console.log(data.users + data.load_page_number)
+				handle_load_users(data.users, data.load_page_number)
+
+			},
+			error: function(data) {
+				console.log('ERROR')
+			},
+		})
+	}
+
+
+	function handle_load_users(users, loadPageNumber){
+		if(users != null && users != "undefined" && users != "None"){
+			setPageNumber(loadPageNumber, false)
+			users.forEach(function(user){
+				//appendChatMessage(message, true, false) // tartsa a pozicíót, nem új üzenet
+				console.log(user)
+				appendUserList(user)
+			})
+		}
+		else{
+			setPageNumber(-1, true)
+		}
+	}
+
+	var rankCounter = 1
+
+
+	function appendUserList(user){
+		userID = user.account.id
+		username = user.account
+		characterType = user.character_type
+		level = user.level
+		honor = user.honor
+
+		createUserElement(userID, username, characterType, level, honor)
+	}
+
+
+	function createUserElement(userID, username, characterType, level, honor){
+		var usersListDiv = document.getElementById("users")
+
+		var newUserDiv = document.createElement("div")
+		newUserDiv.classList.add("userDivPaginate")
+
+
+		var rankField = document.createElement("div")
+		rankField.classList.add("rank-field")
+
+		var rankFieldSpan = document.createElement("span")
+		rankFieldSpan.innerHTML = rankCounter
+		rankCounter++
+
+
+		rankField.appendChild(rankFieldSpan)
+
+		var characterTypeField = document.createElement("div")
+		characterTypeField.classList.add("character-type-field")
+
+		var characterTypeFieldImg = document.createElement("img")
+		if (characterType == "warrior"){
+			characterTypeFieldImg.src = "{% static 'images/swordsman.png' %}"
+		}
+		else if (characterType == "mage"){
+			characterTypeFieldImg.src = "{% static 'images/wizard.png' %}"
+		}
+		else if(characterType == "scout"){
+			characterTypeFieldImg.src = "{% static 'images/archer.png' %}"
+		}
+		else{
+			characterTypeFieldImg.src = "{% static 'images/swordsman.png' %}"
+		}
+
+		characterTypeFieldImg.classList.add("character-type-field-img")
+
+		characterTypeField.appendChild(characterTypeFieldImg)
+
+		var usernameField = document.createElement("div")
+		//usernameField.innerHTML = username
+		usernameField.classList.add("username-field")
+
+		var usernameFieldSpan = document.createElement("span")
+		usernameFieldSpan.innerHTML = username
+
+		usernameField.appendChild(usernameFieldSpan)
+
+		var levelField = document.createElement("div")
+		levelField.classList.add("level-field")
+
+		var levelFieldSpan = document.createElement("span")
+		levelFieldSpan.innerHTML = level
+
+		levelField.appendChild(levelFieldSpan)
+
+		var honorField = document.createElement("div")
+		honorField.classList.add("honor-field")
+
+
+		var honorFieldSpan = document.createElement("span")
+		honorFieldSpan.innerHTML = honor
+
+		honorField.appendChild(honorFieldSpan)
+
+		newUserDiv.appendChild(rankField)
+		newUserDiv.appendChild(characterTypeField)
+		newUserDiv.appendChild(usernameField)
+		newUserDiv.appendChild(levelField)
+		newUserDiv.appendChild(honorField)
+
+		usersListDiv.appendChild(newUserDiv)
+
+	}
+
+
+
+
+
+
+	$("#users").scroll(function(){
+		var div = document.getElementById("users")
+		if ((Math.abs(div.scrollTop) + 2) >= (div.scrollHeight - div.offsetHeight)) {
+			loadNextPartOfUsers()
+		}
+	})
+
+
 
 	function hideAndUnhide(buttonType){
 		var charactersDiv = document.getElementById("characters-list")

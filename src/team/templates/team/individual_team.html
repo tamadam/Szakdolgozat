@@ -376,6 +376,7 @@
 #join-or-leave-section{
 
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	width: 60%;
@@ -388,14 +389,17 @@
 	align-items: center;
 	justify-content: center;
 	width: 50%;
-	height: 30%;
+	height: 80%;
 	font-size: 1em;
 	color: black;
 	font-weight: bold;
 }
 
-
-
+#error-field{
+	height: 20%;
+	color: red;
+	visibility: hidden;
+}
 
 .team-join-leave-button{
 	background: url("{% static 'images/button-back.png' %}");	
@@ -579,9 +583,10 @@
 						<div id="join-team-button" class="team-join-leave-button" onclick="joinTeam('{{user_id}}', '{{team.id}}')">Csatlakozás</div>
 
 					{% endif %}
-					<div id="error-field">
 
-					</div>
+				</div>
+				<div id="error-field">
+					error
 				</div>
 			</div>
 		</div>
@@ -666,6 +671,7 @@
 				console.log("amíg csapatod van nem csatlakozhatsz")
 				var divError = document.getElementById("error-field")
 				divError.innerHTML = "Nem csatlakozhatsz amíg másik csapat tagja vagy"
+				divError.style.visibility = "visible"
 			}
 			else{
 				console.log("JOIN TEAM")

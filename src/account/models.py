@@ -124,6 +124,23 @@ class CharacterManager(models.Manager):
 
 
 
+	def get_all_accounts_in_ordered_list_without_admins(self):
+		characters = [Character.objects.get(account=user) for user in Account.objects.exclude(is_admin=True)]
+
+		try:
+			characters = sorted(characters, key=lambda character: character.account.date_joined) # először date szerint orderelünk
+			characters = sorted(characters, key=attrgetter('honor','level'), reverse=True) # utana a mar rendezett listat honor és level szerint
+		except:
+			characters = sorted(characters, key=attrgetter('honor','level', 'account.username'), reverse=True)  # minimális az esély arra, hogy 2 felhasználó ms-re pontosan 
+														# egyszerre regisztráljon, de ilyen esetben ez egy alternativ rendezési lehetőség,
+														# a sorrend lényegén nem fog változtatni
+		accounts_ordered_list = []
+		for character_ac in characters:
+			accounts_ordered_list.append(Account.objects.get(id=character_ac.account.id))
+
+		return accounts_ordered_list
+
+
 
 class Character(models.Model):
 	account = models.OneToOneField(Account, on_delete=models.CASCADE, primary_key=True) 

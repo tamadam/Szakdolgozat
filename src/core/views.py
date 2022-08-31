@@ -5,7 +5,7 @@ from operator import attrgetter
 from django.conf import settings
 
 import json
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 from core.constants import *
 from team.models import Team
@@ -15,7 +15,7 @@ from django.core.paginator import Paginator
 from django.core.serializers import serialize
 
 
-from account.utils import EncodeAccountObject
+from account.utils import EncodeAccountObject, EncodeCharacterObject
 
 @login_required(login_url='login')
 def home_page_view(request):
@@ -138,17 +138,11 @@ def users_search_view(request):
 		}
 
 
-	try_pagination()
+	#try_pagination()
 
 	return render(request, 'core/search_users.html', context)
 
 
-def try_pagination():
-	p = Paginator(Account.objects.all(), 2)
-
-	s = EncodeAccountObject()
-
-	print(s.serialize(p.page(1).object_list))
 """
 def list_accounts(request):
 	characters = Account.objects.exclude(is_admin=True)
@@ -158,4 +152,47 @@ def list_accounts(request):
 	}
 	return JsonResponse({'characters': list(characters.values())})
 """
+
+
+
+def load_users_pagination(request):
+	try:
+
+		accounts = Character.objects.get_all_accounts_in_ordered_list_without_admins()
+
+		characters = Character.objects.get_all_characters_in_ordered_list_without_admins()
+
+		data = {}
+		page_number = request.GET.get('page_number')
+
+		load_page_number = int(page_number)
+
+		print('PAGE NUMBER' + page_number)
+		p = Paginator(characters, 8) # 8 azt jelenti hogy ennyi profilt jelenitunk meg egyszerre a felületen(10-esével)
+
+
+		print('numpages', p.num_pages)
+
+		if load_page_number <= p.num_pages:
+			load_page_number = load_page_number + 1
+
+			s = EncodeCharacterObject()
+
+			print(s.serialize(p.page(page_number).object_list))
+			print('next')
+
+			data['users'] = s.serialize(p.page(page_number).object_list)
+		else:
+			data['users'] = 'None'
+
+		data['load_page_number'] = load_page_number
+
+
+
+		return JsonResponse(data)
+
+	except Exception as exception:
+		print('Error when getting users' + str(exception))
+
+	return None
 
