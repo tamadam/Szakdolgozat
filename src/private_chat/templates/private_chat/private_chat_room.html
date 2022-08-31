@@ -928,6 +928,13 @@
 			"room_id": roomId,
 		}))
 		rawInputMessage.value = "";
+
+		// azért kell setTimeout mert ha egyből meghívnank a függvényt, még nem lenne mit frissíteni,
+		// a consumeren még nem ment át
+		setTimeout(function(){
+			refresh_page_part()
+		},200)
+		
 	}
 
 	// <<<-------------------------------------------------->>> //
@@ -1031,10 +1038,10 @@
 		profile_image = data["profile_image"]
 		sendingTime = data["sending_time"]
 
-		var msg = message + "\n";
-		var username = usernameReceived + ": "; 
+		var messageReceived = message + "\n";
+		var username = usernameReceived; 
 
-		createChatMessageElement(userId, username, message_id, msg, profile_image, sendingTime, maintainPosition, isNewMessage);
+		createChatMessageElement(userId, username, message_id, messageReceived, profile_image, sendingTime, maintainPosition, isNewMessage);
 	}
 
 

@@ -52,12 +52,20 @@
 #team-content-page{
 	width: 100%;
 	height: 100%;
+	background: url("{% static 'images/team-background-house.jpg' %}");	
+
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+
 	background-color: white;
 	font-family: "Kanit-Regular";
 	font-size: 1.8vh;
 	display: flex;
 	flex-direction: column;
 	max-width: 1900px;
+	color: #e3cc4a;
+
 
 }
 
@@ -82,6 +90,17 @@
 	justify-content: center;
 }
 
+#team-name-title{
+	background: url("{% static 'images/button-back.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	padding: 10px;
+	min-width: 300px;
+	color: black;
+}
+
+
 #team-messages{
 	height: 100%;
 	max-height: 600px;
@@ -90,6 +109,7 @@
 	flex-direction: column;
 	align-items: center;
 	position: relative;
+	margin-right: 2em;
 
 }
 
@@ -110,30 +130,13 @@
 
 #body-details{
 	height: 100%;
-	width: 30%;
-}
-/*
-#private-chat-room-title-container{
+	width: 40%;
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	background-color: #e3cc4a;
-	border-top-left-radius: 20px;
-	border-top-right-radius: 20px;
-
-}
-*/
-
-#private-chat-room-title{
-
-
 }
 
-#private-chat-room-title:hover{
-	cursor: pointer;
-	color: grey;
-}
 
 
 #team-chat-container{
@@ -149,7 +152,9 @@
 	overflow-x: hidden;
 	overflow-y: auto;
 	font-size: 0.9em;
-	background-color: rgba(255, 255, 255, 0.6);
+	/*background-color: rgba(33, 80, 58, 0.6);*/
+	background-color: rgba(112, 139, 186, 0.6);
+	background-image: linear-gradient(to right, rgba(112, 139, 186, 0.6), rgba(95, 61, 49, 0.6));
 	height: 88%;
 	max-height: 600px;
 
@@ -174,15 +179,16 @@
 }
 
 .send-new-message-textarea:focus{
-	outline-color: orange;
+	outline-color: #8e939a;
 }
 
 #send-new-message-button{
 	width: 5%;
 	padding: 10px;
-	background-color: #e4c885;
+	background-color: #e6f8fc;
 	display: flex;
 	align-items: center;
+	justify-content: center;
 
 }
 
@@ -214,6 +220,8 @@
 	justify-content: start;
 	width: 95%;
 	font-weight: bold;
+	color: black;
+
 }
 
 .username-field-right:hover{
@@ -250,7 +258,8 @@
 }
 
 .new-chat-message-container:hover{
-	background-color: #f6dfad;
+	background-color: #5c7399;
+	background-image: linear-gradient(to right, rgba(112, 139, 186), rgba(95, 61, 49));
 }
 
 
@@ -263,7 +272,7 @@
 .tooltip-span{
 	visibility: hidden;
 	margin: 2%;
-	color: grey;
+	color: black;
 
 }
 
@@ -328,6 +337,147 @@
 
 }
 
+#body-details-title{
+	height: 20%;
+	width: 60%;
+	padding: 10px;
+	border-width: 2px;
+	border-style: solid;
+  	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
+	background-color: rgba(0,0,0,0.8);
+	display: flex;
+	flex-direction: column;
+
+}
+
+#title-description{
+	height: 20%;
+	font-size: 0.9em;
+	border
+}
+
+#description-text{
+	height: 80%;
+	font-size: 1em;
+	font-family: "Kanit-Light";
+	text-align: center;
+
+}
+
+#members-container{
+	overflow-x: hidden;
+	overflow-y: auto;
+	height: 45%;
+	width: 60%;
+	margin-top: 2%;
+}
+
+
+#join-or-leave-section{
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 60%;
+	height: 20%;
+
+}
+
+#join-leave-buttons-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 30%;
+	font-size: 1em;
+	color: black;
+	font-weight: bold;
+}
+
+
+
+
+.team-join-leave-button{
+	background: url("{% static 'images/button-back.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	padding: 10px;
+}
+
+.team-join-leave-button:hover{
+	padding: 10px;
+	background: url("{% static 'images/button-back-red.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: #fae455;
+	cursor: pointer;
+}
+
+
+.team-member-container{
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	height: 100%;
+	max-height: 50px;
+}
+
+.team-member-container:hover{
+	cursor: pointer;
+	background-color: rgba(165, 169, 174, 0.6);
+}
+
+.team-member-container-profile-image{
+	width: 14%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-right: 4%;
+}
+
+.team-member-container-member-name{
+	width: 80%;
+	display: flex;
+	align-items: center;
+}
+
+
+.profile-image{
+	width: 2em;
+	height: 2em;
+	border-radius: 50%;
+
+
+}
+
+
+#team-description-title-content {
+    margin:auto;
+    margin-top: -3vh;
+    margin-bottom: 2vh;
+    text-align: center;
+    padding:5px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+#team-description-title{
+	font-weight: bold;
+	font-size: 2.0vh;
+	background-image: url("{% static 'images/button-back.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	margin: 0 auto;
+	width: 50%;
+
+	height: auto;
+	color: black;
+}
+
 </style>
 
 
@@ -341,10 +491,8 @@
 		</div>
 		<div id="team-title-center">
 			<div>
-				<div id="team-details">
-				Id {{team.id}}
-				<h1>{{team.name}}</h1>
-
+				<div id="team-name-title">
+					<h1>{{team.name}}</h1>
 				</div>
 
 			</div>
@@ -360,13 +508,7 @@
 				<div id="team-messages-cover">
 					<span id="loading-message"></span>	
 				</div>
-				<!--
-				<div id="private-chat-room-title-container">
-					<div id="private-chat-room-title">
-						<h3 id="private-chat-other-user-name">...</h3>
-					</div>
-				</div>
-				-->
+
 
 				<!-- eköré a div köré lehetne tenni 1 divet aminek paddingot allitunk-->
 				<div id="team-chat-container"> <!-- public chatnel ez a chat-containernek felel meg -->
@@ -390,7 +532,7 @@
 					<div class="send-new-message-container">
 						<textarea class="send-new-message-textarea" id="send-new-message-textarea-id"></textarea>
 						<div id="send-new-message-button">
-							<img src="{% static 'images/send-message-icon.png' %}" alt="küldés">
+							<img src="{% static 'images/send-message-icon-grey.png' %}" alt="küldés">
 						</div>
 					</div>
 					
@@ -407,28 +549,45 @@
 			</div>
 		{% endif %}
 		<div id="body-details">
-			details
-			<h3>{{team.description}}</h3>
-			Csapattagok: 
-			{% for member in team_members %}
-				{{member.username}} 
-			{% endfor %}
+			<div id="body-details-title">
+				<div id="team-description-title-content">
+					<h4 id="team-description-title">Leírás</h4>
+				</div>
+					<div id="description-text">
+						<h3>{{team.description}}</h3>
+					</div>	
 
+			</div>
+			<div id="members-container">
+				{% for team_member in team_members %}
+					<div class="team-member-container" onclick="selectUser('{{team_member.member.id}}')">
+						<div class="team-member-container-profile-image">
+							<img class="profile-image" src="{{team_member.member_profile_image}}" >
+						</div>
+						<div class="team-member-container-member-name">
+							{{team_member.member.username}} 							
+						</div>
+						
+					</div>
+				{% endfor %}
+			</div>
 			<div id="join-or-leave-section">
-				{% if is_own_team %}
-					<button id="leave-team-button" onclick="leaveTeam('{{user_id}}')">Csapat elhagyása</button>
-				{% else %}
-					<button id="join-team-button" onclick="joinTeam('{{user_id}}', '{{team.id}}')">Csatlakozás</button>
+				<div id="join-leave-buttons-container">
+					{% if is_own_team %}
+						<div id="leave-team-button" class="team-join-leave-button" onclick="leaveTeam('{{user_id}}')">Csapat elhagyása</div>
+					{% else %}
+						<div id="join-team-button" class="team-join-leave-button" onclick="joinTeam('{{user_id}}', '{{team.id}}')">Csatlakozás</div>
 
-				{% endif %}
-				<div id="error-field">
+					{% endif %}
+					<div id="error-field">
 
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div id="team-footer">
-		footer
+		<!--footer-->
 	</div>
 	<div class="loader-container">
 	</div>
@@ -498,74 +657,87 @@
 
 
 	function joinTeam(userId, teamId){
+		audio.play()
 		console.log("joining team...")
-		if ('{{has_team}}' == 'True'){
-			console.log("amíg csapatod van nem csatlakozhatsz")
-			var divError = document.getElementById("error-field")
-			divError.innerHTML = "Nem csatlakozhatsz amíg másik csapat tagja vagy"
-		}
-		else{
-			console.log("JOIN TEAM")
-			payload = {
-				"csrfmiddlewaretoken": "{{csrf_token}}",
-				"user_id": userId,
-				"team_id": teamId,
+
+		//audio hallatszodjon
+		setTimeout(function(){
+			if ('{{has_team}}' == 'True'){
+				console.log("amíg csapatod van nem csatlakozhatsz")
+				var divError = document.getElementById("error-field")
+				divError.innerHTML = "Nem csatlakozhatsz amíg másik csapat tagja vagy"
 			}
-			$.ajax({
-				type: "POST",
-				dataType: "json",
-				url: "{% url 'team:join_team' %}",
-				data: payload,
-				timeout: 5000,
-				success: function(response) {
-					console.log('success')
+			else{
+				console.log("JOIN TEAM")
+				payload = {
+					"csrfmiddlewaretoken": "{{csrf_token}}",
+					"user_id": userId,
+					"team_id": teamId,
+				}
+				$.ajax({
+					type: "POST",
+					dataType: "json",
+					url: "{% url 'team:join_team' %}",
+					data: payload,
+					timeout: 5000,
+					success: function(response) {
+						console.log('success')
 
-					sessionStorage.setItem("reloading", "true");
-					location.reload()
+						sessionStorage.setItem("reloading", "true");
+						location.reload()
 
 
 
 
-				},
-				error: function(response) {
-					console.log('error')
-				},
-			})
-		}
+					},
+					error: function(response) {
+						console.log('error')
+					},
+				})
+			}
+		},100)
+
+
+
 	}
 
 
 
 
 	function leaveTeam(userId){
-	console.log('leaving team...')
-	payload = {
-		"csrfmiddlewaretoken": "{{csrf_token}}",
-		"user_id": userId,
-	}
-	$.ajax({
-		type: "POST",
-		dataType: "json",
-		url: "{% url 'team:leave_team' %}",
-		data: payload,
-		timeout: 5000,
-		success: function(response){
-			console.log('success')
-			if (response.team_is_deleted)
-				location.href = "{% url 'team:user_team_view' %}"
-			else{
+		audio.play()
+		console.log('leaving team...')
 
-				sessionStorage.setItem("reloading", "true");
-				location.reload()
-				//location.href = "{% url 'team:user_team_view' %}"
+		setTimeout(function(){
+			payload = {
+				"csrfmiddlewaretoken": "{{csrf_token}}",
+				"user_id": userId,
 			}
-		},	
-		error: function(response){
-			console.log('error at ajax team_page')
-		},
+			$.ajax({
+				type: "POST",
+				dataType: "json",
+				url: "{% url 'team:leave_team' %}",
+				data: payload,
+				timeout: 5000,
+				success: function(response){
+					console.log('success')
+					if (response.team_is_deleted)
+						location.href = "{% url 'team:user_team_view' %}"
+					else{
 
-	})
-}
+						sessionStorage.setItem("reloading", "true");
+						location.reload()
+						//location.href = "{% url 'team:user_team_view' %}"
+					}
+				},	
+				error: function(response){
+					console.log('error at ajax team_page')
+				},
+
+			})
+		}, 100)
+
+	}
 
 
 
@@ -832,10 +1004,10 @@
 		profile_image = data["profile_image"]
 		sendingTime = data["sending_time"]
 
-		var msg = message + "\n";
-		var username = usernameReceived + ": "; 
+		var messageReceived = message + "\n";
+		var username = usernameReceived; 
 
-		createChatMessageElement(userId, username, message_id, msg, profile_image, sendingTime, maintainPosition, isNewMessage);
+		createChatMessageElement(userId, username, message_id, messageReceived, profile_image, sendingTime, maintainPosition, isNewMessage);
 	}
 
 
@@ -937,10 +1109,12 @@
 		//messageField.classList.add("message-text")
 
 		//messageField.style.backgroundColor = "#b4cfec"
-		messageField.style.backgroundImage = "linear-gradient(orange, yellow)"
+		//messageField.style.backgroundImage = "linear-gradient(#1d6881, #1f7795)"
+		messageField.style.backgroundColor = "#aecaf2"
+		messageField.style.color = "black"
 		messageField.style.borderRadius = "20px"
 		messageField.style.padding = "10px"
-		messageField.style.maxWidth = "75%"
+		messageField.style.maxWidth = "75%"	
 		messageField.innerHTML = message
 
 		var tooltipSpan = document.createElement("span")
@@ -959,8 +1133,9 @@
 
 		if (userId == currentUserID){
 			messageFieldDiv.style.justifyContent = "end"
-			//messageField.style.backgroundColor = "#82cafa"
-			messageField.style.backgroundImage = "linear-gradient(brown, orange)"
+			messageField.style.backgroundColor = "#e3cc4a"
+			messageField.style.color = "black"
+			//messageField.style.backgroundImage = "linear-gradient(#011b29, #080907)"
 			messageField.style.fontWeight = "bold"
 			newChatMessageBody.appendChild(messageFieldDiv)		
 			newChatMessageBody.appendChild(newChatMessageBodyProfilePicture)

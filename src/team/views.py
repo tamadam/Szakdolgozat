@@ -5,6 +5,9 @@ from .models import Team, Membership, TeamMessage
 from .forms import TeamCreationForm
 from django.conf import settings
 import json
+
+from core.constants import *
+
 from django.http import HttpResponse, JsonResponse
 
 
@@ -175,9 +178,24 @@ def individual_team_view(request, *args, **kwargs):
 		pass
 
 
+	team_members = []
+	for team_member in team.users.all():
+		print("csapattag", team_member)
+
+		try:
+			profile_image = team_member.profile_image.url
+		except Exception as e:
+			profile_image = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
+
+		team_members.append({
+				'member': team_member,
+				'member_profile_image': profile_image,
+			})
+
+
 	context = {
 		'team': team,
-		'team_members': team.users.all(),
+		'team_members': team_members,
 		'is_own_team': is_own_team,
 		'has_team': has_team,
 		'user_id': user.id,
