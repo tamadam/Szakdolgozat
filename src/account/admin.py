@@ -53,7 +53,7 @@ class AccountAdminConfig(UserAdmin):
 admin.site.register(Account, AccountAdminConfig)
 
 class CharacterConfig(admin.ModelAdmin):
-	list_display = ('account', 'character_type', 'level', 'honor')  
+	list_display = ('account', 'character_type', 'level', 'honor', 'rank')  
 	readonly_fields = ['character_type', 'account']
 	#ezek hogy ne dobjon hibat
 	filter_horizontal = ()

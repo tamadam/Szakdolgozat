@@ -29,12 +29,22 @@ class EncodeCharacterObject(Serializer):
 		Szerializáljuk a character objectet JSON formátumra, amelyet utána visszaküldünk a viewhoz
 		"""
 
+		try:
+			team = str(obj.account.team_set.all()[0].name)
+		except Exception as e:
+			# ha nincs csapata
+			team = '-'
+
+
+
 		character_object = {
+			'id': str(obj.account.id),
 			'account': str(obj.account),
 			'character_type': str(obj.character_type),
 			'level': str(obj.level),
 			'rank': str(obj.rank),
 			'honor': str(obj.honor),
+			'team': team
 		}
 
 		return character_object

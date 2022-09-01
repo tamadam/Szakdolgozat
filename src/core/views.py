@@ -16,6 +16,7 @@ from django.core.serializers import serialize
 
 
 from account.utils import EncodeAccountObject, EncodeCharacterObject
+from team.utils import EncodeTeamObject
 
 @login_required(login_url='login')
 def home_page_view(request):
@@ -168,7 +169,7 @@ def load_users_pagination(request):
 		load_page_number = int(page_number)
 
 		print('PAGE NUMBER' + page_number)
-		p = Paginator(characters, 8) # 8 azt jelenti hogy ennyi profilt jelenitunk meg egyszerre a felületen(10-esével)
+		p = Paginator(characters, 8) # 8 azt jelenti hogy ennyi profilt jelenitunk meg egyszerre a felületen(8-esével)
 
 
 		print('numpages', p.num_pages)
@@ -195,4 +196,46 @@ def load_users_pagination(request):
 		print('Error when getting users' + str(exception))
 
 	return None
+
+
+def load_teams_pagination(request):
+	try:
+
+		teams = Team.objects.all()
+
+		data = {}
+		page_number = request.GET.get('page_number')
+
+		load_page_number = int(page_number)
+
+		print('PAGE NUMBER' + page_number)
+		p = Paginator(teams, 8) 
+
+
+		print('numpages', p.num_pages)
+
+		if load_page_number <= p.num_pages:
+			load_page_number = load_page_number + 1
+
+			s = EncodeTeamObject()
+
+			print(s.serialize(p.page(page_number).object_list))
+			print('next')
+			print(load_page_number)
+
+			data['teams'] = s.serialize(p.page(page_number).object_list)
+		else:
+			data['teams'] = 'None'
+
+		data['load_page_number'] = load_page_number
+
+
+
+		return JsonResponse(data)
+
+	except Exception as exception:
+		print('Error when getting users' + str(exception))
+
+	return None
+
 

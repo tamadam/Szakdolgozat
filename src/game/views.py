@@ -427,6 +427,9 @@ def arena_fight(request):
 	defender_user.save()
 	defender_user_history.save()
 
+	# frissíti a karakterek helyezését
+	updateRank()
+
 
 	s = EncodeAccountObject()
 
@@ -441,3 +444,15 @@ def arena_fight(request):
 	}
 
 	return JsonResponse(data)
+
+
+
+def updateRank():
+	print('updating ranks...')
+	rank_counter = 1
+	characters = Character.objects.get_all_characters_in_ordered_list_without_admins()
+
+	for character in characters:
+		character.rank = rank_counter
+		rank_counter += 1
+		character.save()
