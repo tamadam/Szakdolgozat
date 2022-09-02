@@ -41,6 +41,9 @@ def register_page_view(request):
 			else:
 				pass # admin user has the default values
 
+
+			updateRank()
+
 			return redirect('login')
 
 
@@ -353,3 +356,15 @@ def set_scout(user):
 	profile.fortune = 8
 
 	profile.save()
+
+
+
+def updateRank():
+	print('updating ranks...')
+	rank_counter = 1
+	characters = Character.objects.get_all_characters_in_ordered_list_without_admins()
+
+	for character in characters:
+		character.rank = rank_counter
+		rank_counter += 1
+		character.save()

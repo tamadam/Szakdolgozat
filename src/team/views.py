@@ -79,7 +79,7 @@ def user_team_view(request):
 	teams = Team.objects.all()
 	context['teams'] = teams
 
-
+	update_team_rank()
 
 	return render(request, 'team/team_page.html', context)
 
@@ -208,3 +208,17 @@ def individual_team_view(request, *args, **kwargs):
 
 
 	return render(request, 'team/individual_team.html', context)
+
+
+
+
+def update_team_rank():
+	print('updating team ranks...')
+	rank_counter = 1
+	teams = Team.objects.all()
+	teams = sorted(teams, key=lambda team: team.date_created)
+
+	for team in teams:
+		team.rank = rank_counter
+		rank_counter += 1
+		team.save()

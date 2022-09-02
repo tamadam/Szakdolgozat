@@ -20,6 +20,8 @@ class Team(models.Model):
 	date_created 	= models.DateTimeField(verbose_name = 'date created', auto_now_add = True, null=True)
 	users 			= models.ManyToManyField(settings.AUTH_USER_MODEL, through='Membership')
 	users_in_chat 	= models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='users_in_chat')
+	rank			= models.DecimalField(verbose_name='rank', max_digits=19, decimal_places=0, blank = True, null = True) #helyezes
+
 
 	def __str__(self):
 		return self.name

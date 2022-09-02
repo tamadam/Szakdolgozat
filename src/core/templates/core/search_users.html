@@ -46,6 +46,9 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
   background: #555; 
 }
 
+/* elrejtjük a scrollbart  de így is lehet görgetni */
+::-webkit-scrollbar {display:none;}
+
 
 #characters-list {
 	display: block;
@@ -97,12 +100,20 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 }
 
 #search-users-title{
-	height: 20%;
+	height: 14%;
 	width: 100%;
 	display: flex;
 	flex-direction: row;
 	font-family: "Kanit-Regular";
 	font-size: 2vh;
+}
+
+#search-field{
+	height: 6%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 
@@ -117,6 +128,17 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 	justify-content: center;
 	text-align: center;
 
+
+}
+
+#search-users-title-name{
+	background: url("{% static 'images/button-back.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	padding: 10px;
+	min-width: 300px;
+	color: black;
 }
 
 #search-users-title-right{
@@ -153,9 +175,19 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 
 #users-container{
 	height: 60%;
+	max-height: 550px;
+	min-width: 650px;
 	width: 50%;
 	display: flex;
 	flex-direction: column;
+
+	background-color: rgba(137, 111, 102, 0.6);
+	background-image: linear-gradient(rgba(137, 111, 102, 0.4), rgba(167, 153, 118, 0.4));
+	padding: 1em;
+	box-shadow: rgba(0, 0, 0, 0.9) 0px 22px 70px 4px;
+	font-size: 1.8vh;
+	font-family: "Kanit-Regular";
+
 }
 
 
@@ -168,75 +200,84 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 }
 
 .switch-button{
-  font-size: 1.8vh;
-  position: relative;
-  display: inline-block;
-  width: 5em;
-  height: 2em;
+	font-size: 1.8vh;
+	position: relative;
+	display: inline-block;
+	width: 5em;
+	height: 2em;
 }
 
 .switch-button input{
-  opacity: 0;
-  width: 0;
-  height: 0;
+	opacity: 0;
+	width: 0;
+	height: 0;
 }
 
 
 .slider{
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: lightgray;
-  transition: 0.4s;
-  border-radius: 30px;
-
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #680c1a; /* rgba(104, 12, 26) */
+	transition: 0.4s;
+	border-radius: 30px;
+	box-shadow: rgba(220, 191, 124, 0.4) 0em 0.1em 0.7em 0.2em; /* #dcbf7c */
 }
 
 
 .slider:before{
-  position: absolute;
-  content: "";
-  height: 1.4em;
-  width: 1.4em;
-  border-radius: 20px;
-  left: 0.3em;
-  bottom: 0.3em;
-  background-color: white;
-  transition: 0.4s;
+	position: absolute;
+	content: "";
+	height: 1.4em;
+	width: 1.4em;
+	border-radius: 20px;
+	left: 0.3em;
+	bottom: 0.3em;
+	background-color: white;
+	transition: 0.4s;
 }
 
 input:checked + .slider {
-  background-color: green;
+	background-color: #dcbf7c;
+	box-shadow: rgba(255, 14, 50, 0.4) 0em 0.1em 0.7em 0.2em;
 }
 
 
 input:checked + .slider:before {
-  transform: translateX(3.0em);
+	transform: translateX(3.0em);
 }
 
 
 
 #users-header{
 	height: 4%;
-	overflow-y: scroll;
+	width: 100%;
 
 	display: flex;
 	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	font-family: "Kanit-Bold";
+	font-size: 2vh;
+	color: white;
+	margin-bottom: 2%;
+	text-shadow: 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black; 
+	padding: 0.4em;
+	text-align: center;
+
 }
 
 #users{
-	height: 92%;
+	height: 96%;
 	width: 100%;
 	overflow-y: scroll;
-	background-color: yellow;
+	color: #e4d153;
+	text-shadow: 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black; 
 }
 
-#users-footer{
-	height: 4%;
-}
 
 
 #teams-container{
@@ -244,32 +285,48 @@ input:checked + .slider:before {
 	width: 50%;
 	display: none;
 	flex-direction: column;
+
+	max-height: 550px;
+
+	background-color: rgba(137, 111, 102, 0.6);
+	background-image: linear-gradient(rgba(137, 111, 102, 0.4), rgba(167, 153, 118, 0.4));
+	padding: 1em;
+	box-shadow: rgba(0, 0, 0, 0.9) 0px 22px 70px 4px;
+	font-size: 1.8vh;
+	font-family: "Kanit-Regular";
 }
 
 #teams-header{
 	height: 4%;
-	overflow-y: scroll;
+	width: 100%;
 
 	display: flex;
 	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	font-family: "Kanit-Bold";
+	font-size: 2vh;
+	color: white;
+	margin-bottom: 2%;
+	text-shadow: 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black; 
+	padding: 0.4em;
+	text-align: center;
 }
 
 #teams{
-	height: 92%;
+	height: 96%;
 	width: 100%;
 	overflow-y: scroll;
-	background-color: yellow;
+	color: #e4d153;
+	text-shadow: 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black; 
 }
 
-#teams-footer{
-	height: 4%;
-}
 
 
 
 #users-header-rank{
 	width: 10%;
-	background-color: grey;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -277,7 +334,7 @@ input:checked + .slider:before {
 
 #users-header-character-type{
 	width: 20%;
-	background-color: yellow;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;	
@@ -285,7 +342,7 @@ input:checked + .slider:before {
 
 #users-header-username{
 	width: 20%;
-	background-color: red;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;	
@@ -293,7 +350,7 @@ input:checked + .slider:before {
 
 #users-header-team{
 	width: 20%;
-	background-color: orange;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;	
@@ -301,7 +358,7 @@ input:checked + .slider:before {
 
 #users-header-level{
 	width: 12%;
-	background-color: green;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;	
@@ -309,33 +366,95 @@ input:checked + .slider:before {
 
 #users-header-honor{
 	width: 18%;
-	background-color: blue;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;	
 }
 
 
+#teams-header-rank{
+	width: 10%;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#teams-header-image{
+	width: 20%;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#teams-header-team-name{
+	width: 40%;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#teams-header-team-members-count{
+	width: 30%;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
 
 .user-div-paginate {
-	background-color: lightblue;
+
 	min-height: 50px;
 	max-height: 80px;
-	border-bottom: 2px solid black;
+
 	display: flex;
 	flex-direction: row;
 	width: 100%;
+	padding: 0.4em;
+	font-size: 1.9vh;
+	border-bottom: 1px solid rgba(251, 244, 193, 0.6);
+
+
+
 
 
 }
+
 
 .user-div-paginate:hover{
 	cursor: pointer;
+	background-color: rgba(127, 96, 84, 0.4);
 }
+
+
+
+
+.user-div-search-paginate{
+	min-height: 50px;
+	max-height: 80px;
+
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	padding: 0.4em;
+	font-size: 1.9vh;
+	border-bottom: 1px solid rgba(251, 244, 193, 0.6);
+
+}
+
+.user-div-search-paginate:hover{
+	cursor: pointer;
+	background-color: rgba(127, 96, 84, 0.4);	
+}
+
 
 .rank-field{
 	width: 10%;
-	background-color: grey;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -344,7 +463,7 @@ input:checked + .slider:before {
 
 .character-type-field{
 	width: 20%;
-	background-color: yellow;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -357,7 +476,7 @@ input:checked + .slider:before {
 
 .username-field{
 	width: 20%;
-	background-color: red;
+
 	display: flex;
 
 	align-items: center;
@@ -366,7 +485,7 @@ input:checked + .slider:before {
 
 .user-team-field{
 	width: 20%;
-	background-color: orange;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -374,7 +493,7 @@ input:checked + .slider:before {
 
 .level-field{
 	width: 12%;
-	background-color: green;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -382,7 +501,7 @@ input:checked + .slider:before {
 
 .honor-field{
 	width: 18%;
-	background-color: blue;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -390,25 +509,48 @@ input:checked + .slider:before {
 
 
 .user-div-paginate-team {
-	background-color: lightblue;
 	min-height: 50px;
 	max-height: 80px;
-	border-bottom: 2px solid black;
+
 	display: flex;
 	flex-direction: row;
 	width: 100%;
+	padding: 0.4em;
+	font-size: 1.9vh;
+	border-bottom: 1px solid rgba(251, 244, 193, 0.6);
+
+
 
 
 }
 
 .user-div-paginate-team:hover{
 	cursor: pointer;
+	background-color: rgba(127, 96, 84, 0.4);
 }
+
+.user-div-search-paginate-team{
+	min-height: 50px;
+	max-height: 80px;
+
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	padding: 0.4em;
+	font-size: 1.9vh;
+	border-bottom: 1px solid rgba(251, 244, 193, 0.6);
+}
+
+.user-div-search-paginate-team:hover{
+	cursor: pointer;
+	background-color: rgba(127, 96, 84, 0.4);
+}
+
 
 
 .rank-field-team{
 	width: 10%;
-	background-color: grey;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -417,7 +559,7 @@ input:checked + .slider:before {
 
 .character-type-field-team{
 	width: 20%;
-	background-color: yellow;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -430,15 +572,15 @@ input:checked + .slider:before {
 
 .username-field-team{
 	width: 40%;
-	background-color: red;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 
 .level-field-team{
-	width: 12%;
-	background-color: green;
+	width: 30%;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -464,7 +606,38 @@ input:checked + .slider:before {
 }
 
 
+#search-input{
+	font-family: "Kanit-Regular";
+	font-size: 1.8vh;
+	padding: 0.4em;
+	width: 20%;
+	text-align: center;
+	background-color: rgba(245, 219, 141, 0.8);
+	background-image: linear-gradient(to right, rgba(188, 133, 84, 0.6), rgba(108, 16, 32, 0.6));
+	color: #f5df4b;
+	outline: none;
+	border: none;
+	border-radius: 20px;
 
+}
+
+::placeholder{
+	color: white;
+	font-family: "Kanit-Light";
+	font-size: 1.2em;
+
+}
+
+
+#search-input:focus::placeholder{
+	color: transparent;
+}
+
+#search-input:focus{
+	background-color: rgba(245, 219, 141, 1.0);
+	background-image: linear-gradient(to right, rgba(188, 133, 84, 0.6), rgba(108, 16, 32, 1.0));
+
+}
 
 </style>
 
@@ -477,10 +650,16 @@ input:checked + .slider:before {
 			</div>
 		</div>
 		<div id="search-users-title-center">
-			<h1>Hősök csarnoka</h1>
+			<div id="search-users-title-name">
+				<h1>Hősök csarnoka</h1>
+			</div>
+
 		</div>
 		<div id="search-users-title-right">	
 		</div>		
+	</div>
+	<div id="search-field">
+		<input type="text" placeholder="Karakter keresése..." id="search-input">
 	</div>
 	<div id="users-container">
 		<div id="users-header">
@@ -495,20 +674,18 @@ input:checked + .slider:before {
 
 			
 		</div>
-		<div id="users-footer">
-			<!--Footer-->		
-		</div>
 	</div>
 	<div id="teams-container">
 		<div id="teams-header">
-			
+			<div id="teams-header-rank">Helyezés</div>
+			<div id="teams-header-image"></div>
+			<div id="teams-header-team-name">Csapatnév</div>
+			<div id="teams-header-team-members-count">Csapattagok száma</div>
 		</div>
 		<div id="teams">
 			
 		</div>
-		<div id="teams-footer">
-			Footer
-		</div>
+
 	</div>
 	<div id="footer">
 		<label class="switch-button">
@@ -554,26 +731,296 @@ input:checked + .slider:before {
 <script type="text/javascript">
 
 
+	$("#search-input").on("input", function(){
+		getValueFromSearchInput()
+	})
+
+
+	function getValueFromSearchInput(){
+		var searchedText = $("#search-input").val()
+		payload = {
+			"searched_text": searchedText,
+			"search_bar_users": searchBarUsers,
+		}
+		$.ajax({
+			dataType: "json",
+			url: "{% url 'core:get_search_results' %}",
+			data: payload,
+
+			success: function(data) {
+				console.log("SUCCESS")
+				handleSearchResults(data.results)
+
+			},
+			error: function(data) {
+				console.log('ERROR')
+			},
+		})
+
+	}
+
+	// pagination miatt, hogyha rakerestunk valakire, volt pl 9 találat, és utana scrolloztunk, akkor betöltötte a maradék usert
+	// tehát volt aki 2x szerepelt a listaban, ezzel display: none-ra allítjuk az uj div-eket amik generálodnanak
+	var activeSearch = false
+	var activeTeamSearch = false
+ 
+	function handleSearchResults(results){
+		if (searchBarUsers){
+			// hogyha a usereket keressük
+			if(results != null && results != "undefined" && results != "None"){
+				activeSearch = true
+				console.log(results)
+				$(".user-div-paginate").css("display", "none")
+				$(".user-div-search-paginate").remove()
+				results.forEach(function(user){
+					appendSearchResults(user)
+				})
+			}
+			else{
+				activeSearch = false
+				$(".user-div-search-paginate").remove()
+				$(".user-div-paginate").css("display", "flex")
+			}	
+		}
+		else{
+			//hogyha a csapatokat keressük
+			if(results != null && results != "undefined" && results != "None"){
+				console.log(results)
+				activeTeamSearch = true
+				$(".user-div-paginate-team").css("display", "none")
+				$(".user-div-search-paginate-team").remove()
+				results.forEach(function(team){
+					appendSearchResultsTeam(team)
+				})
+			}
+			else{
+				activeTeamSearch = false
+				$(".user-div-search-paginate-team").remove()
+				$(".user-div-paginate-team").css("display", "flex")
+			}	
+		}
+
+	}
+
+	function appendSearchResults(user){
+		userID = user.id
+		username = user.account
+		characterType = user.character_type
+		level = user.level
+		honor = user.honor
+		team = user.team
+		rank = user.rank
+
+		createSearchedUserElement(userID, username, characterType, level, honor, team, rank)
+	}
+
+
+	function appendSearchResultsTeam(team){
+		teamID = team.id
+		teamName = team.name
+		teamDescription = team.description
+		teamMembersNum = team.members_number
+		teamRank = team.rank
+
+
+		createSearchedTeamElement(teamID, teamName, teamDescription, teamMembersNum, teamRank)
+	}
+
+
+	function createSearchedUserElement(userID, username, characterType, level, honor, team, rank){
+		var usersListDiv = document.getElementById("users")
+
+
+		var newUserDiv = document.createElement("div")
+		newUserDiv.classList.add("user-div-search-paginate")
+		newUserDiv.addEventListener("click", function (event) {
+			selectUser(userID)
+		})
+		if (currentUserID == userID){
+			newUserDiv.style.color = "white"
+		}
+		else{
+			newUserDiv.style.color = "#e4d153"	
+		}
+
+
+		var rankField = document.createElement("div")
+		rankField.classList.add("rank-field")
+
+		var rankFieldSpan = document.createElement("span")
+		rankFieldSpan.innerHTML = rank
+
+
+
+		rankField.appendChild(rankFieldSpan)
+
+		var characterTypeField = document.createElement("div")
+		characterTypeField.classList.add("character-type-field")
+
+		var characterTypeFieldImg = document.createElement("img")
+		if (characterType == "warrior"){
+			characterTypeFieldImg.src = "{% static 'images/swordsman.png' %}"
+		}
+		else if (characterType == "mage"){
+			characterTypeFieldImg.src = "{% static 'images/wizard.png' %}"
+		}
+		else if(characterType == "scout"){
+			characterTypeFieldImg.src = "{% static 'images/archer.png' %}"
+		}
+		else{
+			characterTypeFieldImg.src = "{% static 'images/swordsman.png' %}"
+		}
+
+		characterTypeFieldImg.classList.add("character-type-field-img")
+
+		characterTypeField.appendChild(characterTypeFieldImg)
+
+		var usernameField = document.createElement("div")
+		//usernameField.innerHTML = username
+		usernameField.classList.add("username-field")
+
+		var usernameFieldSpan = document.createElement("span")
+		usernameFieldSpan.innerHTML = username
+
+		usernameField.appendChild(usernameFieldSpan)
+
+
+		var userTeamField = document.createElement("div")
+		userTeamField.classList.add("user-team-field")
+
+		var userTeamSpan = document.createElement("span")
+		userTeamSpan.innerHTML = team
+
+		userTeamField.appendChild(userTeamSpan)
+
+
+		var levelField = document.createElement("div")
+		levelField.classList.add("level-field")
+
+		var levelFieldSpan = document.createElement("span")
+		levelFieldSpan.innerHTML = level
+
+		levelField.appendChild(levelFieldSpan)
+
+		var honorField = document.createElement("div")
+		honorField.classList.add("honor-field")
+
+
+		var honorFieldSpan = document.createElement("span")
+		honorFieldSpan.innerHTML = honor
+
+		honorField.appendChild(honorFieldSpan)
+
+		newUserDiv.appendChild(rankField)
+		newUserDiv.appendChild(characterTypeField)
+		newUserDiv.appendChild(usernameField)
+		newUserDiv.appendChild(userTeamField)
+		newUserDiv.appendChild(levelField)
+		newUserDiv.appendChild(honorField)
+
+		usersListDiv.appendChild(newUserDiv)
+	}
+
+
+	function createSearchedTeamElement(teamID, teamName, teamDescription, teamMembersNum, teamRank){
+		var teamsListDiv = document.getElementById("teams")
+
+		var newTeamDiv = document.createElement("div")
+		newTeamDiv.classList.add("user-div-search-paginate-team")
+		newTeamDiv.addEventListener("click", function(event){
+			selectTeam(teamID)
+		})
+		if (currentUserTeamID == teamID){
+			newTeamDiv.style.color = "white"
+		}
+		else{
+			newTeamDiv.style.color = "#e4d153"	
+		}
+
+		teamsListDiv.appendChild(newTeamDiv)
+
+		var rankField = document.createElement("div")
+		rankField.classList.add("rank-field-team")
+
+		var rankFieldSpan = document.createElement("span")
+		rankFieldSpan.innerHTML = teamRank
+
+		rankField.appendChild(rankFieldSpan)
+
+		var characterTypeField = document.createElement("div")
+		characterTypeField.classList.add("character-type-field-team")
+
+		var characterTypeFieldImg = document.createElement("img")
+		characterTypeFieldImg.src = "{% static 'images/team-icon.png' %}"
+		characterTypeFieldImg.classList.add("character-type-field-img-team")
+
+		characterTypeField.appendChild(characterTypeFieldImg)
+
+		var usernameField = document.createElement("div")
+		//usernameField.innerHTML = username
+		usernameField.classList.add("username-field-team")
+
+		var usernameFieldSpan = document.createElement("span")
+		usernameFieldSpan.innerHTML = teamName
+
+		usernameField.appendChild(usernameFieldSpan)
+
+
+		var levelField = document.createElement("div")
+		levelField.classList.add("level-field-team")
+
+		var levelFieldSpan = document.createElement("span")
+		levelFieldSpan.innerHTML = teamMembersNum
+
+		levelField.appendChild(levelFieldSpan)
+
+
+		newTeamDiv.appendChild(rankField)
+		newTeamDiv.appendChild(characterTypeField)
+		newTeamDiv.appendChild(usernameField)
+		newTeamDiv.appendChild(levelField)
+
+		teamsListDiv.appendChild(newTeamDiv)
+	}
+
+
+	var currentUserID = "{{account_id}}"
+	var currentUserTeamID = "{{account_team_id}}"
+
+	var searchBarUsers = true
+
 	$("#switch-checkbox").change(function(){
 		$("#switch-checkbox").attr("disabled", true)
+		$("#search-input").val("")
+		getValueFromSearchInput() // azert kell mert ha kitöröljük az inputbol itt, attol meg a keresesi eredmeny megmarad(mikor visszamegyunk a teamekrol a userekhez)
 		audio.play()
 		if ($(this).is(":checked")){
 			//$("#users-container").css("display", "none")
 			//$("#teams-container").css("display", "flex")
+			searchBarUsers = false
+			$("#search-input").attr("placeholder", "Csapat keresése...")
+
+			
 			$("#users-container").fadeOut("fast", function(){
 				$("#users-container").css("display", "none")
 				$("#teams-container").fadeIn("fast")
 				$("#teams-container").css("display", "flex")
 			})
+			
 		}
 		else{
 			//$("#teams-container").css("display", "none")
 			//$("#users-container").css("display", "flex")
+			searchBarUsers = true
+			$("#search-input").attr("placeholder", "Karakter keresése...")
 			$("#teams-container").fadeOut("fast", function(){
 				$("#teams-container").css("display", "none")
 				$("#users-container").fadeIn("fast")
 				$("#users-container").css("display", "flex")
 			})
+
+			
+
 		}
 		// gyors nyomkodasnal voltak kisebb bugok, ezt kiiktatjuk azzal, hogy disable-jük a checkboxot és 400ms utan engedélyezzuk ujra
 		setTimeout(function(){
@@ -642,7 +1089,7 @@ input:checked + .slider:before {
 		}
 
 		//document.getElementById("id_page_number").innerHTML = publicChatPageNumber
-		console.log(usersPageNumber)
+		console.log("usersPageNumber " + usersPageNumber)
 	}
 
 
@@ -654,7 +1101,7 @@ input:checked + .slider:before {
 		else {
 			teamsPageNumber = pageNumber
 		}
-		console.log("pageNumber " + pageNumber)
+
 		console.log("teamspagenumber ", teamsPageNumber)
 	}
 
@@ -758,7 +1205,7 @@ input:checked + .slider:before {
 		}
 		else{
 			console.log("handle_load_teams false")
-			setPageNumber(-1, true)
+			setTeamsPageNumber(-1, true)
 		}
 	}
 
@@ -783,8 +1230,9 @@ input:checked + .slider:before {
 		teamName = team.name
 		teamDescription = team.description
 		teamMembersNum = team.members_number
+		teamRank = team.rank
 
-		createTeamElement(teamID, teamName, teamDescription, teamMembersNum)
+		createTeamElement(teamID, teamName, teamDescription, teamMembersNum, teamRank)
 	}
 
 
@@ -798,6 +1246,12 @@ input:checked + .slider:before {
 		newUserDiv.addEventListener("click", function (event) {
 			selectUser(userID)
 		})
+		if (currentUserID == userID){
+			newUserDiv.style.color = "white"
+		}
+		else{
+			newUserDiv.style.color = "#e4d153"	
+		}
 
 
 		var rankField = document.createElement("div")
@@ -876,11 +1330,14 @@ input:checked + .slider:before {
 
 		usersListDiv.appendChild(newUserDiv)
 
+		if (activeSearch){
+			newUserDiv.style.display = "none"
+		}
 	}
 
-	var teamRankCounter = 1
 
-	function createTeamElement(teamID, teamName, teamDescription, teamMembersNum){
+
+	function createTeamElement(teamID, teamName, teamDescription, teamMembersNum, teamRank){
 		console.log(teamID, teamName, teamDescription)
 
 		var teamsListDiv = document.getElementById("teams")
@@ -890,6 +1347,12 @@ input:checked + .slider:before {
 		newTeamDiv.addEventListener("click", function(event){
 			selectTeam(teamID)
 		})
+		if (currentUserTeamID == teamID){
+			newTeamDiv.style.color = "white"
+		}
+		else{
+			newTeamDiv.style.color = "#e4d153"	
+		}
 
 		teamsListDiv.appendChild(newTeamDiv)
 
@@ -897,8 +1360,8 @@ input:checked + .slider:before {
 		rankField.classList.add("rank-field-team")
 
 		var rankFieldSpan = document.createElement("span")
-		rankFieldSpan.innerHTML = teamRankCounter
-		teamRankCounter++
+		rankFieldSpan.innerHTML = teamRank
+
 
 		rankField.appendChild(rankFieldSpan)
 
@@ -936,6 +1399,10 @@ input:checked + .slider:before {
 		newTeamDiv.appendChild(levelField)
 
 		teamsListDiv.appendChild(newTeamDiv)
+
+		if (activeTeamSearch){
+			newTeamDiv.style.display = "none"
+		}
 	}
 
 
@@ -961,15 +1428,35 @@ input:checked + .slider:before {
 
 
 	function selectTeam(teamId){
-		var url = "{% url 'team:individual_team_view' team_id=7347328438423 %}".replace("7347328438423", teamId);
-		var win = window.open(url, "_self")
-		win.focus()
+		audio.play()
+		setTimeout(function(){
+			try{
+				var url = "{% url 'team:individual_team_view' team_id=7347328438423 %}".replace("7347328438423", teamId);
+				var win = window.open(url, "_self")
+				win.focus()
+			}
+			catch(error){
+				console.log(error)
+			}
+		}, 100)
+
 	}
 
 	function selectUser(userId){
-	var url = "{% url 'profile' user_id=7347328438423 %}".replace("7347328438423", userId);
-	var win = window.open(url, "_self")
-	win.focus()
+		audio.play()
+		setTimeout(function(){
+			try{
+				var url = "{% url 'profile' user_id=7347328438423 %}".replace("7347328438423", userId);
+				var win = window.open(url, "_self")
+				win.focus()
+			}
+			catch(error){
+				console.log(error)
+			}
+		}, 100)
+
+
+
 	}
 
 </script>

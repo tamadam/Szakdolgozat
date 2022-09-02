@@ -131,11 +131,27 @@ def users_search_view(request):
 
 	characters = Character.objects.get_all_characters_in_ordered_list_without_admins()
 
+
+	try:
+		account_id = request.user.id
+		account = Account.objects.get(id=account_id)
+		try:
+			account_team_id = account.team_set.all()[0].id
+		except:
+			account_team_id = None
+
+	except Exception as e:
+		account_id = None
+		account_team_id = None
+
+
 	teams = Team.objects.all()
 
 	context = {
 		'characters': characters,
 		'teams': teams,
+		'account_id': account_id,
+		'account_team_id': account_team_id,
 		}
 
 
@@ -239,3 +255,48 @@ def load_teams_pagination(request):
 	return None
 
 
+def get_search_results(request):
+	data = {}
+
+	searched_text = request.GET.get('searched_text')
+	search_bar_users = request.GET.get('search_bar_users')
+
+	results = None
+	if search_bar_users == 'true':
+		print('USER SEARCH')
+		#s = EncodeAccountObject()
+		s = EncodeCharacterObject()
+
+		character_results = []
+
+		if len(searched_text) > 0:
+			accounts = Account.objects.filter(is_admin=False).filter(username__icontains=searched_text) # a kis/nagybetű nem számít
+			character_results = [Character.objects.get(account=account.id) for account in accounts]
+			character_results = sorted(character_results, key=lambda character: character.rank)
+			results = s.serialize(character_results)
+			#results = s.serialize(Account.objects.filter(is_admin=False).filter(username__icontains=searched_text)) # a kis/nagybetű nem számít
+
+
+		#print(searched_text)
+		print('USER RESULTS')
+		print(results)
+
+		print(character_results)
+	else:
+		print('TEAM SEARCH')
+		t = EncodeTeamObject()
+
+		team_results = []
+
+		if len(searched_text) > 0:
+			teams = Team.objects.filter(name__icontains=searched_text)
+			team_results = sorted(teams, key=lambda team: team.date_created) # a létrehozás dátuma alapján rendszerezzük
+			results = t.serialize(team_results)
+
+		print(results)
+
+	data = {
+		'results': results,
+	}
+
+	return JsonResponse(data)
