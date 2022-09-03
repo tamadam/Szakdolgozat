@@ -19,69 +19,41 @@ from django.http import HttpResponse, JsonResponse
 
 @login_required(login_url='login')
 def user_team_view(request):
-	print('USER TEAM VIEW')
 	context = {}
+
+	try:
+		user = Account.objects.get(id=request.user.id)
+	except Exception as exception:
+		print(exception)
+		return HttpResponse('A felhasználó nem található!')
+
+	try:
+		user_team_id = user.team_set.all()[0].id
+	except Exception as exception:
+		user_team_id = None
+		pass
+
+	# ha a felhasználónak van csapata, átirányítjuk a csapatának az oldalára
+	if user_team_id:
+		return redirect('team:individual_team_view', team_id=user_team_id)
+
 	form = TeamCreationForm()
-	context['form'] = form
-	user = Account.objects.get(id=request.user.id)
-	recent_user_id = user.id # user a későbbiekben megváltozik, ezért itt el kell menteni
 
-
+	# csapat létrehozása esetén
 	if request.method == 'POST':
 		form = TeamCreationForm(request.POST)
 
 		if form.is_valid():
-			try: 
-				form.check_name_availability(request.POST.get('name')) # ellenorizzuk hogy a csapatnev nem szerepel e mar mas betukiosztasban(kis/nagy)
-				team = form.save()
-				Membership.objects.create(user=user, team=team)
-				context['is_valid'] = True
-				return redirect('team:user_team_view')
-			except Exception as e:
-				context['is_valid'] = False
-				
-		else:
-			context['is_valid'] = False
-
-	else:
-		print('else')
-		context['is_valid'] = True
-		#user = Account.objects.get(id=request.user.id)
-		try:
-			team_id = user.team_set.all()[0].id # admin felületen hozzá lehet adni egy usert több csapathoz is, viszont a webes felületen ezt nem engedjük
-												# viszont emiatt mindig a "legelső" csapat számít, sose lesz több
-		except:
-			team_id = None
-
-		if team_id:
-			print('van id')
-			user_team = Team.objects.get(id=team_id)
-			print(user_team.id, user_team.name, user_team.description)
-
-			for user in user_team.users.all():
-				print(user)
-
-			context['has_team'] = True
-			context['form'] = form
-			context['user_id'] = recent_user_id
-			context['team_id'] = user_team.id
-			context['team_name'] = user_team.name
-			context['team_description'] = user_team.description
-			context['team_members'] = user_team.users.all()
-
-
-		else:
-			context['has_team'] = False
-			context['form'] = form
-			context['user_id'] = user.id
-
-
-	teams = Team.objects.all()
-	context['teams'] = teams
+			team = form.save() # visszaadja a csapat objektumot
+			Membership.objects.create(user=user, team=team) # hozzáadjuk a felhasználót a létrehozott csapathoz
+			return redirect('team:individual_team_view', team_id=team.id)
 
 	update_team_rank()
+	
+	context['form'] = form
 
 	return render(request, 'team/team_page.html', context)
+
 
 
 def leave_team(request):

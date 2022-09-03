@@ -99,11 +99,12 @@ body {
 	font-size: 6vh;
 	color: black;
 	background-color: white;
-	background: url("{% static 'images/button-back.png' %}");
+	background: url("{% static 'images/button-back.png' %}");	
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
-	width: 20%;
+	min-width: 300px;
+
 }
 
 #main-page-button {
@@ -135,6 +136,10 @@ body {
 	height: 40%;	
 }
 
+
+.go-to-main-page:hover {
+	cursor: pointer;
+}
 
 
 .go-to-main-page:active {
@@ -269,6 +274,10 @@ body {
 	vertical-align: middle;
 }
 
+
+.increase-attribute-button:hover {
+	cursor: pointer;
+}
 
 
 .increase-attribute-button:active {
@@ -426,6 +435,7 @@ body {
 
 #no-owner-buttons-first-container:hover{
 	color: #f70044;
+	cursor: pointer;
 }
 
 #no-owner-buttons-first-container img{
@@ -484,6 +494,7 @@ body {
 
 #no-owner-buttons-second-container:hover{
 	color: #f70044;
+	cursor: pointer;
 }
 
 #no-owner-buttons-second-container img{
@@ -601,6 +612,7 @@ body {
 
 #stat1-content:hover, #stat2-content:hover, #stat3-content:hover, #stat4-content:hover {
 	box-shadow: 0 0 0 200px rgba(0, 0, 0, 0.9) inset;
+	cursor: pointer;
 }
 
 #stat1-content:hover p, #stat2-content:hover p, #stat3-content:hover p, #stat4-content:hover p{
@@ -847,6 +859,7 @@ body {
 	$("#buttons-first-container").on("mouseover", function(){
 		$("#buttons-first-container img").attr("src","{% static 'images/profile-edit-icon-hover.png' %}");
 		$("#buttons-first-container").css("color","#f70044");
+		$("#buttons-first-container").css("cursor", "pointer")
 	})
 
 
@@ -870,7 +883,7 @@ body {
 				console.log(error)
 			}
 
-    	}, 100)
+    	}, 220)
     	$(".loader-container").fadeIn("fast")
 	})
 

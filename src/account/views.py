@@ -156,31 +156,107 @@ def edit_profile_view(request, *args, **kwargs):
 	#print(','.join('{0}={1!r}'.format(k,v) for k,v in kwargs.items()))
 	user_id = kwargs.get('user_id')
 
+
 	try:
 		account = Account.objects.get(id=user_id)
 	except Account.DoesNotExist:
-		return HttpResponse('Account does not exist')
+		return HttpResponse('A felhasználó nem létezik!')
 
 	if request.user.id != account.id:
-		return HttpResponse('You are not allowed to edit other players profile')
+		return HttpResponse('Nem szerkesztheted más játékosok profilját!')
 
 
 	# itt már biztosan mi akarjuk szerkeszteni a profilunkat
 	
 	form = AccountEditForm(instance=account)
 
+	error_message = ""
+
 	if request.method == 'POST':
 		form = AccountEditForm(request.POST, request.FILES, instance=account)
 		if form.is_valid():
-			form.save()
-			return redirect('profile', user_id=account.id)
+			try:
+				# a try-catch block a jelszó kezelést tartalmazza 
+				password_value_1 = request.POST['password1']
+				password_value_2 = request.POST['password2']
+
+				if len(password_value_1) > 0:
+					data = validate_password_edit_profile(password_value_1, password_value_2)
+					if data['error_code'] == 0:
+						if not account.check_password(password_value_1):
+							# a check_password igaz, hogyha a megadott jelszó egyezik a jelenlegi jelszóval
+							print('megfelelo erossegu és nem egyezik az elozovel')
+							account.set_password(password_value_1)
+							account.save()
+							form.save()
+
+							return redirect('profile', user_id=account.id)
+						else:
+							print('megfelelo erossegu de egyezik az elozovel')
+							error_message = 'A jelszó megegyezik az előzővel'
+					else:
+						print('nem megfelelo erossegu')
+						error_message = data['message']
+				else:
+					form.save()
+					return redirect('profile', user_id=account.id)
+
+			except Exception as exception:
+				form.save()
+				return redirect('profile', user_id=account.id)
+				
+
+
+
+	current_username = account.username
+	current_email = account.email
+
+	if account.profile_image:
+		current_profile_image = account.profile_image.url
+	else:
+		current_profile_image = ""
+
 
 	context = {
 		'form': form,
+		'username': current_username,
+		'email': current_email,
+		'profile_image': current_profile_image,
+		'error_message': error_message,
 	}
 
 	return render(request, 'account/edit_profile.html', context)
 
+
+def validate_password_edit_profile(password1, password2):
+	data = {}
+
+	if len(password1) < 6:
+		data['error_code'] = 1
+		data['message'] = 'A jelszónak legalább 6 karakternek kell legyen'
+		return data
+	if sum(character.isdigit() for character in password1) < 1:
+		data['error_code'] = 1
+		data['message'] = 'A jelszónak tartalmaznia kell legalább 1 számot'
+		return data
+	if not any (character.islower() for character in password1):
+		data['error_code'] = 1
+		data['message'] = 'A jelszónak tartalmaznia kell legalább 1 kisbetűt'
+		return data
+	if not any (character.isupper() for character in password1):
+		data['error_code'] = 1
+		data['message'] = 'A jelszónak tartalmaznia kell legalább 1 nagybetűt'
+		return data
+
+	if password1 != password2:
+		data['error_code'] = 1
+		data['message'] = 'A két jelszó nem egyezik'
+		return data
+
+
+	data['error_code'] = 0
+	data['message'] = 'Megfelelő'
+	return data
 
 
 def validate_username_realtime(request):

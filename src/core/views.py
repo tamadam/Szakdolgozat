@@ -128,7 +128,7 @@ def users_search_view(request):
 	#for character in characters:
 		#dates_tmp.append(character.account.date_joined)
 	#print(characters)
-
+	search_team = request.GET.get('csapat')
 	characters = Character.objects.get_all_characters_in_ordered_list_without_admins()
 
 
@@ -147,11 +147,17 @@ def users_search_view(request):
 
 	teams = Team.objects.all()
 
+	if search_team:
+		search_team = 'exists'
+	else:
+		search_team = 'none'
+
 	context = {
 		'characters': characters,
 		'teams': teams,
 		'account_id': account_id,
 		'account_team_id': account_team_id,
+		'search_team': search_team,
 		}
 
 

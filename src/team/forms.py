@@ -1,6 +1,6 @@
 from django import forms
 from .models import Team
-
+from django.core.exceptions import ValidationError
 
 class TeamCreationForm(forms.ModelForm):
 	class Meta:
@@ -8,16 +8,9 @@ class TeamCreationForm(forms.ModelForm):
 		fields = ['name', 'description']
 
 
-	def check_name_availability(self, name):
-		print("CHECKK")
-		name = name.lower()
-
-		teams = Team.objects.all()
-
-		for team in teams:
-			team_name = team.name.lower()
-			if team_name == name:
-				raise forms.ValidationError(f'{name} is already in use')
-			#team = Team.objects.exclude(id=self.instance.id).get(name=name).lower().exclude(id=self.instance.id).get(name=name)
+	def clean_name(self):
+		name = self.cleaned_data['name']
+		if Team.objects.filter(name__icontains=name).exists():
+			raise ValidationError(f'{name} csapatnév már használatban van!')
 
 		return name

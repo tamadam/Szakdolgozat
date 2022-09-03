@@ -164,6 +164,9 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 
 }
 
+.go-to-main-page:hover {
+	cursor: pointer;
+}
 
 
 
@@ -730,7 +733,6 @@ input:checked + .slider:before {
 
 <script type="text/javascript">
 
-
 	$("#search-input").on("input", function(){
 		getValueFromSearchInput()
 	})
@@ -1044,6 +1046,18 @@ input:checked + .slider:before {
 		setTimeout(function(){
 			$(".loader-container").fadeOut("slow")
 		}, 150)
+
+		var searchTeams = "{{search_team}}"
+		if (searchTeams == "exists"){
+			$("#switch-checkbox").prop("checked", true)
+			searchBarUsers = false
+			$("#users-container").css("display", "none")
+			$("#teams-container").css("display", "flex")
+		} 
+		else{
+			$("#switch-checkbox").prop("checked", false)	
+
+		}
 
 	})
 
