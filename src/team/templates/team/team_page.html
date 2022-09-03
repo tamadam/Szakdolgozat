@@ -6,15 +6,40 @@
 
 
 <style>
+@font-face {
+	font-family: 'Kanit-Regular';
+	src: local('Kanit-Regular'),
+	url("{% static 'fonts/Kanit-Regular.ttf' %}");
+}
+
+@font-face {
+	font-family: 'Kanit-Bold';
+	src: local('Kanit-Bold'),
+	url("{% static 'fonts/Kanit-Bold.ttf' %}");
+}
+
+@font-face {
+	font-family: 'Kanit-Light';
+	src: local('Kanit-Light'),
+	url("{% static 'fonts/Kanit-Light.ttf' %}");
+}
 
 #team-selector-page{
 	width: 100%;
 	height: 100%;
 	background-color: white;
+	background: url("{% static 'images/team-select.jpg' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
+	font-family: "Kanit-Regular";
+	font-size: 1.8vh;
+	width: 1900px;
+	user-select: none;
 }
 
 #team-selector-header{
@@ -58,6 +83,7 @@
 	align-items: center;
 	justify-content: center;
 	text-align: center;
+	color: #d5ba22;
 
 }
 
@@ -93,6 +119,36 @@
 	content:url("{% static 'images/previous-button-purple.png' %}");
 }
 
+/* --- */
+
+#go-back-to-selector {
+	display: none;
+	justify-content: center;
+	align-items: center; 
+	width: 30%;
+	height: 30%;
+
+}
+
+#go-back-to-selector img{
+
+	max-width: 100%;
+	max-height: 100%;
+
+}
+
+.go-to-selector:hover {
+	cursor: pointer;
+}
+
+
+
+.go-to-selector:active {
+	content:url("{% static 'images/back-button-purple.png' %}");
+}
+
+/* -- */
+
 .loader-container {
 	width: 100%;
 	height: 100%;
@@ -109,6 +165,99 @@
 	font-size: 1.8vh;
 
 }
+
+#selector-buttons{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 50%;
+	font-size: 4vh;
+
+
+}
+
+#select-other-team{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20%;
+	height: 100%;
+	border: 4px solid black;
+	border-radius: 20px;
+	margin-right: 1em;
+	background-color: rgba(213, 186, 34, 0.9); 
+
+	text-align: center;
+}
+
+
+#select-other-team:hover{
+	background-color: #f70044;
+	color: #d5ba22;
+	cursor: pointer;
+}
+
+
+
+#create-team-button{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20%;
+	height: 100%;
+	border: 4px solid black;
+	border-radius: 20px;
+	margin-left: 1em;
+	background-color: rgba(213, 186, 34, 0.9);
+	text-align: center;
+}
+
+#create-team-button:hover{
+	background-color: #f70044;
+	color: #d5ba22;
+	cursor: pointer;
+}
+
+#create-team-div{
+	display: none;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 50%;
+}
+
+#create-team-form-id{
+	height: 80%;
+	align-items: center;
+	justify-content: center;
+}
+
+#error-messages-div{
+	display: none;
+	align-items: center;
+	justify-content: center;
+	color: red;
+	height: 20%;
+}
+
+
+#error-messages-div span{
+	font-size: 2vh;
+}
+
+
+#error-messages-div ul{
+	list-style-type:none;
+}
+
+
+#create-team-form-id{
+	background-color: lightblue;
+}
+
 </style>
 
 <div id="team-selector-page">
@@ -120,7 +269,7 @@
 		</div>
 		<div id="team-selector-title-center">
 			<div id="team-selector-title">
-				<h1>Csapat</h1>
+				<!--<h1>Csapat</h1>-->
 			</div>
 		</div>
 		<div id="team-selector-title-right">	
@@ -128,17 +277,35 @@
 
 	</div>
 	<div id="team-selector-body">
-		<form method="POST">
-			{%csrf_token%}
-			{{form.as_p}}
+		<div id="selector-buttons">
+			<div id="select-other-team">Csatlakozás egy csapathoz</div>
+			<div id="create-team-button">Csapat létrehozása</div>
+		</div>
+		<div id="create-team-div">
+			<form method="POST" id="create-team-form-id">
+				{%csrf_token%}
+				<p><label for="id_name">Name:</label> <input type="text" name="name" maxlength="60" required id="id_name"></p>
+				<p><label for="id_description">Description:</label> <textarea name="description" cols="40" rows="10" maxlength="200" id="id_description">
+				Leírás</textarea></p>
 				<button type="submit" value="Add team">Csapat létrehozása</button>
-		</form>
+
+			</form>
+			<div id="error-messages-div">
+				<span>Hiba! Kérlek figyelj az alábbiakra!</span>
+				{% if form.errors %}
+			    	{% for error in form.errors.values %}
+			        	<span class="error-messages">{{error}}</span>
+			    	{% endfor %}
+			 	{% endif %}
+			</div>
+		</div>
 
 
-		<button onclick="join()">Csatlakozas csapathoz</button>	
 	</div>
 	<div id="team-selector-footer">
-		Footer
+		<div id="go-back-to-selector">
+			<img src="{% static 'images/back-button.png' %}" alt="Vissza" class="go-to-selector" onmouseover="changeColorSelector(this)" onmouseout="resetColorSelector(this)">
+		</div>
 	</div>
 	<div class="loader-container">
 	</div>
@@ -153,11 +320,30 @@
 	})
 
 
-	function join(){
-		var url = "{% url 'search' %}?csapat=1"
-		var win = window.location.replace(url)
-		win.focus()
-	}
+	$("#select-other-team").click(function(){
+		audio.play()
+		setTimeout(function(){
+			try {
+				var url = "{% url 'search' %}?csapat=1"
+				var win = window.location.replace(url)
+				win.focus()
+			}
+			catch(error){
+				console.log(error)
+			}
+
+		}, 200)
+		$(".loader-container").fadeIn("fast")
+	})
+
+
+	$("#create-team-button").click(function(){
+		audio.play()
+		$("#selector-buttons").css("display", "none")
+		$("#create-team-div").css("display", "flex")
+		$("#go-back-to-selector").css("display", "flex")
+		hideErrorMessage()
+	})
 
 
 
@@ -171,6 +357,15 @@
 	function resetColor(imageElement){
 		imageElement.setAttribute("src", "{% static 'images/previous-button.png' %}")
 	}
+
+	function changeColorSelector(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/back-button-red.png' %}")
+	}
+
+	function resetColorSelector(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/back-button.png' %}")
+	}
+
 
 
 	$(".go-to-main-page").click(function(){
@@ -191,6 +386,34 @@
     	$(".loader-container").fadeIn("fast")
 	})
 
+
+	$(".go-to-selector").click(function(){
+		audio.play()
+		$("#selector-buttons").css("display", "flex")
+		$("#create-team-div").css("display", "none")
+		$("#go-back-to-selector").css("display", "none")
+	})
+
+
+	var errorMessageSeen = false
+
+	{% if form.errors %}
+		$("#selector-buttons").css("display", "none")
+		$("#create-team-div").css("display", "flex")
+		$("#error-messages-div").css("display", "block")
+		$("#go-back-to-selector").css("display", "flex")
+		errorMessageSeen = true
+
+	{% else %}
+		errorMessageSeen = false
+ 	{% endif %}
+
+
+ 	function hideErrorMessage(){
+ 		if(errorMessageSeen){
+			$("#error-messages-div").css("display", "none")
+ 		}
+ 	}
 
 </script>
 
