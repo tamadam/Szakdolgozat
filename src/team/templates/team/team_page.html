@@ -226,26 +226,120 @@
 	align-items: center;
 	justify-content: center;
 	width: 100%;
-	height: 50%;
+	height: 60%;
 }
 
 #create-team-form-id{
 	height: 80%;
+	width: 30%;
+	min-width: 600px;
+	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
+	background-color: rgba(42, 66, 88, 0.6);
+	border-radius: 20px;
+	color: #f4d734;
 }
 
+.create-team-input-container{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	height: 15%;
+	width: 60%;
+	margin-top: 0.4em;
+}
+
+.create-team-input-container input {
+	outline: none;
+	border: none;
+	font-size: 1em;
+	padding: 0.2em;
+	border-radius: 10px;
+	font-family: "Kanit-Light";
+	background-color: rgba(255, 230, 80, 0.8);
+}
+
+.create-team-input-container input:focus {
+	background-color: rgba(255, 230, 80, 1.0);
+}
+
+.create-team-description-container{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	height: 55%;
+	width: 60%;
+	margin-top: 0.4em;
+}
+
+.create-team-submit-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 30%;
+	width: 100%;
+}
+
+.create-team-label-container{
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	width: 40%;
+	margin-right: 0.2em;
+
+}
+
+
+.create-team-input-field{
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	width: 100%;
+	height: 100%;
+	margin-left: 0.2em;
+}
+
+
+.create-team-input-field textarea{
+	display: flex;
+	font-size: 1em;
+	padding: 0.2em;
+	border-radius: 10px;
+	height: 90%;
+	width: 90%;
+	resize: none;
+	outline: none;
+	border: none;
+	font-family: "Kanit-Light";
+	background-color: rgba(255, 230, 80, 0.8);
+}
+
+.create-team-input-field textarea:focus{
+	background-color: rgba(255, 230, 80, 1.0);
+}
+
+
+
 #error-messages-div{
-	display: none;
+	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	color: red;
 	height: 20%;
+	width: 40%;
+	text-align: center;
+	visibility: hidden;
 }
 
 
 #error-messages-div span{
 	font-size: 2vh;
+
 }
 
 
@@ -253,10 +347,29 @@
 	list-style-type:none;
 }
 
-
-#create-team-form-id{
-	background-color: lightblue;
+#add-team-button{
+	outline: none;
+	background: none;
+	background-image: url("{% static 'images/button-back.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	min-width: 300px;
+	font-family: "Kanit-Regular";
+	font-size: 1em;
+	border: none;
 }
+
+#add-team-button:hover{
+	background-image: url("{% static 'images/button-back-red.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	cursor: pointer;
+	color: #f4d734;
+}
+
+
 
 </style>
 
@@ -284,10 +397,27 @@
 		<div id="create-team-div">
 			<form method="POST" id="create-team-form-id">
 				{%csrf_token%}
-				<p><label for="id_name">Name:</label> <input type="text" name="name" maxlength="60" required id="id_name"></p>
-				<p><label for="id_description">Description:</label> <textarea name="description" cols="40" rows="10" maxlength="200" id="id_description">
-				Leírás</textarea></p>
-				<button type="submit" value="Add team">Csapat létrehozása</button>
+				<div class="create-team-input-container">
+					<div class="create-team-label-container">
+						<label for="id_name">Csapatnév</label>						
+					</div>
+					<div class="create-team-input-field">
+						<input type="text" name="name" maxlength="60" required id="id_name">						
+					</div>
+					
+				</div>
+				<div class="create-team-description-container">
+					<div class="create-team-label-container">
+						<label for="id_description">Csapatleírás</label>
+					</div>
+					<div class="create-team-input-field">
+						<textarea name="description" cols="40" rows="10" maxlength="200" id="id_description"></textarea>			
+					</div>
+				</div>
+
+				<div class="create-team-submit-container">
+					<button type="submit" value="Add team" id="add-team-button">Csapat létrehozása</button>
+				</div>
 
 			</form>
 			<div id="error-messages-div">
@@ -319,6 +449,10 @@
 
 	})
 
+
+	$("#add-team-button").click(function(){
+		audio.play()
+	})
 
 	$("#select-other-team").click(function(){
 		audio.play()
@@ -400,7 +534,7 @@
 	{% if form.errors %}
 		$("#selector-buttons").css("display", "none")
 		$("#create-team-div").css("display", "flex")
-		$("#error-messages-div").css("display", "block")
+		$("#error-messages-div").css("visibility", "visible")
 		$("#go-back-to-selector").css("display", "flex")
 		errorMessageSeen = true
 
@@ -411,7 +545,7 @@
 
  	function hideErrorMessage(){
  		if(errorMessageSeen){
-			$("#error-messages-div").css("display", "none")
+			$("#error-messages-div").css("visibility", "hidden")
  		}
  	}
 

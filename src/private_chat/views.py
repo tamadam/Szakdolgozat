@@ -89,6 +89,8 @@ def private_chat_page_view(request, *args, **kwargs):
 			print('nem letezik')
 
 
+
+
 		messages_and_users.append({
 				'message': recent_message,
 				'recent_message_sending_time': recent_message_sending_time,
@@ -113,6 +115,7 @@ def private_chat_page_view(request, *args, **kwargs):
 	context['debug_mode'] = settings.DEBUG
 	context['messages_and_users'] = messages_and_users
 	context['account'] = account
+	context['len_messages_and_users'] = len(messages_and_users)
 
 	return render(request, 'private_chat/private_chat_room.html', context)
 

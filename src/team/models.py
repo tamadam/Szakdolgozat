@@ -16,7 +16,7 @@ from notification.models import Notification
 
 class Team(models.Model):
 	name 			= models.CharField(max_length=60, unique=True, blank=False)
-	description		= models.TextField(max_length=200, unique=False, blank=True, default="Leírás")
+	description		= models.TextField(max_length=200, unique=False, blank=True, default="")
 	date_created 	= models.DateTimeField(verbose_name = 'date created', auto_now_add = True, null=True)
 	users 			= models.ManyToManyField(settings.AUTH_USER_MODEL, through='Membership')
 	users_in_chat 	= models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='users_in_chat')

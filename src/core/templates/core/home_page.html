@@ -1,12 +1,8 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 
 <style>
-	
-p{
-	display:  inline;
-}
 
 </style>
 
@@ -17,33 +13,10 @@ p{
 
 <span id="hello-msg">Hello, {{username}} </span>
 <br>
-<span id="team-msg">A csapatod </span>
-<br>
-<br>
-<div id="strength">
-Erő: <p class="character-attr-value"id="strength-value">{{strength}}</p> 
-<button onclick="increaseAttr('{{user_id}}', 'strength')">click me</button><br>
-</div>
-<div id="skill">
-Ügyesség: <p id="skill-value">{{skill}} </p> 
-<button onclick="increaseAttr('{{user_id}}', 'skill')">click me</button><br>
-</div>
-<div id="intelligence">
-Értelem: <p id="intelligence-value">{{intelligence}} </p> 
-<button onclick="increaseAttr('{{user_id}}', 'intelligence')">click me</button><br>
-</div>
-<div id="health_point">
-Kitartás: <p id="health_point-value">{{health_point}} </p> 
-<button onclick="increaseAttr('{{user_id}}', 'health_point')">click me</button><br>
-</div>
-<div id="fortune">
-Szerencse: <p id="fortune-value">{{fortune}} </p> 
-<button onclick="increaseAttr('{{user_id}}', 'fortune')">click me</button><br>
-</div>
 
-<div id="gold">
-Arany: <p id="gold-value">{{gold}}<br></p>
-</div>
+<br>
+<br>
+
 
 <div id="game-choice">
 	<a href="{% url 'game:game_choice' %}">Játék választó</a>
@@ -52,63 +25,7 @@ Arany: <p id="gold-value">{{gold}}<br></p>
 
 
 
-
 <script>
-
-	function setIncreasedAttr(attributeType, newAttrValue, newGoldValue) {
-		console.log(attributeType)
-		if (attributeType == "strength"){
-			document.getElementById("strength-value").innerHTML = newAttrValue
-			document.getElementById("gold-value").innerHTML = newGoldValue
-		}
-		if (attributeType == "skill"){
-			document.getElementById("skill-value").innerHTML = newAttrValue
-			document.getElementById("gold-value").innerHTML = newGoldValue
-		}
-		if (attributeType == "intelligence"){
-			document.getElementById("intelligence-value").innerHTML = newAttrValue
-			document.getElementById("gold-value").innerHTML = newGoldValue
-		}
-		if (attributeType == "health_point"){
-			document.getElementById("health_point-value").innerHTML = newAttrValue
-			document.getElementById("gold-value").innerHTML = newGoldValue
-		}
-		if (attributeType == "fortune"){
-			document.getElementById("fortune-value").innerHTML = newAttrValue
-			document.getElementById("gold-value").innerHTML = newGoldValue
-		}
-	}
-
-
-	function increaseAttr(userId, attributeType){
-		payload = {
-			"csrfmiddlewaretoken": "{{csrf_token}}",
-			"user_id": userId,
-			"attribute_type": attributeType,
-		}
-		$.ajax({
-			type: "POST",
-			dataType: "json",
-			url: "{% url 'core:increase_attribute_value' %}",
-			data: payload,
-			timeout: 5000,
-			success: function(data) {
-				console.log('SUCCESS')
-				if (data.message == "Success"){
-					setIncreasedAttr(data.attr_type, data.new_attr_value, data.new_gold_value)
-				}
-				else if (data.message == "Out of gold"){
-					alert("nincs eleg aranyad")
-				}
-				else{
-					alert('Something went wrong')
-				}
-			},
-			error: function(data) {
-				console.log('ERROR')
-			},
-		})
-	}
 
 </script>
 

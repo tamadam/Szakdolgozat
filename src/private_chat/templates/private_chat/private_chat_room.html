@@ -267,6 +267,7 @@
 #send-new-message-button img{
 	max-width: 100%;
 	max-height: 100%;
+	user-select: none;
 
 }
 
@@ -429,6 +430,20 @@
 
 }
 
+.zero-message{
+	display: none;
+	align-items: center;
+	justify-content: center;
+	color: red;
+	font-family: "Kanit-Regular";
+	font-size: 1.4em;
+	background-color: rgba(0, 0, 0, 0.8);
+	padding: 1em;
+	user-select: none;
+}
+
+
+
 </style>
 
 
@@ -441,7 +456,7 @@
 		</div>
 		<div id="private-chat-title-center">
 			<div>
-				<h1>Üzeneteid</h1>
+				<h1 id="private-chat-title-text-h1">Üzeneteid</h1>
 			</div>
 		</div>
 		<div id="private-chat-title-right">	
@@ -548,11 +563,14 @@
 		</div>
 	</div>
 	<div id="private-chat-footer">
-		<!--footer-->
+		<div class="zero-message">
+			<span>Nincsen megjeleníthető üzeneted!</span>
+		</div>
 	</div>
 	<div class="loader-container">
 		<span id="loading-message"></span>
 	</div>
+
 </div>
 
 
@@ -589,6 +607,7 @@
 
 	$(window).on("load", function(){
 		
+
 		$("#loading-message").html("Üzenetek betöltése...")
 		// alapból a websocket kapcsolat létrehozása utána fade outolja ki, de ha valami hiba lenne, akkor 
 		// 2600ms utan mindenkepp 
@@ -598,6 +617,7 @@
 		}, 2600)
 
 	})
+
 
 
 
@@ -659,7 +679,18 @@
 		{% endif %}
 
 
-		setInterval(refresh_page_part, 2500)
+		if ("{{len_messages_and_users}}" == 0){
+			$(".send-new-message-textarea").prop("disabled", true)
+			$("#send-new-message-button").css("pointerEvents", "none")
+			$("#private-chat-room-title").css("pointerEvents", "none")
+			$(".zero-message").css("display", "flex")
+		}
+		else{
+			setInterval(refresh_page_part, 2500)
+		}
+
+
+
 
 
 	}
@@ -808,7 +839,6 @@
 				console.log('something wrong');
 			}
 		});
-
 
 	}
 

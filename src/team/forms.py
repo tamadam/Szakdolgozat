@@ -11,6 +11,6 @@ class TeamCreationForm(forms.ModelForm):
 	def clean_name(self):
 		name = self.cleaned_data['name']
 		if Team.objects.filter(name__icontains=name).exists():
-			raise ValidationError(f'{name} csapatnév már használatban van!')
+			raise ValidationError(f'"{name}" csapatnév már használatban van!')
 
 		return name
