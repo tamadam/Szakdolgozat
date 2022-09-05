@@ -33,6 +33,7 @@
 	background-size: cover;
 	user-select: none;
 	width: 1900px;
+	min-width: 800px;
 
 	display: flex;
 	flex-direction: column;
@@ -107,18 +108,97 @@
 	height: 100%;
 	width: 100%;
 	display: flex;
+	flex-direction: row;
 	align-items: flex-end;
 	margin-bottom: 0.4em;
-	background-color: lightblue;
+	background-color: rgba(173, 216, 230, 0.8);
+	border-top-left-radius: 30%;
+	border-bottom-left-radius: 10%;
+}
+
+
+#private-chat-icon:hover{
+	cursor: pointer;
+	background-color: rgba(173, 216, 230, 1.0);
+	box-shadow: rgba(148, 194, 209, 0.8) 0em 0.4em 2em;
+}
+
+
+.chat-icon-title{
+	width: 20%;
+	height: 80%;
+	display: flex;
+	align-items: top;
+	justify-content: flex-start;
+	margin-right: 0.1em;
+
+
+}
+
+#private-message-counter{
+
+	background-color: lightgrey;
+	text-align: center;
+	width: 100%;
+	height: fit-content;
+	font-family: "Kanit-Regular";
+	font-size: 1em;
+	color: black;
+
+
+}
+
+
+
+.chat-icon-content{
+	width: 80%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+}
+
+.chat-menu-img{
+	max-width: 90%;
+	max-height: 90%;
+	padding: 0.2em;
+	border-top-left-radius: 30%;
+	border-bottom-left-radius: 30%;
+
 }
 
 #public-chat-icon{
 	height: 100%;
 	width: 100%;
 	display: flex;
-	align-items: flex-start;
-	margin-top: 0.4em;
-	background-color: lightcyan;
+	flex-direction: row;
+	align-items: flex-end;
+	margin-bottom: 0.4em;
+	background-color: rgba(173, 216, 230, 0.8);
+	border-top-left-radius: 10%;
+	border-bottom-left-radius: 30%;
+}
+
+#public-chat-icon:hover{
+	cursor: pointer;
+	background-color: rgba(173, 216, 230, 1.0);
+	box-shadow: rgba(148, 194, 209, 0.8) 0em 0.4em 2em;
+}
+
+
+
+.public-chat-icon-content{
+	height: 100%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.public-chat-menu-img{
+	max-width: 80%;
+	max-height: 80%;
 }
 
 
@@ -312,10 +392,10 @@
 }
 
 .start-menu-img{
-	height: 60%;
+	height: 56%;
 	width: 70%;
-	max-width: 80%;
-	max-height: 70%;
+	max-width: 70%;
+	max-height: 56%;
 }
 
 .exit-menu-img{
@@ -339,6 +419,8 @@
 	font-size: 1.8vh;
 
 }
+
+
 </style>
 
 
@@ -353,7 +435,15 @@
 					<span class="menu-title-span">Karakter</span>
 				</div>
 				<div class="big-menu-content">
-					<img src="{% static 'images/archer.png' %}" alt="karakter" class="big-menu-img">
+					{% if character_type == 'scout' %}
+						<img src="{% static 'images/archer.png' %}" alt="karakter" class="big-menu-img">
+					{% elif character_type == 'warrior' %}
+						<img src="{% static 'images/swordsman.png' %}" alt="karakter" class="big-menu-img">
+					{% elif character_type == 'mage' %}
+						<img src="{% static 'images/wizard.png' %}" alt="karakter" class="big-menu-img">
+					{% else %}
+						<img src="{% static 'images/swordsman.png' %}" alt="karakter" class="big-menu-img">
+					{% endif %}
 				</div>				
 			</div>
 			<div class="menu menu2">
@@ -398,8 +488,19 @@
 		</div>	
 		<div id="main-menu-container-right">
 			<div id="chat-icons-side">
-				<div id="private-chat-icon">priv</div>
-				<div id="public-chat-icon">publ</div>
+				<div id="private-chat-icon">
+					<div class="chat-icon-content">
+						<img src="{% static 'images/mail.png' %}" alt="privat-chat" class="chat-menu-img">
+					</div>
+					<div class="chat-icon-title">
+						<span id="private-message-counter">0</span>
+					</div>
+				</div>
+				<div id="public-chat-icon">
+					<div class="chat-icon-content public-chat-icon-content">
+						<img src="{% static 'images/community.png' %}" alt="kozossegi-chat" class="public-chat-menu-img">
+					</div>
+				</div>
 			</div>
 		</div>	
 	</div>
@@ -414,7 +515,9 @@
 <script>
 
 	var activeTeamBackgroundAnimation = false
-	//animateTeamMenuBackground(true) //first run
+	var activePrivateChatBackgroundAnimation = false
+	var activePublicChatBackgroundAnimation = false
+
 
 	jQuery.easing.def = "linear";
 
@@ -441,6 +544,48 @@
 
 	}
 
+
+	function animatePrivateChatBackground(firstRun){
+
+		if (activePrivateChatBackgroundAnimation){
+			if (firstRun){
+				$("#private-chat-icon").css("opacity", 1.0)	
+			}
+			$("#private-chat-icon").animate({
+				opacity: 0.4
+			}, 900, function(){
+				$(this).animate({
+					opacity: 1.0
+				}, 900, function(){
+					setTimeout(animatePrivateChatBackground(false), 400)
+				})
+			})
+		}
+
+
+	}
+
+
+	function animatePublicChatBackground(firstRun){
+
+		if (activePublicChatBackgroundAnimation){
+			if (firstRun){
+				$("#public-chat-icon").css("opacity", 1.0)	
+			}
+			$("#public-chat-icon").animate({
+				opacity: 0.4
+			}, 900, function(){
+				$(this).animate({
+					opacity: 1.0
+				}, 900, function(){
+					setTimeout(animatePublicChatBackground(false), 400)
+				})
+			})
+		}
+
+
+	}
+
 	function cancelAnimateTeamMenuBackground(){
 		activeTeamBackgroundAnimation = false
 		setTimeout(function(){
@@ -448,17 +593,28 @@
 		}, 500)
 	}
 
-	/*
-	setTimeout(function(){
-		activeTeamBackgroundAnimation = true
-		animateTeamMenuBackground(true)
-	}, 1000)
 
-	setTimeout(cancelAnimateTeamMenuBackground, 5000)
-	*/
+	function cancelAnimatePrivateChatBackground(){
+		activePrivateChatBackgroundAnimation = false
+		setTimeout(function(){
+			$("#private-chat-icon").css("opacity", 1.0)	
+		}, 500)
+	}
+
+
+
+	function cancelAnimatePublicChatBackground(){
+		activePublicChatBackgroundAnimation = false
+		setTimeout(function(){
+			$("#public-chat-icon").css("opacity", 1.0)	
+		}, 500)
+	}
+
 
 	$(window).on("load", function(){
-		$(".loader-container").fadeOut("slow")
+		setTimeout(function(){
+			$(".loader-container").fadeOut("slow")
+		}, 400)
 	})
 
 
@@ -577,13 +733,206 @@
 	})
 
 
+	$("#private-chat-icon").click(function(){
+		audio.play()
+
+		setTimeout(function(){
+			try {
+
+				var url = "{% url 'private_chat:private_chat_room' %}"
+				var win = window.location.replace(url) 
+				win.focus()
+			}
+			catch(error){
+				console.log(error)
+			}
+		}, 200)
+		$(".loader-container").fadeIn("fast")
+	})
+
+
+	$("#public-chat-icon").click(function(){
+		audio.play()
+
+		setTimeout(function(){
+			try {
+
+				var url = "{% url 'public_chat' %}"
+				var win = window.location.replace(url) 
+				win.focus()
+			}
+			catch(error){
+				console.log(error)
+			}
+		}, 200)
+		$(".loader-container").fadeIn("fast")
+	})
+
 
 </script>
 
-{% endblock %}
 
-<!--
-	<div id="game-choice">
-		<a href="{% url 'game:game_choice' %}">Játék választó</a>
-	</div>
--->
+ <script>
+    // WEBSOCKET BEÁLLÍTÁS FOLYAMATA KEZDETE //
+
+    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+
+    /* nincs debug_mode view de ezt viewban meg lehet csinalni sztem templatetagssel
+    if ("{{ debug_mode }}")
+      var ws_path = ws_scheme + "://" + window.location.host + "/"; // fejlesztéshez
+    else
+      var ws_path = ws_scheme + "://" + window.location.host + ":8001/"; // élesben
+    */
+    var ws_path = ws_scheme + '://' + window.location.host + "/";
+
+    // websocket beállítás
+    var notificationSocket = new WebSocket(ws_path)
+
+
+    // websocket megnyitása
+    notificationSocket.onopen = function(event) {
+      console.log("notificationSocket: Connection successfully created");
+      getUnreadPrivateChatRoomMessagesCount()
+      getUnreadPublicChatRoomMessagesCount()
+      getUnreadTeamMessagesCount()
+    };
+
+    // bejövő üzeneket kezelése a consumertől
+    notificationSocket.onmessage = function(event) {
+      console.log("Data received from the server: ", event.data);
+      var data = JSON.parse(event.data)
+
+
+      if(data.message_type == 20){
+        console.log("got message_type 20")
+        setNumOfPrivateChatNotifications(data.num)
+      }
+      else if(data.message_type == 21){
+        console.log("got message_type 21")
+        setNumOfPublicChatNotifications(data.num)
+      }
+      else if(data.message_type == 22){
+        console.log("got message_type 22")
+        setTeamChatNotifications(data.num)
+      }
+
+    };
+
+
+    // hibaüzenetek kiírása
+    notificationSocket.onerror = function(event) {
+      console.log("Error: ", event.message);
+    };
+
+
+    // websocket bezárása
+    notificationSocket.onclose = function(event) {
+      if (event.wasClean){
+        console.log("Connection closed");
+      }
+      else {
+        console.log("Connection died.");
+      }
+    };
+
+    function setTeamChatNotifications(numOfNotifications) {
+      console.log("setting num of team chat notification")
+      console.log("num of team chat notifications: " + numOfNotifications)
+      var notificationCounter = document.getElementById("team-chat-notification-counter")
+      if (numOfNotifications > 0){
+      	if(!activeTeamBackgroundAnimation){
+			activeTeamBackgroundAnimation = true
+			animateTeamMenuBackground(true)
+      	}
+      }
+      else{
+		cancelAnimateTeamMenuBackground()
+      }
+    }
+
+
+
+
+
+    // public chat notifications
+    function setNumOfPublicChatNotifications(numOfNotifications){
+      console.log("setting num of public chat notification")
+      console.log("num of public chat notifications: " + numOfNotifications)
+
+      if (numOfNotifications > 0){
+      	if(!activePublicChatBackgroundAnimation){
+			activePublicChatBackgroundAnimation = true
+			animatePublicChatBackground(true)
+      	}
+      }
+      else{
+		cancelAnimatePublicChatBackground()
+      }
+    }
+
+
+    // private chat notifications
+    function setNumOfPrivateChatNotifications(numOfNotifications){
+      console.log("setting num of private chat notification")
+      console.log("num of private chat notifications: " + numOfNotifications)
+
+      
+      if (numOfNotifications > 0){
+      	if (numOfNotifications > 9){
+      		numOfNotifications = "9+"
+      	}
+        $("#private-message-counter").html(numOfNotifications)
+        $("#private-message-counter").css("backgroundColor", "red")
+        $("#private-message-counter").css("fontFamily", "Kanit-Bold")
+        $("#private-message-counter").css("color", "white")
+
+      	if(!activePrivateChatBackgroundAnimation){
+			activePrivateChatBackgroundAnimation = true
+			animatePrivateChatBackground(true)
+      	}
+      }
+      else{
+        $("#private-message-counter").html(numOfNotifications)
+        $("#private-message-counter").css("backgroundColor", "lightgrey")
+        $("#private-message-counter").css("fontFamily", "Kanit-Regular")
+        $("#private-message-counter").css("color", "black")
+		cancelAnimatePrivateChatBackground()
+      }
+      
+    }
+
+    function getUnreadTeamMessagesCount(){
+      if("{{request.user.is_authenticated}}"){
+        notificationSocket.send(JSON.stringify({
+            "command": "get_unread_team_messages_count",
+        }));
+      }
+    } 
+
+
+
+    function getUnreadPublicChatRoomMessagesCount(){
+      if("{{request.user.is_authenticated}}"){
+        notificationSocket.send(JSON.stringify({
+            "command": "get_unread_public_chat_room_messages_count",
+        }));
+      }
+    } 
+
+
+
+    function getUnreadPrivateChatRoomMessagesCount(){
+      if("{{request.user.is_authenticated}}"){
+        notificationSocket.send(JSON.stringify({
+            "command": "get_unread_private_chat_room_messages_count",
+        }));
+      }
+    }
+
+    setInterval(getUnreadTeamMessagesCount, 1800)
+    setInterval(getUnreadPublicChatRoomMessagesCount, 1800)
+    setInterval(getUnreadPrivateChatRoomMessagesCount, 1800)
+ </script>
+
+
+{% endblock %}

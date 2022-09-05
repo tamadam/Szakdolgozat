@@ -29,69 +29,15 @@ def home_page_view(request):
 	context = {
 		'user_id': user.account.id,
 		'username': user.account.username,
-		'strength': user.strength,
-		'skill': user.skill,
-		'intelligence': user.intelligence,
-		'health_point': user.health_point,
-		'fortune': user.fortune,
-		'gold': user.gold,
-
+		'character_type': user.character_type,
 	}
+
+	print("CHARTYPE",user.character_type)
 
 	return render(request, 'core/home_page.html', context)
 
 
 
-
-
-def increase_attribute_value(request, *args, **kwargs):
-	context = {}
-	if request.method == 'POST':	
-		user_id = request.POST.get('user_id')
-		attr_type = request.POST.get('attribute_type')
-		user = Character.objects.get(account=user_id)
-		print('USERNAME ', user.account.username, ' ATTR ', attr_type)
-
-		if (user.gold)- DEFAULT_ATTRIBUTE_INCREASE_VALUE >= 0: 
-			if attr_type == 'strength':
-				user.strength += 1
-				user.gold -= DEFAULT_ATTRIBUTE_INCREASE_VALUE
-				user.save()
-				context['new_attr_value'] = str(user.strength)
-
-			elif attr_type == 'skill':
-				user.skill += 1
-				user.gold -= DEFAULT_ATTRIBUTE_INCREASE_VALUE
-				user.save()
-				context['new_attr_value'] = str(user.skill)
-
-			elif attr_type == 'intelligence':
-				user.intelligence += 1
-				user.gold -= DEFAULT_ATTRIBUTE_INCREASE_VALUE
-				user.save()
-				context['new_attr_value'] = str(user.intelligence)
-
-			elif attr_type == 'health_point':
-				user.health_point += 1
-				user.gold -= DEFAULT_ATTRIBUTE_INCREASE_VALUE
-				user.save()
-				context['new_attr_value'] = str(user.health_point)
-
-
-			elif attr_type == 'fortune':
-				user.fortune += 1
-				user.gold -= DEFAULT_ATTRIBUTE_INCREASE_VALUE
-				user.save()
-				context['new_attr_value'] = str(user.fortune)
-
-			context['new_gold_value'] = str(user.gold)
-			context['message'] = 'Success'
-			context['attr_type'] = attr_type
-		else: 
-			context['message'] = 'Out of gold'
-
-
-	return HttpResponse(json.dumps(context), content_type='application/json')
 
 
 # beepitve mar a modellben, törlendo

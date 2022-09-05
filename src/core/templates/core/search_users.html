@@ -1051,6 +1051,7 @@ input:checked + .slider:before {
 		if (searchTeams == "exists"){
 			$("#switch-checkbox").prop("checked", true)
 			searchBarUsers = false
+			$("#search-input").attr("placeholder", "Csapat keresése...")
 			$("#users-container").css("display", "none")
 			$("#teams-container").css("display", "flex")
 		} 
