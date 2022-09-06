@@ -1,6 +1,45 @@
+{% extends 'base_new.html' %}
+
+{% load static %}
+
+{% block content %}
+<style>
+	#game{
+		background-color: white;
+	}
+</style>
+
 <div id="game">
 	<p>Gamek</p>
-	<a href="{% url 'game:easy_game' %}">Könnyű játék</a>
+	<!--<a href="{% url 'game:easy_game' %}">Könnyű játék</a>-->
+	<div id="easy-4">Könnyű 4x4</div>
+	<div id="easy-5">Könnyű 5x4</div>
+	<div id="easy-6">Könnyű 6x6</div>
+
+	<br>
 	<a href="{% url 'game:medium_game' %}">Közepes játék</a>
 	<a href="{% url 'game:hard_game' %}">Nehéz játék</a>
 </div>
+
+<script>
+	$("#easy-4").click(function(){
+		startEasyGame(4)
+	})
+
+	$("#easy-5").click(function(){
+		startEasyGame(5)
+	})
+
+	$("#easy-6").click(function(){
+		startEasyGame(6)
+	})
+
+	function startEasyGame(gameFieldSize){
+		var url = "{% url 'game:easy_game' %}?jatek_tabla_meret=" + gameFieldSize 
+		var win = window.location.replace(url) 
+		win.focus()
+	}
+</script>
+
+
+{% endblock %}

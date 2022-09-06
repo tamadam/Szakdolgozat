@@ -22,11 +22,39 @@ def game_choice_view(request):
 
 def easy_game_view(request):
 	context = {}
+	correct_field_values = ['4', '5', '6']
+	game_field_size = request.GET.get('jatek_tabla_meret')
+
+	if not game_field_size:
+		game_field_size = 4
+	elif game_field_size not in correct_field_values:
+		game_field_size = 4 # alapértelmezett érték, hogyha a linken keresztül indítja el a játékot
+
+	print('game_field_size', game_field_size)
+
+	game_field_size = int(game_field_size)
+
+	if game_field_size == 4:
+		minutes = 0
+		seconds = 45
+	elif game_field_size == 5:
+		minutes = 1
+		seconds = 10
+	elif game_field_size == 6:
+		minutes = 2
+		seconds = 10
+	else:
+		minutes = 0
+		seconds = 45
+
 
 	user = Account.objects.get(id=request.user.id)
 
 	context = {
 		'user_id': user.id,
+		'game_field_size': game_field_size,
+		'minutes': minutes,
+		'seconds': seconds,
 	}
 
 	return render(request, 'game/easy_game.html', context)
@@ -75,27 +103,48 @@ def finished_game(request):
 	data = {}
 	user_id = None
 	game_type = 'easy'
+	game_level = '1'
 
 	try:
 		user_id=request.GET.get('user_id')
 		game_type=request.GET.get('game_type')
+		game_level = request.GET.get('game_level')
 	except Exception as e:
 		print(e)
 		pass
+
+
+	# easy game-hez
+	multiplier = 0
+
+	if game_level == '2':
+		multiplier = 10
+	elif game_level == '3':
+		multiplier = 20
+	else:
+		multiplier = 0
+
+	####
 
 	if user_id:
 		character = Character.objects.get(account=user_id)
 
 		# játék fajták megkülönböztetése --> mindegyikért eltérő mennyiségű XP jár
 		if game_type == 'easy':
-			character.current_xp += DEFAULT_XP_INCREASE_EASY_GAME
-			character.gold += DEFAULT_GOLD_INCREASE_EASY_GAME
+			character.current_xp += DEFAULT_XP_INCREASE_EASY_GAME + multiplier
+			character.gold += DEFAULT_GOLD_INCREASE_EASY_GAME + multiplier
+			got_gold = DEFAULT_GOLD_INCREASE_EASY_GAME + multiplier
+			got_xp = DEFAULT_XP_INCREASE_EASY_GAME + multiplier
 		elif game_type == 'medium':
 			character.current_xp += DEFAULT_XP_INCREASE_MEDIUM_GAME
 			character.gold += DEFAULT_GOLD_INCREASE_MEDIUM_GAME
+			got_gold = DEFAULT_GOLD_INCREASE_MEDIUM_GAME
+			got_xp = DEFAULT_XP_INCREASE_MEDIUM_GAME
 		elif game_type == 'hard':
 			character.current_xp += DEFAULT_XP_INCREASE_HARD_GAME
 			character.gold += DEFAULT_GOLD_INCREASE_HARD_GAME
+			got_gold = DEFAULT_GOLD_INCREASE_HARD_GAME
+			got_xp = DEFAULT_XP_INCREASE_HARD_GAME
 
 		# szintlépés, ilyenkor növekszik a szint 1-el, az xp 0-zódik, az elérendő xp növekszik az előzőhöz képest, és a tulajdonsagok is nonek
 		if character.current_xp >= character.next_level_xp:
@@ -108,6 +157,8 @@ def finished_game(request):
 
 	data = {
 		'message': 'Success',
+		'got_gold': got_gold,
+		'got_xp': got_xp,
 	}
 
 	return JsonResponse(data)
