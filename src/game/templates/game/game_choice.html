@@ -17,7 +17,14 @@
 	<div id="easy-6">Könnyű 6x6</div>
 
 	<br>
-	<a href="{% url 'game:medium_game' %}">Közepes játék</a>
+	<div id="second-2">Puzzle 2x2</div>
+	<div id="second-3">Puzzle 3x3</div>
+	<div id="second-4">Puzzle 4x4</div>
+	<div id="second-5">Puzzle 5x5</div>
+
+
+
+	<br>
 	<a href="{% url 'game:hard_game' %}">Nehéz játék</a>
 </div>
 
@@ -34,8 +41,31 @@
 		startEasyGame(6)
 	})
 
+	$("#second-2").click(function(){
+		startSecondGame(2)
+	})
+
+	$("#second-3").click(function(){
+		startSecondGame(3)
+	})
+
+	$("#second-4").click(function(){
+		startSecondGame(4)
+	})
+
+	$("#second-5").click(function(){
+		startSecondGame(5)
+	})
+
+
 	function startEasyGame(gameFieldSize){
 		var url = "{% url 'game:easy_game' %}?jatek_tabla_meret=" + gameFieldSize 
+		var win = window.location.replace(url) 
+		win.focus()
+	}
+
+	function startSecondGame(gameFieldSize){
+		var url = "{% url 'game:medium_game' %}?jatek_tabla_meret=" + gameFieldSize 
 		var win = window.location.replace(url) 
 		win.focus()
 	}

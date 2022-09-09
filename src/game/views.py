@@ -63,10 +63,41 @@ def easy_game_view(request):
 def medium_game_view(request):
 	context = {}
 
+	correct_field_values = ['2', '3', '4', '5']
+	game_field_size = request.GET.get('jatek_tabla_meret')
+
+	if not game_field_size:
+		game_field_size = 3
+	elif game_field_size not in correct_field_values:
+		game_field_size = 3 # alapértelmezett érték, hogyha a linken keresztül indítja el a játékot
+
+	print('game_field_size', game_field_size)
+
+	game_field_size = int(game_field_size)
+
+	if game_field_size == 2:
+		minutes = 0
+		seconds = 10
+	elif game_field_size == 3:
+		minutes = 0
+		seconds = 50
+	elif game_field_size == 4:
+		minutes = 1
+		seconds = 30
+	elif game_field_size == 5:
+		minutes = 2
+		seconds = 30
+	else:
+		minutes = 0
+		seconds = 10
+
 	user = Account.objects.get(id=request.user.id)
 
 	context = {
 		'user_id': user.id,
+		'game_field_size': game_field_size,
+		'minutes': minutes,
+		'seconds': seconds,
 	}
 
 	return render(request, 'game/medium_game.html', context)

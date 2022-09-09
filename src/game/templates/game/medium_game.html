@@ -1,20 +1,492 @@
+{% extends 'base_new.html' %}
 
-<!-- AJAXHOZ KELL JQUERY IMPORT -->
-<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+{% load static %}
 
-<p>Easy</p>
-{{user_id}}
-<button id="finish">Vege a jateknak</button>
+{% block content %}
+
+<style>
+@font-face {
+	font-family: 'Kanit-Regular';
+	src: local('Kanit-Regular'),
+	url("{% static 'fonts/Kanit-Regular.ttf' %}");
+}
+
+@font-face {
+	font-family: 'Kanit-Bold';
+	src: local('Kanit-Bold'),
+	url("{% static 'fonts/Kanit-Bold.ttf' %}");
+}
+
+@font-face {
+	font-family: 'Kanit-Light';
+	src: local('Kanit-Light'),
+	url("{% static 'fonts/Kanit-Light.ttf' %}");
+}
+
+#second-game-content{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	background-color: white;
+	user-select: none;
+	font-family: "Kanit-Regular";
+	font-size: 2vh;
+}
+
+#second-game-header{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 14%;
+}
+
+#second-game-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;	
+	width: 100%;
+	height: 72%;
+}
+
+#second-game-footer{
+	display: flex;
+	align-items: center;
+	justify-content: center;	
+	width: 100%;
+	height: 14%;
+}
+
+#puzzle-container-left{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20%;
+	height: 100%;
+}
+
+#puzzle-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	width: 50vh;
+	height: 50vh;
+	border: 4px solid red;
+}
+
+#puzzle-container-right{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20%;
+	height: 100%;
+}
+
+#timer-title{
+	height: 40%;
+	width: 100%;
+	text-align: center;
+}
+
+#timer-text{
+	height: 40%;
+	width: 100%;
+	text-align: center;
+}
+
+.puzzle-piece{
+	top: 0;
+	left: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	width: 50%;
+	height: 50%;
+	background-color: lightblue;
+	color: green;
+	cursor: pointer;
+	transition: 0.3s left, 0.3s top;
+
+}
+
+.puzzle-piece img{
+	width: 100%;
+	height: 100%;
+	max-width: 100%;
+	max-height: 100%;
+	opacity: 1.0;
+}
+
+
+</style>
+
+<div id="second-game-content">
+	<div id="second-game-header">
+		header
+	</div>
+	<div id="second-game-container">
+		<div id="puzzle-container-left"></div>
+		<div id="puzzle-container">
+			
+		</div>
+		<div id="puzzle-container-right">
+			<div id="puzzle-timer-container">
+				<div id="timer-title">Hátralévő idő</div>
+				<div id="timer-text">..:..</div>
+			</div>
+		</div>
+	</div>
+	<div id="second-game-footer">
+		footer
+	</div>
+
+
+
+</div>
+
+
+
 
 <!-- UGYANAZ A KOD 3 HELYEN -->
 <script>
+	// puzzle játék //
+	const images2x2 = [
+		{ name: "1", image: "{% static 'images/puzzle-images/2x2/1.jpg' %}" },
+		{ name: "2", image: "{% static 'images/puzzle-images/2x2/2.jpg' %}" },
+		{ name: "3", image: "{% static 'images/puzzle-images/2x2/3.jpg' %}" },
+		{ name: "4", image: "{% static 'images/puzzle-images/2x2/4.jpg' %}" },
+	]
+	const images3x3 = [
+		{ name: "1", image: "{% static 'images/puzzle-images/3x3/1.jpg' %}" },
+		{ name: "2", image: "{% static 'images/puzzle-images/3x3/2.jpg' %}" },
+		{ name: "3", image: "{% static 'images/puzzle-images/3x3/3.jpg' %}" },
+		{ name: "4", image: "{% static 'images/puzzle-images/3x3/4.jpg' %}" },
+		{ name: "5", image: "{% static 'images/puzzle-images/3x3/5.jpg' %}" },
+		{ name: "6", image: "{% static 'images/puzzle-images/3x3/6.jpg' %}" },
+		{ name: "7", image: "{% static 'images/puzzle-images/3x3/7.jpg' %}" },
+		{ name: "8", image: "{% static 'images/puzzle-images/3x3/8.jpg' %}" },
+		{ name: "9", image: "{% static 'images/puzzle-images/3x3/9.jpg' %}" },
+	]
 
+	const images4x4 = [
+		{ name: "1", image: "{% static 'images/puzzle-images/4x4/1.jpg' %}" },
+		{ name: "2", image: "{% static 'images/puzzle-images/4x4/2.jpg' %}" },
+		{ name: "3", image: "{% static 'images/puzzle-images/4x4/3.jpg' %}" },
+		{ name: "4", image: "{% static 'images/puzzle-images/4x4/4.jpg' %}" },
+		{ name: "5", image: "{% static 'images/puzzle-images/4x4/5.jpg' %}" },
+		{ name: "6", image: "{% static 'images/puzzle-images/4x4/6.jpg' %}" },
+		{ name: "7", image: "{% static 'images/puzzle-images/4x4/7.jpg' %}" },
+		{ name: "8", image: "{% static 'images/puzzle-images/4x4/8.jpg' %}" },
+		{ name: "9", image: "{% static 'images/puzzle-images/4x4/9.jpg' %}" },
+		{ name: "10", image: "{% static 'images/puzzle-images/4x4/10.jpg' %}" },
+		{ name: "11", image: "{% static 'images/puzzle-images/4x4/11.jpg' %}" },
+		{ name: "12", image: "{% static 'images/puzzle-images/4x4/12.jpg' %}" },
+		{ name: "13", image: "{% static 'images/puzzle-images/4x4/13.jpg' %}" },
+		{ name: "14", image: "{% static 'images/puzzle-images/4x4/14.jpg' %}" },
+		{ name: "15", image: "{% static 'images/puzzle-images/4x4/15.jpg' %}" },
+		{ name: "16", image: "{% static 'images/puzzle-images/4x4/16.jpg' %}" },
+	]
+
+	const images5x5 = [
+		{ name: "1", image: "{% static 'images/puzzle-images/5x5/1.jpg' %}" },
+		{ name: "2", image: "{% static 'images/puzzle-images/5x5/2.jpg' %}" },
+		{ name: "3", image: "{% static 'images/puzzle-images/5x5/3.jpg' %}" },
+		{ name: "4", image: "{% static 'images/puzzle-images/5x5/4.jpg' %}" },
+		{ name: "5", image: "{% static 'images/puzzle-images/5x5/5.jpg' %}" },
+		{ name: "6", image: "{% static 'images/puzzle-images/5x5/6.jpg' %}" },
+		{ name: "7", image: "{% static 'images/puzzle-images/5x5/7.jpg' %}" },
+		{ name: "8", image: "{% static 'images/puzzle-images/5x5/8.jpg' %}" },
+		{ name: "9", image: "{% static 'images/puzzle-images/5x5/9.jpg' %}" },
+		{ name: "10", image: "{% static 'images/puzzle-images/5x5/10.jpg' %}" },
+		{ name: "11", image: "{% static 'images/puzzle-images/5x5/11.jpg' %}" },
+		{ name: "12", image: "{% static 'images/puzzle-images/5x5/12.jpg' %}" },
+		{ name: "13", image: "{% static 'images/puzzle-images/5x5/13.jpg' %}" },
+		{ name: "14", image: "{% static 'images/puzzle-images/5x5/14.jpg' %}" },
+		{ name: "15", image: "{% static 'images/puzzle-images/5x5/15.jpg' %}" },
+		{ name: "16", image: "{% static 'images/puzzle-images/5x5/16.jpg' %}" },
+		{ name: "17", image: "{% static 'images/puzzle-images/5x5/17.jpg' %}" },
+		{ name: "18", image: "{% static 'images/puzzle-images/5x5/18.jpg' %}" },
+		{ name: "19", image: "{% static 'images/puzzle-images/5x5/19.jpg' %}" },
+		{ name: "20", image: "{% static 'images/puzzle-images/5x5/20.jpg' %}" },
+		{ name: "21", image: "{% static 'images/puzzle-images/5x5/21.jpg' %}" },
+		{ name: "22", image: "{% static 'images/puzzle-images/5x5/22.jpg' %}" },
+		{ name: "23", image: "{% static 'images/puzzle-images/5x5/23.jpg' %}" },
+		{ name: "24", image: "{% static 'images/puzzle-images/5x5/24.jpg' %}" },
+		{ name: "25", image: "{% static 'images/puzzle-images/5x5/25.jpg' %}" },
+	]
+
+	var initialValue = null
+	var rows = null
+	var cols = null
+	var fieldSize = null
+	var puzzlePiecesContainer = null
+	var puzzlePieces = null
+	var emptyPieceCoordinate = null
+	var emptyPieceID = null
+	var arrayIdOfPieces = []
+
+	var pieceWidth = null
+	var pieceHeight = null
+
+	var imageSource = null
+	var pieceSizeBasedOnFieldSize = null
+
+	var disablePuzzleField = true
+
+	function initializeGame(){
+		try{
+			initialValue = {{game_field_size}}
+		}
+		catch{
+			initialValue = 3
+		}
+		var shuffleMultiplier = setInitialValues()
+
+		createPuzzlePieces()
+		alignPiecesProperPosition()
+		setTimeout(function(){
+			shufflePieces(shuffleMultiplier * initialValue)
+			disablePuzzleField = false
+		}, 1000)
+	}
+
+	function setInitialValues(){
+		rows = initialValue
+		cols = initialValue
+		fieldSize = cols * rows
+		emptyPieceCoordinate = [rows - 1, cols -1]
+		emptyPieceID = fieldSize - 1
+
+		var shuffleMultiplier = 10
+
+		if (initialValue == 2){
+			imageSource = images2x2
+			pieceSizeBasedOnFieldSize = "50%"
+		}
+		else if(initialValue == 3){
+			imageSource = images3x3
+			pieceSizeBasedOnFieldSize = "33.3%"
+			shuffleMultiplier = 15
+		}
+		else if(initialValue == 4){
+			imageSource = images4x4
+			pieceSizeBasedOnFieldSize = "25%"
+			shuffleMultiplier = 20
+		}
+		else if(initialValue == 5){
+			imageSource = images5x5
+			pieceSizeBasedOnFieldSize = "20%"
+			shuffleMultiplier = 25
+		}
+		else{
+			imageSource = images2x2
+			pieceSizeBasedOnFieldSize = "50%"
+		}
+
+
+		return shuffleMultiplier
+
+	}
+
+	// legeneráljuk a megadott számú div-et (a puzzle darabjait)
+	function createPuzzlePieces(){
+		puzzlePiecesContainer = document.getElementById("puzzle-container")
+		for (let i = 0; i < fieldSize - 1; i++){
+			var puzzleElement = document.createElement("div")
+			puzzleElement.classList.add("puzzle-piece")
+			puzzleElement.style.width = pieceSizeBasedOnFieldSize
+			puzzleElement.style.height = pieceSizeBasedOnFieldSize
+			//puzzleElement.innerHTML = i + 1
+
+			var puzzleElementImage = document.createElement("img")
+			puzzleElementImage.src = imageSource[i].image
+
+			puzzleElement.appendChild(puzzleElementImage)
+
+			puzzlePiecesContainer.appendChild(puzzleElement)
+		}
+
+		// puzzlePiecesben benne van az összes darab
+		puzzlePieces = document.getElementsByClassName("puzzle-piece")
+		pieceWidth = puzzlePieces[0].clientWidth
+		pieceHeight = puzzlePieces[0].clientHeight
+	}
+
+
+	// végigmegyünk a puzzle darabokon, a megfelelő helyre helyezzük őket
+	// onclick event listenert is itt adjuk hozzá, valamint egy tömbbe is rakjuk őket
+	function alignPiecesProperPosition(){
+		for (let i = 0; i < rows; i++){
+			for (let j = 0; j < cols; j++){
+				var puzzlePieceID = (i * cols) + j
+				if (puzzlePieceID >= fieldSize - 1){
+					break
+				}
+
+				var puzzlePiece = puzzlePieces[puzzlePieceID]
+
+				puzzlePiece.addEventListener("click", handleClickOnPiece.bind(null, event, puzzlePieceID))
+
+				alignPuzzlePiece(puzzlePiece, i, j)
+
+				arrayIdOfPieces.push(puzzlePieceID)
+
+			}
+		}
+
+		arrayIdOfPieces.push(emptyPieceID)
+	}
+
+
+	function alignPuzzlePiece(puzzlePiece, rowIndex, colIndex){
+		puzzlePiece.style.left = (colIndex * pieceWidth) + "px"
+		puzzlePiece.style.top = (rowIndex * pieceHeight) + "px"
+	}
+
+
+	function handleClickOnPiece(event, puzzlePieceID){
+		//console.log("puzzle piece " + puzzlePieceID + " clicked")
+		console.log(disablePuzzleField)
+		if(!disablePuzzleField){
+			var isMoved = moveClickedPiece(puzzlePieceID)
+
+			if(isMoved){
+				if(isPuzzleCompleted()){
+					disablePuzzleField = true
+					endPuzzleGame()
+				}
+				else{
+					disablePuzzleField = false
+				}
+			}
+		}
+	}
+
+	function moveClickedPiece(puzzlePieceID){
+		var puzzlePiece = puzzlePieces[puzzlePieceID]
+
+		var newCoordinate = getCoordinateIfMovableOrNull(puzzlePiece)
+
+		if(newCoordinate){
+			alignPuzzlePiece(puzzlePiece, emptyPieceCoordinate[1], emptyPieceCoordinate[0])
+
+			// az eddigi üres rész helyére eltároljuk a kattintott puzzle ID-ját
+			arrayIdOfPieces[emptyPieceCoordinate[0] + (emptyPieceCoordinate[1] * cols)] = puzzlePieceID
+
+			// a kattintot puzzle darab koordinátáit átírjuk az üresre
+			emptyPieceCoordinate[0] = newCoordinate[0]
+			emptyPieceCoordinate[1] = newCoordinate[1]
+
+			arrayIdOfPieces[emptyPieceCoordinate[0] + (emptyPieceCoordinate[1] * cols)] = emptyPieceID
+
+			return true
+		}
+
+		return false
+	}
+
+	function getCoordinateIfMovableOrNull(puzzlePiece){
+		var piecePositionX = parseInt(puzzlePiece.style.left)
+		var piecePositionY = parseInt(puzzlePiece.style.top)
+
+		var pieceCoordinate = [piecePositionX / pieceWidth, piecePositionY / pieceHeight]
+
+		//console.log("FIX: pieceWidth " + pieceWidth + " | heightWidth" + pieceHeight)
+		//console.log("piecePositionX " + piecePositionX + " | " + "piecePositionY " + piecePositionY)
+
+
+		// a kattintott és az üres koordinátái
+		//console.log("pieceCoordinateX " + pieceCoordinate[0] + " | pieceCoordinateY " + pieceCoordinate[1])
+		//console.log("emptyPieceCoordinateX " + emptyPieceCoordinate[0] + " | emptyPieceCoordinateY " + emptyPieceCoordinate[1])
+
+
+		var xAxisDifference = Math.abs(pieceCoordinate[0] - emptyPieceCoordinate[0])
+		var yAxisDifference = Math.abs(pieceCoordinate[1] - emptyPieceCoordinate[1])
+
+		//console.log("xAxisDifference " + xAxisDifference)
+		//console.log("yAxisDifference " + yAxisDifference)
+
+		var distance = [xAxisDifference, yAxisDifference]
+
+
+		if ((distance[0] == 1 && distance[1] == 0) || (distance[0] == 0 && distance[1] == 1)){
+			return pieceCoordinate
+		}
+
+		return null
+
+	}
+
+
+	function isPuzzleCompleted(){
+		for (let i = 0; i < arrayIdOfPieces.length; i++){
+			if (arrayIdOfPieces[i] != i){
+				return false
+			}
+		}
+
+		return true
+	}
+
+
+	function shufflePieces(numberOfShuffle){
+		// a fieldSize az 3x3 esetén 9, abból 1 az üres, és az ID-k 0-7ig vannak
+		// random ID 0 és 7 között
+		//Math.floor(Math.random() * (max + 1));
+		for (let i = 0; i < numberOfShuffle; i++){
+			var randomPieceID = Math.floor(Math.random() * (fieldSize - 1))
+			//console.log(randomPieceID)
+
+			if (!moveClickedPiece(randomPieceID)){
+				// ha olyat akar mozgatni amit nem lehet, akkor növeljük a keverések számát
+				numberOfShuffle++
+			}
+		}
+
+
+		if(isPuzzleCompleted()){
+			// előfordulhat, hogy a keverés végére kirakva kapja meg a felhasználó a puzzle-t
+			// ebben az esetben újrakezdjük a keverést
+			shufflePieces(numberOfShuffle)
+		}
+	}
+
+
+	function endPuzzleGame(){
+		console.log("vege")
+		var finalPuzzlePiece = document.createElement("div")
+		finalPuzzlePiece.classList.add("puzzle-piece")
+		finalPuzzlePiece.style.width = pieceSizeBasedOnFieldSize
+		finalPuzzlePiece.style.height = pieceSizeBasedOnFieldSize
+		finalPuzzlePiece.style.opacity = "0"
+		finalPuzzlePiece.setAttribute("id", "final-puzzle-piece")
+
+		var finalPuzzleImage = document.createElement("img")
+		finalPuzzleImage.src = imageSource.slice(-1)[0].image
+
+		finalPuzzlePiece.appendChild(finalPuzzleImage)
+		puzzlePiecesContainer.appendChild(finalPuzzlePiece)
+
+		alignPuzzlePiece(finalPuzzlePiece, rows-1, cols-1)
+
+		setTimeout(function(){
+			$("#final-puzzle-piece").animate({
+				opacity: 1.0
+			}, 400)
+		}, 400)
+	}
+
+
+	initializeGame()
+
+	// ----------- // 
 	var userID = "{{user_id}}"
 
-
-	$( "#finish" ).click(function() {
-		increaseCharacterXP()
-	});
 
 	function increaseCharacterXP(){
 		console.log("increase")
@@ -38,3 +510,6 @@
 		})
 	}
 </script>
+
+
+{% endblock %}
