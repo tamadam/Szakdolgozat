@@ -86,7 +86,7 @@ def medium_game_view(request):
 		seconds = 30
 	elif game_field_size == 5:
 		minutes = 2
-		seconds = 30
+		seconds = 50
 	else:
 		minutes = 0
 		seconds = 10
@@ -140,6 +140,7 @@ def finished_game(request):
 		user_id=request.GET.get('user_id')
 		game_type=request.GET.get('game_type')
 		game_level = request.GET.get('game_level')
+		game_level_puzzle = request.GET.get('game_level_puzzle')
 	except Exception as e:
 		print(e)
 		pass
@@ -156,6 +157,16 @@ def finished_game(request):
 		multiplier = 0
 
 	####
+	#second game-hez
+	increaser = 0
+	if game_level_puzzle == '2':
+		pass
+	elif game_level_puzzle == '3':
+		increaser = 20
+	elif game_level_puzzle == '4':
+		increaser = 30
+	elif game_level_puzzle == '5':
+		increaser = 40
 
 	if user_id:
 		character = Character.objects.get(account=user_id)
@@ -166,11 +177,11 @@ def finished_game(request):
 			character.gold += DEFAULT_GOLD_INCREASE_EASY_GAME + multiplier
 			got_gold = DEFAULT_GOLD_INCREASE_EASY_GAME + multiplier
 			got_xp = DEFAULT_XP_INCREASE_EASY_GAME + multiplier
-		elif game_type == 'medium':
-			character.current_xp += DEFAULT_XP_INCREASE_MEDIUM_GAME
-			character.gold += DEFAULT_GOLD_INCREASE_MEDIUM_GAME
-			got_gold = DEFAULT_GOLD_INCREASE_MEDIUM_GAME
-			got_xp = DEFAULT_XP_INCREASE_MEDIUM_GAME
+		elif game_type == 'second':
+			character.current_xp += DEFAULT_XP_INCREASE_MEDIUM_GAME + increaser
+			character.gold += DEFAULT_GOLD_INCREASE_MEDIUM_GAME + increaser
+			got_gold = DEFAULT_GOLD_INCREASE_MEDIUM_GAME + increaser
+			got_xp = DEFAULT_XP_INCREASE_MEDIUM_GAME + increaser
 		elif game_type == 'hard':
 			character.current_xp += DEFAULT_XP_INCREASE_HARD_GAME
 			character.gold += DEFAULT_GOLD_INCREASE_HARD_GAME
