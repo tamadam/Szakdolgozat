@@ -107,10 +107,41 @@ def medium_game_view(request):
 def hard_game_view(request):
 	context = {}
 
+	correct_field_values = ['10', '20', '30']
+	game_field_size = request.GET.get('bombak_szama')
+
+	if not game_field_size:
+		game_field_size = 10
+	elif game_field_size not in correct_field_values:
+		game_field_size = 10 # alapértelmezett érték, hogyha a linken keresztül indítja el a játékot
+
+	print('game_field_size', game_field_size)
+
+	game_field_size = int(game_field_size)
+
+	if game_field_size == 10:
+		minutes = 1
+		seconds = 35
+	elif game_field_size == 20:
+		minutes = 2
+		seconds = 20
+	elif game_field_size == 30:
+		minutes = 3
+		seconds = 10
+	else:
+		minutes = 1
+		seconds = 35
+
+
+
+
 	user = Account.objects.get(id=request.user.id)
 
 	context = {
 		'user_id': user.id,
+		'game_field_size': game_field_size,
+		'minutes': minutes,
+		'seconds': seconds,
 	}
 
 	return render(request, 'game/hard_game.html', context)
@@ -141,6 +172,7 @@ def finished_game(request):
 		game_type=request.GET.get('game_type')
 		game_level = request.GET.get('game_level')
 		game_level_puzzle = request.GET.get('game_level_puzzle')
+		game_level_bombs = request.GET.get('game_level_bombs')
 	except Exception as e:
 		print(e)
 		pass
@@ -168,6 +200,15 @@ def finished_game(request):
 	elif game_level_puzzle == '5':
 		increaser = 40
 
+	###
+	#third gamehez
+	increaserBombs = 0
+	if game_level_bombs == '20':
+		increaserBombs = 30
+	elif game_level_bombs == '30':
+		increaserBombs = 50
+
+
 	if user_id:
 		character = Character.objects.get(account=user_id)
 
@@ -182,11 +223,11 @@ def finished_game(request):
 			character.gold += DEFAULT_GOLD_INCREASE_MEDIUM_GAME + increaser
 			got_gold = DEFAULT_GOLD_INCREASE_MEDIUM_GAME + increaser
 			got_xp = DEFAULT_XP_INCREASE_MEDIUM_GAME + increaser
-		elif game_type == 'hard':
-			character.current_xp += DEFAULT_XP_INCREASE_HARD_GAME
-			character.gold += DEFAULT_GOLD_INCREASE_HARD_GAME
-			got_gold = DEFAULT_GOLD_INCREASE_HARD_GAME
-			got_xp = DEFAULT_XP_INCREASE_HARD_GAME
+		elif game_type == 'third':
+			character.current_xp += DEFAULT_XP_INCREASE_HARD_GAME + increaserBombs
+			character.gold += DEFAULT_GOLD_INCREASE_HARD_GAME + increaserBombs
+			got_gold = DEFAULT_GOLD_INCREASE_HARD_GAME + increaserBombs
+			got_xp = DEFAULT_XP_INCREASE_HARD_GAME + increaserBombs
 
 		# szintlépés, ilyenkor növekszik a szint 1-el, az xp 0-zódik, az elérendő xp növekszik az előzőhöz képest, és a tulajdonsagok is nonek
 		if character.current_xp >= character.next_level_xp:
