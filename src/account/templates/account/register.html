@@ -19,7 +19,7 @@
 	<link rel="shortcut icon" href="#">
 	
 </head>
-
+<!--
 <style>
 @font-face {
 	font-family: 'Kanit-Regular';
@@ -74,6 +74,7 @@ html, body {
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
+
 }
 
 .character-type {
@@ -123,14 +124,17 @@ html, body {
 
 }
 
+
+
 #go-back-to-choose-menu {
+	display: none;
 	user-select: none;
 	margin: 0 auto;
 	margin-bottom: 2vh;
 	border: 3px solid transparent;
 }
 
-/*  <--  --> gombok */
+/*   gombok */
 #character-type-choice-buttons {
 	user-select: none;
 	/*border: 3px solid yellow;*/
@@ -206,8 +210,9 @@ html, body {
 	display: none;
 	overflow: hidden;
 
-	width: 30%;
-	min-width: 50%;
+	width: 50%;
+	min-width: 600px;
+	max-width: 800px;
 	margin: 0 auto;
 
 	background-color: rgba(0,0,0,0.8);
@@ -218,116 +223,50 @@ html, body {
 	/*border: 3px solid #b8a529;*/
 	border-radius: 40px;
 	height: 55%;
+	user-select: none;
+	flex-direction: column;
 }
 
-
-
-
-#go-back-to-choose-menu{
-	display: none;
-}
-
-
-
-
-#account-data-form{
-	flex: 1;
-	/*border: 3px solid purple;*/
-	min-width: 35%;
+#part2-previous{
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	width: 100%;
-	position: relative;
-
+	height: 10%;
 }
 
-#register-form {
-	margin-top: 4%;
-}
-
-
-.input-fields {
-	/*border: 3px solid brown;*/
-
-	width: 40%;
-	min-width: 76%;
-	position: relative;
-	margin: 0 auto;
-}
-
-.input-fields span {
-	margin-bottom: 4px;
-	font-size: 2.8vh;
-}
-
-
-#username-not-available, #email-not-available, #password-weak, #password-not-match {
-	font-size: 2vh;
-	visibility: hidden;
-	color: red;
-	font-family: sans-serif;
-	text-align: center;
-}
-
-.input-field-with-error-text {
-	display: block;
-	/*border: 2px solid red;*/
-
-
-}
-
-.input-field-with-error-text input {
-	padding: 0 15px;
-	height: 42px;
-	outline: none;
-	font-size: 14px;
-	margin:  0 auto;
-	display: block;
-	width: 75%;
-
-}
-
-.input-field-with-error-text input[type=submit] {
-	max-width: 180px;
-
-}
-
-#registration-button-place{
-	bottom: 0;
-	position: absolute;
+#part2-content{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
 	width: 100%;
+	height: 90%;
+
 }
+
+
 
 
 #choosen-character-description{
-	/*
-	background-image: url("{% static 'images/swordsman.png' %}");
-	background-position: center center;
-	background-size: 100% 100%;
+	width: 50%;
+    height: 100%;
 
-	background-size: cover; 
-*/
 	background-image: none;
 	background-position: center center;
 	background-size: 100% 100%;
-
-	width: 50%;
-    height: 100%;
-	float: left;
-	/*border: 1px solid yellow;*/
-	min-width: 60px;
 	visibility: hidden;
 	opacity: 0;
-	user-select: none;
 	position: relative;
 	border: 1px solid transparent;
 	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
 	border-width: 0 3 0 0px;
-	text-align: center;
+
 
 }
 
 #title-desc-div {
 	opacity: 0;
-	color: white;
 	position: absolute;
 	bottom: 0;
 	left: 0;
@@ -348,6 +287,116 @@ html, body {
 	font-weight: bold;
 	width: 100%;
 }
+
+
+#account-data-form{
+	width: 50%;
+    height: 100%;
+    position: relative;
+}
+
+
+
+.input-fields {
+	/*border: 3px solid brown;*/
+	/*
+	width: 40%;
+	min-width: 76%;
+	position: relative;
+	margin: 0 auto;
+	*/
+	display: flex;
+	gap: 4%;
+	flex-direction: column;
+	width: 100%;
+	height: 80%;
+	align-items: center;
+	justify-content: center;
+}
+
+#input-field-title{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 6%;
+
+}
+
+#input-field-title span{
+	font-size: 3vh;
+}
+
+#input-field-content{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 90%;
+}
+
+
+.input-field-with-error-text {
+	display: flex;
+	gap: 5%;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	width: 100%;
+
+
+}
+
+.input-field-with-error-text input {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 60%;
+	height: 50%;
+	outline: none;
+	font-size: 1.8vh;
+
+}
+
+.input-field-with-error-text span {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 50%;
+	outline: none;
+	font-family: "Kanit-Bold";
+	font-size: 1.8vh;
+
+}
+
+
+
+
+#username-not-available, #email-not-available, #password-weak, #password-not-match {
+	visibility: hidden;
+	color: red;
+}
+
+
+
+
+
+
+
+#registration-button-place{
+	bottom: 0;
+	position: absolute;
+	width: 100%;
+}
+
+
+
+
+
 
 /*
 #certain-desc-div{
@@ -563,19 +612,18 @@ body {
 	height: auto;
 }
 
-#part2 {
-	min-width: 40%;
-	width: 40%;
 
-}
 
 }
 
 </style>
+-->
 
 
-<body>
+<!-- body helye -->
+<!--
 <div class="container">
+
 			<div id="part1">
 				<p id="choose-character-text">Válassz egy karakter típust!</p>
 				<div id="character-type-choice-field">
@@ -604,73 +652,77 @@ body {
 	    			<input type="image" src="{% static 'images/stone-arrow-yellow-right.png' %}" id="rightButton" onmouseover="changeColor(this, 'right');" onmouseout="resetColor(this, 'right');" class="responsive-arrow" />
 	            </div>
 	      	</div>
-	      	<!-- input image a part 2 része -->
-			<input type="image" src="{% static 'images/stone-arrow-yellow-left.png' %}" id="go-back-to-choose-menu" onmouseover="changeColor(this, 'left');" onmouseout="resetColor(this, 'left');" class="responsive-arrow"/>
+	      	<input type="image" src="{% static 'images/stone-arrow-yellow-left.png' %}" id="go-back-to-choose-menu" onmouseover="changeColor(this, 'left');" onmouseout="resetColor(this, 'left');" class="responsive-arrow"/>
+
 	      	<div id="part2">
-	      		<div id="choosen-character-description">
-	      			<div id="title-desc-div">
-	      				<span id="title-desc">...</span>
-	      			</div>
-	      			<!--
-	      			<div id="certain-desc-div">
-	      				<span id="description-span">...</span>
-	      			</div>
-					-->	      			
-
+	      		<div id="part2-previous">
 	      		</div>
-				<div id="account-data-form">
+	      		<div id="part2-content">
+		      		<div id="choosen-character-description">
+		      			<div id="title-desc-div">
+		      				<span id="title-desc">...</span>
+		      			</div>
+  			
 
-					<form method="POST" action="" id="register-form">
-						{%csrf_token%}
-						<div class="input-fields">
-							<span>Add meg az adatokat!</span>
-							<span class="input-field-with-error-text">
-								<input type="text" name="username" maxlength="20" autofocus required id="id_username">
-								<small id="username-not-available">Foglalt vagy hibás felhasználónév</small>
-							</span>
-							<span class="input-field-with-error-text">
+		      		</div>
+					<div id="account-data-form">
 
-								<input type="email" name="email" maxlength="128" required id="id_email">
-								<small id="email-not-available">Foglalt vagy hibás email cím</small>
-							</span>
-							<span class="input-field-with-error-text">
+						<form method="POST" action="" id="register-form">
+							{%csrf_token%}
+							<div class="input-fields">
+								<div id="input-field-title">
+									<span>Add meg az adatokat!</span>								
+								</div>
+								<div id="input-field-content">
+									<div class="input-field-with-error-text">
+										<input type="text" name="username" maxlength="20" autofocus required id="id_username">
+										<span id="username-not-available">Foglalt vagy hibás felhasználónév</span>
+									</div>
+									<div class="input-field-with-error-text">
 
-								<input type="password" name="password1" autocomplete="new-password" required id="id_password1">
-								<small id="password-weak">A jelszó nem megfelelő erősségű</small>
+										<input type="email" name="email" maxlength="128" required id="id_email">
+										<span id="email-not-available">Foglalt vagy hibás email cím</span>
+									</div>
+									<div class="input-field-with-error-text">
 
-							</span>
-							<span class="input-field-with-error-text">
+										<input type="password" name="password1" autocomplete="new-password" required id="id_password1">
+										<span id="password-weak">A jelszó nem megfelelő erősségű</span>
 
-								<input type="password" name="password2" autocomplete="new-password" required id="id_password2">
-								<small id="password-not-match">A két jelszó nem egyezik meg</small>
-							</span>
+									</div>
+									<div class="input-field-with-error-text">
+
+										<input type="password" name="password2" autocomplete="new-password" required id="id_password2">
+										<span id="password-not-match">A két jelszó nem egyezik meg</span>
+									</div>
 
 
-				 			<!-- Ez a rész mindig display: none -->
-							<div>
-								<select name="character_type" id="id_character_type">
-								  <option value="warrior">warrior</option>
-								  <option value="mage">mage</option>
-								  <option value="scout">scout</option>
-								</select>
+						 			< !-- Ez a rész mindig display: none -- >
+									<div>
+										<select name="character_type" id="id_character_type">
+										  <option value="warrior">warrior</option>
+										  <option value="mage">mage</option>
+										  <option value="scout">scout</option>
+										</select>
+									</div>
+									< !-- ------------------------------ -- >
+								</div>
 							</div>
-							<!-- ------------------------------ -->
-						</div>
-						<div id="error-div">
-							<span>Hiba! Kérlek figyelj az alábbiakra!</span>
-							{% if form.errors %}
-						    	{% for error in form.errors.values %}
-						        	<span class="error-messages">{{error}}</span>
-						    	{% endfor %}
-						 	{% endif %}
-						</div>
+							<div id="error-div">
+								<span>Hiba! Kérlek figyelj az alábbiakra!</span>
+								{% if form.errors %}
+							    	{% for error in form.errors.values %}
+							        	<span class="error-messages">{{error}}</span>
+							    	{% endfor %}
+							 	{% endif %}
+							</div>
 
 
-						<div id="registration-button-place">
-				 			<input type="submit" value="Regisztráció">
-				 		</div>
-					</form>
+							<div id="registration-button-place">
+					 			<input type="submit" value="Regisztráció">
+					 		</div>
+						</form>
 
+					</div>
 				</div>
 			</div>
 
@@ -680,7 +732,7 @@ body {
 						Már regisztráltál?  <img src="{% static 'images/login-icon.png' %}">  <a href="{% url 'login' %}" id="redirect-login-button">Bejelentkezés</a>
 				</div>	
 			</div>
-		</div>
+</div>
 	<div class="background-movement-content">
 	
 	</div>
@@ -703,62 +755,799 @@ body {
 
 	</script>
 
+-->
+
+<style>
+@font-face {
+	font-family: 'Kanit-Regular';
+	src: local('Kanit-Regular'),
+	url("{% static 'fonts/Kanit-Regular.ttf' %}");
+}
+
+@font-face {
+	font-family: 'Kanit-Bold';
+	src: local('Kanit-Bold'),
+	url("{% static 'fonts/Kanit-Bold.ttf' %}");
+}
+
+@font-face {
+	font-family: 'Kanit-Light';
+	src: local('Kanit-Light'),
+	url("{% static 'fonts/Kanit-Light.ttf' %}");
+}
+
+html, body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
+	position: relative;
+	overflow:  hidden;
+	background-color: black; /* a háttér ki fogja takarni de előfordulhat hogy nem tölt be/lassabban tölt be */
+}
+
+#moving-background-container {
+	width: 110%;
+	height: 110%;
+	left: 0;
+	top: 0;
+	position: absolute;
+	background: url("{% static 'images/login_background.jpg' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+#registration-page-content{
+    /* a mozgo hatterhez kellenek ezek */
+    width: 100%;
+	height: 100%;
+    z-index: 1;
+	position: relative;
+    /* --- */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: "Kanit-Regular";
+    font-size: 1.8vh;
+}
+
+#registration-page-header{
+	width: 100%;
+	height: 8%;
+}
+
+#registration-page-container{
+	width: 100%;
+	height: 86%;	
+}
+
+#registration-page-footer{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 6%;	
+	background-color: rgba(0, 0, 0, 0.86);
+	color: white;
+}
+
+.footer-content{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	font-size: 2.86vh;
+}
+
+
+#footer-image{
+	max-width: 80%;
+	max-height: 80%;
+}
+
+
+#registration-page-footer a {
+	color: white;
+	text-decoration: none;
+}
+
+#registration-page-footer a:hover {
+	color: #b8a529;
+	text-decoration: none;
+}
+
+#registration-page-footer a:active {
+	color: #e31612;
+	text-decoration: none;
+}
+
+
+
+#registration-part1{
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+#registration-part2{
+	display: none;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	gap: 5%;
+	width: 100%;
+	height: 100%;
+}
+
+
+#character-type-choice-field{
+	position: relative;
+	width: 300%;
+	height: 60%;
+	left: 0;
+	background-color: white;
+	border:3px solid red;
+}
+
+#character-type-choice-buttons{
+	margin-top: 5%;
+	display: flex;
+	flex-direction: row;
+	gap: 2%;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+}
+
+#left-choice-button-container{
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	width: 50%;
+}
+
+#right-choice-button-container{
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	width: 50%;	
+}
+
+.choice{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: 33.33%;
+	height: 100%;
+	float: left;
+}
+
+#choice1{
+	background-color: red;
+}
+
+#choice2{
+	background-color: green;
+}
+
+#choice3{
+	background-color: blue;
+}
+
+.choice-content{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 30%;
+	height: 100%;
+	border: 2px solid white;
+	min-width: 500px;
+}
+
+.choice-up{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 90%;
+}
+
+.choice-down{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 10%;
+}
+
+.choice-content img{
+	max-width: 100%;
+	max-height: 100%;
+}
+
+.choice-content-left{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 100%;
+}
+
+.choice-content-right{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 100%;
+}
+
+.description{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 90%;
+	height: 50%;
+	background-color: yellow;
+}
+
+#choice1-description, #choice2-description, #choice3-description{
+	opacity: 0;
+}
+
+.choice-submit{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 30%;
+	height: 80%;
+	background-color: white;
+	background: url("{% static 'images/button-back.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: black;
+
+}
+
+.choice-submit:hover{
+	background: url("{% static 'images/button-back-red.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: #fae455;
+	cursor: pointer;
+}
+
+
+#choice1-submit, #choice2-submit, #choice3-submit{
+	opacity: 0;
+}
+
+
+#data-container{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 40%;
+	height: 66%;
+	background-color: rgba(0, 0, 0, 0.8);
+	border-radius: 20px;
+	padding: 1em;
+	max-width: 800px;
+}
+
+#data-top{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+	width: 100%;
+	height: 14%;
+
+}
+
+#data-top-title-left{
+	width: 14%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#data-top-title-center{
+	width: 72%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	font-family: "Kanit-Regular";
+	font-size: 1.8vh;
+	color: #fae455;
+
+}
+
+.go-to-previous-page{
+	max-width: 80%;
+	max-height: 80%;
+}
+
+.go-to-previous-page:hover {
+	cursor: pointer;
+}
+
+.go-to-previous-page:active {
+	content:url("{% static 'images/previous-button-purple.png' %}");
+}
+
+
+#data-top-title-right{
+	width: 14%;
+}
+
+
+
+#data-bottom{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 86%;
+}
+
+#data-bottom-left{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 100%;
+	opacity: 0;
+
+}
+
+
+
+
+#choosen-character-type-image{
+	background-image: none;
+	background-position: center center;
+	background-size: 100% 100%;
+	width: 100%;
+    height: 100%;
+	position: relative;
+
+
+}
+
+#character-type-name-div {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
+	background-image: url("{% static 'images/button-back.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	padding: 6px;
+	width: 50%;
+}
+
+#character-type-name {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: black;
+	width: 100%;
+	height: 100%;
+	font-weight: bold;
+}
+
+
+
+#data-bottom-right{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 100%;
+	border: 1px solid transparent;
+	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
+	border-width: 0 0 0 3px;
+}
+
+
+#registration-form{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 90%;
+	height: 100%;
+	margin: 0;
+}
+
+
+#form-part1{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 80%;	
+}
+
+
+#form-part2{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-end;
+	width: 100%;
+	height: 20%;	
+}
+
+.input-field-with-error-text{
+	width: 100%;
+	height: 25%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+}
+
+
+
+.input-field-with-error-text input{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 75%;
+	height: 50%;
+	outline: none;
+	font-size: 1.8vh;
+}
+
+.input-field-with-error-text span{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 50%;
+	font-family: "Kanit-Bold";
+	font-size: 1.8vh;
+}
+
+
+
+#username-not-available, #email-not-available, #password-weak, #password-not-match {
+	visibility: hidden;
+	color: red;
+}
+
+
+input {
+	font-family: "Kanit-Regular";
+    font-size: 1.2em;
+    color: black;
+    text-align: center;
+}
+
+
+::placeholder {
+	color: grey;
+}
+
+input[type=text], input[type=password], input[type=email] {
+	padding: 10px;
+	background-color: #f2f2f2;
+	border: 4px solid transparent;
+	border-radius: 0.4em;
+
+
+}
+
+input[type=text]:focus, input[type=password]:focus, input[type=email]:focus {
+	background-color: white;
+	outline: none;
+	border: 4px solid #b8a529;
+
+}
+
+
+input[type=submit] {
+	background: url("{% static 'images/button-back.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	padding: 6px;
+	min-width: 15%;
+	width: 60%;
+	border: none;
+	color: black;
+	font-family: "Kanit-Regular";
+	font-size: 1.8vh;
+	font-weight: bold;
+	margin-top: 15;
+
+
+
+}
+
+input[type=submit]:hover {
+	background: url("{% static 'images/button-back-red.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: #fae455;
+	cursor: pointer;
+
+
+
+
+}
+
+
+input[type=submit]:active {
+	background: url("{% static 'images/button-back-onclick.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: #fae455;
+
+
+
+
+}
+
+/* a formban lévő role választó, az animációs felületen választjuk ki és állítjuk be */
+#id_character_type{
+	display: none;
+}
+
+
+
+
+#error-messages-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: red;
+	font-family: "Kanit-Regular";
+	font-weight: bold;
+	font-size: 1.8vh;
+	height: 20%;
+	width: 40%;
+	padding: 0.4em;
+	background-color: rgba(0, 0, 0, 0.8);
+	visibility: hidden;
+}
 
 
 
 
 
+
+
+.loader-container {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 2;
+}
+
+
+</style>
+
+<body>
+<div id="moving-background-container">
+	
+</div>
+<div id="registration-page-content">
+	<div id="registration-page-header"></div>
+	<div id="registration-page-container">
+		<div id="registration-part1">
+			<div id="character-type-choice-field">
+				<div class="choice" id="choice1">
+					<div class="choice-content" id="choice1-content">
+						<div class="choice-up">
+							<div class="choice-content-left" id="choice1-content-left">
+			                	<img src="{% static 'images/swordsman.png' %}">
+							</div>
+							<div class="choice-content-right" id="choice1-content-right">
+								<div class="description" id="choice1-description"></div>
+							</div>						
+						</div>
+						<div class="choice-down">
+							<div class="choice-submit" id="choice1-submit">Ő legyen!</div>
+						</div>
+
+					</div>
+				</div>
+				<div class="choice" id="choice2">
+					<div class="choice-content" id="choice2-content">
+						<div class="choice-up">
+							<div class="choice-content-left" id="choice2-content-left">
+								<img src="{% static 'images/wizard.png' %}">
+							</div>
+							<div class="choice-content-right" id="choice2-content-right">
+								<div class="description" id="choice2-description"></div>
+							</div>
+						</div>
+						<div class="choice-down">
+							<div class="choice-submit" id="choice2-submit">Ő legyen!</div>
+						</div>
+					</div>
+				</div>
+				<div class="choice" id="choice3">
+					<div class="choice-content" id="choice3-content">
+						<div class="choice-up">
+							<div class="choice-content-left" id="choice3-content-left">
+								<img src="{% static 'images/archer.png' %}">
+							</div>
+							<div class="choice-content-right" id="choice3-content-right">
+								<div class="description" id="choice3-description"></div>
+							</div>						
+						</div>
+						<div class="choice-down">
+							<div class="choice-submit" id="choice3-submit">Ő legyen!</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="character-type-choice-buttons">
+				<div id="left-choice-button-container">
+					<input type="image" src="{% static 'images/stone-arrow-yellow-left.png' %}" id="leftButton" onmouseover="changeColor(this, 'left');" onmouseout="resetColor(this, 'left');"/>					
+				</div>
+				<div id="right-choice-button-container">
+					<input type="image" src="{% static 'images/stone-arrow-yellow-right.png' %}" id="rightButton" onmouseover="changeColor(this, 'right');" onmouseout="resetColor(this, 'right');" />
+				</div>
+			</div>
+		</div>
+		<div id="registration-part2">
+			<div id="data-container">
+				<div id="data-top">
+					<div id="data-top-title-left">
+						<img src="{% static 'images/previous-button.png' %}" alt="Vissza" class="go-to-previous-page" onmouseover="changePreviousButtonColor(this)" onmouseout="resetPreviousButtonColor(this)">
+					</div>
+					<div id="data-top-title-center">
+						<h1>Add meg az adatokat!</h1>
+					</div>
+					<div id="data-top-title-right">	
+					</div>
+				</div>
+				<div id="data-bottom">
+					<div id="data-bottom-left">
+			      		<div id="choosen-character-type-image">
+			      			<div id="character-type-name-div">
+			      				<span id="character-type-name">...</span>
+			      			</div>
+			      		</div>
+					</div>
+					<div id="data-bottom-right">
+						<form method="POST" action="" id="registration-form">
+							<div id="form-part1">								
+								{%csrf_token%}	
+								<div class="input-field-with-error-text">
+									<input type="text" name="username" maxlength="20" autofocus required id="id_username">
+									<span id="username-not-available">Foglalt vagy hibás felhasználónév</span>
+								</div>
+								<div class="input-field-with-error-text">
+
+									<input type="email" name="email" maxlength="128" required id="id_email">
+									<span id="email-not-available">Foglalt vagy hibás email cím</span>
+								</div>
+								<div class="input-field-with-error-text">
+
+									<input type="password" name="password1" autocomplete="new-password" required id="id_password1">
+									<span id="password-weak">A jelszó nem megfelelő erősségű</span>
+
+								</div>
+								<div class="input-field-with-error-text">
+
+									<input type="password" name="password2" autocomplete="new-password" required id="id_password2">
+									<span id="password-not-match">A két jelszó nem egyezik meg</span>
+								</div>
+
+					 			<!-- Ez a rész mindig display: none -->
+								<div>
+									<select name="character_type" id="id_character_type">
+									  <option value="warrior">warrior</option>
+									  <option value="mage">mage</option>
+									  <option value="scout">scout</option>
+									</select>
+								</div>
+								<!-- ------------------------------ -->	
+
+							</div>
+							<div id="form-part2">
+								<input type="submit" value="Regisztráció">
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div id="error-messages-container">
+				<div id="error-messages">
+					{% if form.errors %}
+						<span>Hiba! Kérlek figyelj az alábbiakra!</span>
+				    	{% for error in form.errors.values %}
+				        	<span class="error-messages">{{error}}</span>
+				    	{% endfor %}
+				 	{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="registration-page-footer">
+		<div class="footer-content" id="footer-text">Már regisztráltál?</div>
+		<div class="footer-content" id="footer-image-div">
+			<img src="{% static 'images/login-icon.png' %}" id="footer-image">
+		</div>
+		<div class="footer-content" id="footer-link">
+			<a href="{% url 'login' %}" id="redirect-login-button">Bejelentkezés</a>
+		</div>	
+	</div>
+
+</div>
+<div class="loader-container">
+	
+</div>
 
 
 <script>
-	//tároljuk az elozo eger helyet a mozgo hatterhez
-	var previousMoveDirX = null
+
+	// input mezők feltöltése placeholderrel
+
+	// az indexelés 4-tól indul, hiszen előtte van 3 input és a csrf token ami szintén inputnak számít
+	// a htmlt a django generalta le {{form.username}} stb
+	var inputFields = document.getElementsByTagName("input")
+	inputFields[3].placeholder='Karakter név';
+	inputFields[4].placeholder='Email cím';
+	inputFields[5].placeholder='Jelszó';
+	inputFields[6].placeholder='Jelszó újra';
+
+
+
+	const audio = new Audio()
+	audio.src = "{% static 'audios/button_click.mp3' %}"
+
+
+
+	$(window).on("load", function(){
+		$(".loader-container").fadeOut("slow")
+		animateSwitchCharacterType(currentCharacterType, true)
+	})
+
+
 
 	moveBackgroundOnMouseMovement()
 
 	function moveBackgroundOnMouseMovement(){
-
-
-		const pageBackground = document.querySelector('.background-movement-content');
-		const containerBackground = document.querySelector('.container'); //container lefedi az egesz kepes backgroundot, ezert azon kell erzekelni a mousemove-ot
-
+		const pageBackground = document.querySelector("#moving-background-container");
+		const containerBackground = document.querySelector('#registration-page-content'); //registration-page-content lefedi az egesz kepes backgroundot, ezert azon kell erzekelni a mousemove-ot
 
 		const windowWidth = window.innerWidth
 
-
-
 		$(containerBackground).mousemove(function(event){
 			var moveDirX = event.clientX / (windowWidth / 2)
-			//console.log("moveDirX " + moveDirX)
-			//console.log("previousMoveDirX" + previousMoveDirX)
-
-			//console.log(moveDirX - previousMoveDirX)
-			/*
-			if (previousMoveDirX != null){
-				let difference = moveDirX - previousMoveDirX
-
-				if (difference >= 0.1 || difference <= -0.1){
-					console.log("hey")
-					pageBackground.style.transition = "transform 240ms linear"
-				}
-				else{
-					pageBackground.style.transition = "none"
-				}
-			}
-*/
-
 
 			pageBackground.style.transform = `translate3d(-${moveDirX}%, 0, 0)`
-
-
-
-
-
-			previousMoveDirX = moveDirX
-		});
-
-
-
+		})
 	}
 
 
@@ -782,10 +1571,213 @@ body {
 	}
 
 
-	var errorInUsername = false
-	var errorInEmail = false
+	function changePreviousButtonColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/previous-button-red.png' %}")
+	}
+
+	function resetPreviousButtonColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/previous-button.png' %}")
+	}
 
 
+	// hangeffekt lejátszása regisztráció megnyomásakor
+	$("#registration-form").on('submit', function() {
+	   	audio.play()
+
+	    return true;
+	});
+
+
+	/* KARAKTER TÍPUS VÁLASZTÓ */
+
+    var currentCharacterType = 0;
+
+
+    $("#leftButton").click(function () {
+    	audio.play()
+        if (currentCharacterType == 0) {
+            currentCharacterType = 2;
+        }
+        else{
+            currentCharacterType--;
+        }
+
+        switchCharacterType(currentCharacterType)
+    })
+
+
+    $("#rightButton").click(function () {
+    	audio.play()
+        if (currentCharacterType == 2) {
+            currentCharacterType = 0;
+        }
+        else{
+            currentCharacterType++;
+        }
+
+        switchCharacterType(currentCharacterType)
+    })
+
+
+    function switchCharacterType(characterTypeNumber){
+		jQuery.easing.def = 'easeOutCubic'; // a slide effekt típusát beállítjuk
+		animateSwitchCharacterType(characterTypeNumber, false)
+
+    }
+
+
+    function animateSwitchCharacterType(currentCharacterNumber, firstLoad){
+    	console.log(currentCharacterNumber)
+    	if (firstLoad){
+    		setTimeout(function(){
+    			$("#choice" + (currentCharacterNumber+1) + "-description").animate({
+        			opacity: 1 
+        		}, 400) 
+        		$("#choice" + (currentCharacterNumber+1) + "-submit").animate({
+        			opacity: 1
+        		}, 400)
+    		}, 500)
+    	}
+    	else{	        
+	  		$("#character-type-choice-field").animate({
+	  			left: "-" + currentCharacterNumber * 100 + "%",
+	  		}, 1000, function(){
+				hideAllChoiceDescriptionAndButton()
+	  			$("#choice" + (currentCharacterNumber+1) + "-description").animate({
+	  				opacity: 1
+	  			}, 400)
+        		$("#choice" + (currentCharacterNumber+1) + "-submit").animate({
+        			opacity: 1
+        		}, 400)
+	  		})
+	    }
+    }
+
+
+    function hideAllChoiceDescriptionAndButton(){
+    	$("#choice1-description").css("opacity", "0")
+    	$("#choice2-description").css("opacity", "0")
+    	$("#choice3-description").css("opacity", "0")
+    	$("#choice1-submit").css("opacity", "0")
+    	$("#choice2-submit").css("opacity", "0")
+    	$("#choice3-submit").css("opacity", "0")
+    }
+
+
+
+	/* */
+
+
+	/* váltás part1 és part2 között oda vissza */
+
+
+
+    $(".choice-submit").click(function () {
+    	audio.play()
+    	$(".loader-container").fadeIn("fast")
+  		setTimeout(showNextPart, 300)
+    })
+
+
+    $(".go-to-previous-page").click(function() {
+    	audio.play()
+
+    	$(".loader-container").fadeIn("fast")
+    	setTimeout(showPreviousPart, 340)
+
+    })
+
+
+    function showNextPart(){
+    	$("#registration-part1").css("display", "none")
+		$("#registration-part2").css("display", "flex")
+
+
+    	setCharacterType()
+
+
+		$(".loader-container").fadeOut("fast")
+
+		setTimeout(animateChoosenCharacterType, 500)
+    }
+
+
+
+    function showPreviousPart(){
+    	$("#registration-part2").css("display", "none")
+		$("#registration-part1").css("display", "block")
+
+		//az animált választott karakternek az opacity-jét vissza kell állítani
+		$("#data-bottom-left").css("opacity", "0")
+
+    	
+		hideErrorMessage()
+
+		
+
+		$(".loader-container").fadeOut("fast")
+    }
+
+
+
+    function setCharacterType(){
+
+       	var selector = document.getElementById('id_character_type')
+
+    	var choosenCharacterBackground = document.getElementById("choosen-character-type-image")
+    	var choosenCharacterName = document.getElementById("character-type-name")
+
+    	if (currentCharacterType == 0){
+    		selector.value="warrior";
+    		choosenCharacterName.innerHTML = "Harcos"
+
+
+
+    		choosenCharacterBackground.style.backgroundImage  = "url('{% static 'images/swordsman.png' %}')"
+
+
+    	}
+        else if (currentCharacterType == 1){
+    		selector.value="mage";
+    		choosenCharacterName.innerHTML = "Mágus"
+
+    		choosenCharacterBackground.style.backgroundImage  = "url('{% static 'images/wizard.png' %}')"
+    	}
+    	else if(currentCharacterType == 2){
+    		selector.value="scout";
+    		choosenCharacterName.innerHTML = "Íjász"
+
+    		choosenCharacterBackground.style.backgroundImage  = "url('{% static 'images/archer.png' %}')"
+    	}
+    	else{
+    		//bármilyen hiba esetén warrior lesz
+    		selector.value="warrior"
+    		choosenCharacterName.innerHTML = "Harcos"
+
+    		choosenCharacterBackground.style.backgroundImage  = "url('{% static 'images/swordsman.png' %}')"
+    	}
+
+
+
+
+    }
+
+
+
+
+
+    function animateChoosenCharacterType(){
+		jQuery.easing.def = "linear"
+		$("#data-bottom-left").animate({"opacity": "1"}, 1000)
+
+    }
+ 
+
+	/* */
+
+
+
+	/* beírt adatok helyességének az ellenőrzése */
 
 	$("#id_username").on("input", function(){
 		var username = $(this).val()
@@ -915,6 +1907,34 @@ body {
 
 	}
 
+	/* */
+
+
+
+	/* hibaüzenetek megjelenítésének a kezelése */
+	
+	var errorMessageSeen = false
+
+	{% if form.errors %}
+		console.log("van")
+		document.getElementById("error-messages-container").style.visibility = "visible"
+		showNextPart()
+		errorMessageSeen = true
+
+	{% else %}
+		console.log("nincs")
+		errorMessageSeen = false
+ 	{% endif %}
+
+ 	function hideErrorMessage(){
+	 	if(errorMessageSeen == true){
+	 		errorMessageSeen = false
+	 		document.getElementById("error-messages-container").style.visibility = "hidden"
+	 	}
+ 	}
+
+ 	/* */
+
 </script>
 
 <script>
@@ -947,243 +1967,6 @@ body {
 		return description
 	}
 
-
-
-
-
-    var currentCharacterType = 0;
-	const audio = new Audio()
-	audio.src = "{% static 'audios/button_click.mp3' %}"
-
-
-	$(window).on("load", function(){
-		$(".loader-container").fadeOut("slow")
-		animateCurrentCharacterTypeDescription(currentCharacterType, true)
-	})
-
-
-
-    $("#leftButton").click(function () {
-    	audio.play()
-        if (currentCharacterType == 0) {
-            currentCharacterType = 2;
-        }
-        else{
-            currentCharacterType--;
-        }
-
-        switchCharacterType(currentCharacterType)
-    })
-
-
-    $("#rightButton").click(function () {
-    	audio.play()
-        if (currentCharacterType == 2) {
-            currentCharacterType = 0;
-        }
-        else{
-            currentCharacterType++;
-        }
-
-        switchCharacterType(currentCharacterType)
-    })
-
-
-    $("#go-back-to-choose-menu").click(function() {
-    	audio.play()
-
-    	$(".loader-container").fadeIn("fast")
-    	setTimeout(showPreviousPart, 340)
-
-    })
-
-
-    function switchCharacterType(characterTypeNumber){
-		jQuery.easing.def = 'easeOutCubic'; // a slide effekt típusát beállítjuk
-		hideCharacterDescription()
-		animateCurrentCharacterTypeDescription(characterTypeNumber, false)
-
-    }
-
-    $(".character-type-sign").click(function () {
-    	audio.play()
-    	$(".loader-container").fadeIn("fast")
-  		setTimeout(showNextPart, 340)
-
-    })
-
-    function showPreviousPart(){
-		hideErrorMessage()
-		hideCharacterPictures()
-    	var part2 = document.getElementById("part2")
-    	part2.style.display = "none"
-    	var connectedArrow = document.getElementById("go-back-to-choose-menu")
-    	connectedArrow.style.display = "none"
-    	var part1 = document.getElementById("part1")
-    	part1.style.display = "block"
-
-    	var descriptionField = document.getElementById("choosen-character-description")
-		descriptionField.style.visibility = "hidden"
-		descriptionField.style.opacity = 0
-
-		$('#certain-desc-div').css({opacity: 0, visibility: "hidden"})
-		$('#title-desc-div').css({opacity: 0});
-
-		$(".loader-container").fadeOut("slow")
-    }
-
-    function showNextPart(){
-    	//var dataForm = document.getElementById("account-data-form")
-    	//var goBackToChooseMenu = document.getElementById("go-back-to-choose-menu")
-
-    	//dataForm.style.display = "block"
-    	//goBackToChooseMenu.style.display = "block"
-
-    	var part1 = document.getElementById("part1")
-    	part1.style.display = "none"
-    	var part2 = document.getElementById("part2")
-    	var connectedArrow = document.getElementById("go-back-to-choose-menu")
-    	connectedArrow.style.display = "block"
-    	part2.style.display = "flex"
-
-    	var descriptionField = document.getElementById("choosen-character-description")
-    	descriptionField.style.visibility = "visible"
-		descriptionField.style.opacity = 1
-
-    	setCharacterType()
-
-
-		$(".loader-container").fadeOut("slow")
-
-		setTimeout(showChoosenCharacterDescription, 500)
-    }
-
-
-    function showChoosenCharacterDescription(){
-		jQuery.easing.def = 'linear';
-		$('#title-desc-div').animate({"opacity": "1"}, 1000);
-    	jQuery.easing.def = 'easeOutExpo';
-
-		$('#certain-desc-div').css({opacity: 0, visibility: "visible"}).animate({opacity: 1}, 1000);
-
-
-    }
-
-
-
-    function hideCharacterDescription(){
-		$("#desc0").css("opacity", "0")
-		$("#desc1").css("opacity", "0")
-	    $("#desc2").css("opacity", "0")	
-    }
-
-
-    function animateCurrentCharacterTypeDescription(currentCharacterNumber, firstLoad){
-    	if (firstLoad){
-    		$("#desc"+ currentCharacterNumber).animate({
-        		opacity: 0 //alapból 0, ezt csak arra használjuk, hogy ne egyből jelenítse meg a leírást az oldal betöltésekor
-        	}, 460, function(){
-        		$("#desc"+ currentCharacterNumber).animate({
-        			opacity: 1
-        		}, 860)
-        	})	
-    	}
-    	else{
-	        $("#character-type-choice-field").animate({
-	            left: "-" + currentCharacterNumber * 100 + "%",
-	        }, 1000, function() { // ez egy callback function ami az animacio vegrehajtasa utan fut le
-	        	$("#desc"+ currentCharacterNumber).animate({
-	        		opacity: 1,
-	        	}, 1000)
-	        })
-	    }
-    }
-
-
-    function setCharacterType(){
-       	var selector = document.getElementById('id_character_type')
-    	var choosenCharacterDescription = document.getElementById("description-span")
-    	var choosenCharacterTitle = document.getElementById("title-desc")
-
-
-    	var background = document.getElementById("choosen-character-description")
-
-    	if (currentCharacterType == 0){
-    		selector.value="warrior";
-    		choosenCharacterTitle.innerHTML = "Harcos"
-    		//choosenCharacterDescription.innerHTML = breakDescriptionLines(warriorDescription)
-    		//document.getElementById("warrior-picture").style.display = "none"
-
-
-    		background.style.backgroundImage  = "url('{% static 'images/swordsman.png' %}')"
-
-
-    	}
-        else if (currentCharacterType == 1){
-    		selector.value="mage";
-    		choosenCharacterTitle.innerHTML = "Mágus"
-    		//choosenCharacterDescription.innerHTML = breakDescriptionLines(mageDescription)
-    		//document.getElementById("mage-picture").style.display = "block"
-    		background.style.backgroundImage  = "url('{% static 'images/wizard.png' %}')"
-    	}
-    	else if(currentCharacterType == 2){
-    		selector.value="scout";
-    		choosenCharacterTitle.innerHTML = "Íjász"
-    		//choosenCharacterDescription.innerHTML = breakDescriptionLines(scoutDescription)
-    		//document.getElementById("scout-picture").style.display = "block"
-    		background.style.backgroundImage  = "url('{% static 'images/archer.png' %}')"
-    	}
-    	else{
-    		//bármilyen hiba esetén warrior lesz
-    		selector.value="warrior"
-    		choosenCharacterTitle.innerHTML = "Harcos"
-    		//choosenCharacterDescription.innerHTML = breakDescriptionLines(warriorDescription)
-    		//document.getElementById("warrior-picture").style.display = "block"
-    		background.style.backgroundImage  = "url('{% static 'images/swordsman.png' %}')"
-    	}
-
-
-
-
-    }
-
-
-    function hideCharacterPictures(){
-    	var background = document.getElementById("choosen-character-description")
-		background.style.backgroundImage = "none"
-    }
-
-
-
-	$("#register-form").on('submit', function() {
-
-	   	audio.play()
-
-	    return true;
-	});
-
-
-	var errorMessageSeen = false
-
-
-
-	{% if form.errors %}
-		console.log("van")
-		document.getElementById("error-div").style.display = "block"
-		showNextPart()
-		errorMessageSeen = true
-
-	{% else %}
-		console.log("nincs")
-		errorMessageSeen = false
- 	{% endif %}
-
- 	function hideErrorMessage(){
-	 	if(errorMessageSeen == true){
-	 		errorMessageSeen = false
-	 		document.getElementById("error-div").style.display = "none"
-	 	}
- 	}
 
  	
 </script>
