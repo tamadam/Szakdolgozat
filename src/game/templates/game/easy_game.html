@@ -503,6 +503,7 @@
 	// időzítő változói
 	var minutes = {{minutes}}
 	var seconds = {{seconds}}
+
 	var timerInterval = null
 
 	var animateStarted = false
@@ -645,6 +646,8 @@
 		}
 	}
 
+	var compareTimeOut = null //a játék végén előfordul, hogy pont az utolsó másodpercben fordítja fel a két kártyát, ilyenkor
+								// emiatt a timeout miatt visszafordulnak, ezt kell meggátolni 
 
 	function compareCardImages(firstImage, secondImage){
 		if(firstImage === secondImage){
@@ -660,7 +663,7 @@
 			disableGameField = false
 		}
 		else{
-			setTimeout(function(){
+			compareTimeOut = setTimeout(function(){
 				cardDown.play()
 				firstCard.classList.remove("flip")
 				secondCard.classList.remove("flip")
@@ -675,12 +678,18 @@
 
 
 	function generateTime(){
+		if(minutes == 0 && seconds == 0){
+			document.getElementById("timer").innerHTML = "0:00"
+			return finishGame(false)
+		}	
 		if (seconds == -1){
 			if (minutes >= 1){
 				minutes -= 1
 				seconds = 59
+
 			}
 			else{
+				// korábbi megoldás, fentebb már ellenőrizzük
 				return finishGame(false)
 			}
 		}
@@ -737,6 +746,7 @@
 
 	function finishGame(isWin){
 		clearInterval(timerInterval)
+		clearTimeout(compareTimeOut)
 		if (animateStarted){
 			clearInterval(animateRedBackgroundInterval)
 			$("#timer").css("backgroundColor", "rgba(255, 0, 0, 1.0)")

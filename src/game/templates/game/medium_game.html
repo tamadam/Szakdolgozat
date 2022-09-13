@@ -867,6 +867,10 @@
 
 
 	function generateTime(){
+		if(minutes == 0 && seconds == 0){
+			document.getElementById("timer-text").innerHTML = "0:00"
+			return endPuzzleGame(false)
+		}	
 		if (seconds == -1){
 			if (minutes >= 1){
 				minutes -= 1

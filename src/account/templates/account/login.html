@@ -12,17 +12,6 @@
 <style>
 
 
-html, body{
-	margin: 0;
-	padding: 0;
-	height: 100%;
-	width: 100%;
-	position: relative;
-	background-color: black; /* hasonló szerepe van mint a register.html-ben */
-	overflow: hidden;
-
-
-}
 
 #moving-background-container {
 	width: 110%;
@@ -287,26 +276,6 @@ input[type=text]:focus, input[type=password]:focus {
 
 
 
-
-
-
-
-
-.loader-container {
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	top: 0;
-	left: 0;
-	background-color: black;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	z-index: 2;
-}
-
-
-
 </style>
 <body>
 	<div id="moving-background-container">
@@ -362,20 +331,7 @@ input[type=text]:focus, input[type=password]:focus {
 	})
 
 
-	moveBackgroundOnMouseMovement()
-
-	function moveBackgroundOnMouseMovement(){
-		const pageBackground = document.querySelector("#moving-background-container")
-		const containerBackground = document.querySelector("#login-page-content")
-
-		const windowWidth = window.innerWidth
-
-		$(containerBackground).mousemove(function(event){
-			var moveDirX = event.clientX / (windowWidth / 2)
-
-			pageBackground.style.transform = `translate3d(-${moveDirX}%, 0, 0)`
-		})
-	}
+	moveBackgroundOnMouseMovement("#moving-background-container", "#login-page-content")
 
 
 	
@@ -396,11 +352,10 @@ input[type=text]:focus, input[type=password]:focus {
 
 
 
-	const audio = new Audio()
-	audio.src = "{% static 'audios/button_click.mp3' %}"
+
 
 	$("#login-form").submit(function() {
-	    audio.play()
+	    clickSound.play()
 
 	    return true; // false hogyha cancel form
 	})

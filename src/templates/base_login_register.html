@@ -17,13 +17,20 @@
 	<link rel="shortcut icon" href="#">
 
 	<link rel="icon" href="{% static 'images/title-icon.png' %}" type="image/x-icon">
+
+	<!-- Az oldal title-je jön ide -->
 	{% block header %}
 
 	{% endblock %}
 
 	<style>
+		/* a main CSS fájl, az összes közös dolog benne van */
 		{% include 'css/base_login_register.css' %}
 	</style>
+	<script>
+		/* a main JS fájl, az összes közös dolog benne van */
+		{% include 'js/base_login_register.js' %}
+	</script>
 </head>
 <body>
 	{% block content %}

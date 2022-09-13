@@ -46,6 +46,9 @@ def user_team_view(request):
 		if form.is_valid():
 			team = form.save() # visszaadja a csapat objektumot
 			Membership.objects.create(user=user, team=team) # hozzáadjuk a felhasználót a létrehozott csapathoz
+			team.owner_of_team = user # beállítjuk a csapat tulajdonosának az aktuális usert
+			team.save()
+			update_team_rank()
 			return redirect('team:individual_team_view', team_id=team.id)
 
 	update_team_rank()
@@ -74,8 +77,25 @@ def leave_team(request):
 	# errort dobhat ha a try utan except van
 
 
+	print('A CSAPAT TULAJDONOSA', user_team.owner_of_team)
+	print(user_team.owner_of_team == user)
+
 	# felhasználó törlése a csapatból
 	user_team.users.remove(user)
+
+	# ha a csapat tulajdonosa lép ki, az új tulajd átállítása
+	if user_team.owner_of_team == user:
+		# csak akkor tudunk kinevezni másik tulajt, ha van még valaki a csapatban
+		if len(user_team.users.all()) > 0:
+			print("ATIRAS")
+			team_mates = Membership.objects.filter(team=user_team) # csapattagok 
+			new_owner = sorted(team_mates, key=lambda team_mate: team_mate.date_joined)[0].user # a legrégebben csatlakozott felhasználó lesz az új tulaj
+			user_team.owner_of_team = new_owner
+			user_team.save()
+
+
+
+
 
 	# ha a csapatnak nincs több tagja, a csapat is törlődik
 	if len(user_team.users.all()) == 0:
@@ -83,6 +103,7 @@ def leave_team(request):
 		context['team_is_deleted'] = True
 	else:
 		context['team_is_deleted'] = False
+
 
 	context['message'] = 'siker'
 
@@ -149,6 +170,12 @@ def individual_team_view(request, *args, **kwargs):
 		account = None
 		pass
 
+	# a leíráshoz használom, hogy csakis a tulajdonos tudja módosítani
+	# másik felhasználó, még a csapattársnak sem engedett
+	is_team_owner_description = False
+	if team.owner_of_team == user:
+		is_team_owner_description = True
+
 
 	team_members = []
 	for team_member in team.users.all():
@@ -159,9 +186,15 @@ def individual_team_view(request, *args, **kwargs):
 		except Exception as e:
 			profile_image = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
 
+		is_team_owner = False
+		if team.owner_of_team == team_member:
+			is_team_owner = True
+
+
 		team_members.append({
 				'member': team_member,
 				'member_profile_image': profile_image,
+				'is_team_owner': is_team_owner,
 			})
 
 
@@ -172,6 +205,7 @@ def individual_team_view(request, *args, **kwargs):
 		'has_team': has_team,
 		'user_id': user.id,
 		'account': account,
+		'is_team_owner_description': is_team_owner_description,
 	}
 
 	# CHAT RÉSZ ------------------------
@@ -194,3 +228,23 @@ def update_team_rank():
 		team.rank = rank_counter
 		rank_counter += 1
 		team.save()
+
+
+def save_team_description(request):
+	data = {}
+	user_id = request.GET.get('user_id')
+	description = request.GET.get('description')
+
+	try:
+		user = Account.objects.get(id=user_id)
+		team = user.team_set.all()[0]
+		team.description = description
+		team.save()
+		data['message'] = 'Success'
+	except Exception as exception:
+		print(exception)
+		data['message'] = 'Error'
+		pass
+
+
+	return JsonResponse(data)

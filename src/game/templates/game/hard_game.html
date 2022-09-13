@@ -836,9 +836,8 @@
 		}
 
 		//console.log("Megtalált bombák száma: " + foundBombsCount)
-		setTimeout(function(){
-			$(".result-container").css("display", "flex")
-		}, 400)
+		$(".result-container").css("display", "flex")
+
 	}
 
 	function showBombs(){
@@ -871,6 +870,10 @@
 
 
 	function generateTime(){
+		if(minutes == 0 && seconds == 0){
+			document.getElementById("timer").innerHTML = "0:00"
+			return endMineSweeperGame(false, null)
+		}	
 		if (seconds == -1){
 			if (minutes >= 1){
 				minutes -= 1

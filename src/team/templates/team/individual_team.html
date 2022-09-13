@@ -445,8 +445,16 @@
 }
 
 .team-member-container-member-name{
-	width: 80%;
+	width: 72%;
 	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+}
+
+.team-member-role-icon-container{
+	width: 14%;
+	display: flex;
+	justify-content: center;
 	align-items: center;
 }
 
@@ -484,6 +492,30 @@
 	height: auto;
 	color: black;
 }
+
+
+
+#team-description-textarea {
+	width: 100%;
+	height: 100%;
+	resize: none;
+	margin: 2px;
+	border: none;
+	outline: none;
+	background: none;
+	color: #fae455;
+	font-family: 'Kanit-Light';
+	font-size: 2vh;
+	white-space: pre-wrap;
+
+
+}
+
+#team-description-textarea::placeholder {
+	color: #fae455;
+
+}
+
 
 </style>
 
@@ -558,7 +590,8 @@
 					<h4 id="team-description-title">Leírás</h4>
 				</div>
 					<div id="description-text">
-						<h3>{{team.description}}</h3>
+						<!--<h3>{{team.description}}</h3>-->
+						<textarea id="team-description-textarea"></textarea>
 					</div>	
 
 			</div>
@@ -566,12 +599,16 @@
 				{% for team_member in team_members %}
 					<div class="team-member-container" onclick="selectUser('{{team_member.member.id}}')">
 						<div class="team-member-container-profile-image">
-							<img class="profile-image" src="{{team_member.member_profile_image}}" >
+							<img class="profile-image" src="{{team_member.member_profile_image}}" alt="profilkep">
 						</div>
 						<div class="team-member-container-member-name">
 							{{team_member.member.username}} 							
 						</div>
-						
+						<div class="team-member-role-icon-container">
+							{% if team_member.is_team_owner %}
+								<img class="profile-image" src="{% static 'images/crown-team.png' %}" alt="korona">
+							{% endif %}
+						</div>
 					</div>
 				{% endfor %}
 			</div>
@@ -628,6 +665,70 @@
 
 
 	})
+
+
+	/* CSAPAT LEÍRÁS KEZELÉSE */
+
+	// csak a csapat tulajdonos tudja módosítani a leírást
+	{% if not is_team_owner_description %}
+		$("#team-description-textarea").prop("disabled", true)
+	{% endif %}
+
+	// ha a leírás üres, akkor egy placeholdert jelenítünk meg
+	// amúgy a rendes leírást
+	if ("{{team.description}}" == ""){
+		$("#team-description-textarea").attr("placeholder", "Nincs megjeleníthető leírás.")
+	}
+	else{
+		$("#team-description-textarea").val("{{team.description}}")
+	}
+
+
+
+	// megakadalyozzuk a new line-t : todo: kicserelni ezt hogy lehessen new line
+    $("#team-description-textarea").keypress(function(event) {
+        if (event.keyCode == 13) {
+            event.preventDefault();
+        }
+    });
+	
+	// a textareabol kilépést követően mentjük a leírást
+	$("#team-description-textarea").focusout(function(){
+		var textAreaContent = $("#team-description-textarea").val()
+
+		info_packet = {
+			"user_id": "{{user_id}}",	
+			"description": textAreaContent,
+		}
+		
+		$.ajax({
+			dataType: "json",
+			url: "{% url 'team:save_team_description' %}",
+			data: info_packet,
+			success: function(data) {
+				console.log('SUCCESS - ' + data.message)
+
+			},
+			error: function(data) {
+				console.log('ERROR')
+			},
+		}) 
+	})
+
+
+
+
+
+
+
+
+
+	/* --------------- */
+
+
+
+
+
 
 	const audio = new Audio()
 	audio.src = "{% static 'audios/button_click.mp3' %}"

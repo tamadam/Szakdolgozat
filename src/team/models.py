@@ -21,7 +21,7 @@ class Team(models.Model):
 	users 			= models.ManyToManyField(settings.AUTH_USER_MODEL, through='Membership')
 	users_in_chat 	= models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='users_in_chat')
 	rank			= models.DecimalField(verbose_name='rank', max_digits=19, decimal_places=0, blank = True, null = True) #helyezes
-
+	owner_of_team 	= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, related_name='owner_of_team')
 
 	def __str__(self):
 		return self.name
