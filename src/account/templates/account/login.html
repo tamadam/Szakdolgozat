@@ -1,48 +1,15 @@
+{% extends 'base_login_register.html' %}
 {% load static %}
-<html>
     
 <head>
-	<title>RoleGame - Bejelentkezés</title>
-
-	<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> JOBB AJAX?-->
-
-
-	<!-- AJAXHOZ KELL JQUERY IMPORT -->
-	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-
-	<!-- JQUERY UI slide effecthez -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-
-
-
-
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-	
-	<!-- disable favicon.ico error -->
-	<link rel="shortcut icon" href="#">
-
+	{% block header %}
+		<title>A Szerepjáték - Bejelentkezés</title>
+	{% endblock%}
 </head>
 
+{% block content%}
+
 <style>
-@font-face {
-	font-family: 'Kanit-Regular';
-	src: local('Kanit-Regular'),
-	url("{% static 'fonts/Kanit-Regular.ttf' %}");
-}
-
-@font-face {
-	font-family: 'Kanit-Bold';
-	src: local('Kanit-Bold'),
-	url("{% static 'fonts/Kanit-Bold.ttf' %}");
-}
-
-@font-face {
-	font-family: 'Kanit-Light';
-	src: local('Kanit-Light'),
-	url("{% static 'fonts/Kanit-Light.ttf' %}");
-}
-
 
 
 html, body{
@@ -57,117 +24,181 @@ html, body{
 
 }
 
-.background-image-container {
+#moving-background-container {
 	width: 110%;
 	height: 110%;
+	left: 0;
 	top: 0;
 	position: absolute;
-	background: url("{% static 'images/login.jpg' %}");	
+	background: url("{% static 'images/login-background-village.jpg' %}");	
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
-	/*transition: transform 180ms linear;*/
 }
 
-.container {
-	text-align: center;
-	position: relative;
-	z-index: 1;
+#login-page-content{
+    /* a mozgo hatterhez kellenek ezek */
+    width: 100%;
 	height: 100%;
-	width: 100%;
+    z-index: 1;
+	position: relative;
+    /* --- */
 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: "Kanit-Regular";
+    font-size: 1.8vh;
+}
+
+#login-page-header{
 	display: flex;
 	justify-content: center;
 	align-items: center; 
-
-
-
-}
-
-#login-part {
-
-    height: auto;
-    width: fit-content;
-    min-width: 30%;
-
-    background-color: rgba(0,0,0,0.8);
-    margin: auto;
-    border-radius: 20px;
-    padding: 10px;
-    display: block;
-    position: absolute;
-    vertical-align: middle;
-	border: 10px solid transparent;
-  	padding: 15px;
-  	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
-
-
-}
-
-
-
-.fade-in-out-container{
+	height: 2%;
 	width: 100%;
-	height: 100%;
-	position: absolute;
-	top: 0;
-	left: 0;
-	background-color: black;
+}
+
+#login-page-container {
 	display: flex;
-	z-index: 2;
-}
-
-#redirect-register {
-
-    background-color: rgba(0,0,0,0.8);
-	color: white;
-	bottom: 0;
-	position: absolute;
+	justify-content: center;
+	align-items: center; 
+	height: 92%;
 	width: 100%;
-	padding: 10px;
-	vertical-align: middle;
-	font-size: 3vh;
-	font-family: "Kanit-Regular";
-	user-select: none;
 }
 
-#redirect-register img{
-	height: 1.2em;
-	vertical-align: middle;
+#login-page-footer{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center; 
+	height: 6%;
+	width: 100%;	
+	background-color: rgba(0, 0, 0, 0.86);
+	color: white;
 }
 
 
-#redirect-register a {
+
+.footer-content{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	font-size: 2.86vh;
+}
+
+
+#footer-image{
+	max-width: 80%;
+	max-height: 80%;
+}
+
+
+#login-page-footer a {
 	color: white;
 	text-decoration: none;
 }
 
-#redirect-register a:hover {
+#login-page-footer a:hover {
 	color: #b8a529;
 	text-decoration: none;
 }
 
-#redirect-register a:active {
+#login-page-footer a:active {
 	color: #e31612;
 	text-decoration: none;
 }
 
 
-form {
-    width: 100%; 
-    margin:0 auto;
-    text-align:center;
+
+#login-form-and-error-container{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 25%;
+	height: 40%;
+
+    background-color: rgba(0,0,0,0.8);
+
+	border: 20px solid transparent;
+	border-image: url("{% static 'images/goldborder.png' %}") 20% round;
+    border-radius: 20px;
+    max-width: 600px;
+    min-width: 200px;
+
 }
 
+#login-form-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 90%;
+}
+
+#login-error-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 10%;
+}
+
+
+
+#login-form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 60%;
+	height: 100%;
+	margin: 0;
+
+}
+
+#input-container{
+	display: flex;
+	flex-direction: column;
+	gap: 10%;
+	align-items: center;
+	justify-content: flex-end;
+	width: 100%;
+	height: 60%;
+}
+
+.input-field{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 24%;
+	width: 86%;
+}
+
+#error-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 26%;	
+}
+
+#submit-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 14%;
+}
+
+
 input {
-	vertical-align: middle;
-	display: block;
-	width: auto;
-	height: auto;
-	min-width: 40%;
-    margin:10 auto;
+
     font-family: "Kanit-Regular";
-    font-size: 1.2em;
+    font-size: 1.8vh;
     color: black;
     text-align: center;
 
@@ -178,8 +209,10 @@ input {
 	color: grey;
 }
 
+
+
 input[type=text], input[type=password] {
-	padding: 10px;
+	padding: 0.2em;
 	background-color: #f2f2f2;
 	border: 4px solid transparent;
 	border-radius: 0.4em;
@@ -193,14 +226,14 @@ input[type=submit] {
 	background-repeat: no-repeat;
 	background-size: cover;
 	padding: 6px;
-	min-width: 15%;
+
 	width: 60%;
 	border: none;
 	color: black;
 	font-family: "Kanit-Regular";
-	font-size: 1.8vh;
+	font-size: 1.2em;
 	font-weight: bold;
-	margin-top: 15;
+
 
 
 
@@ -211,7 +244,8 @@ input[type=submit]:hover {
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
-	color: #b8a529;
+	color: #fae455;
+	cursor: pointer;
 
 
 
@@ -240,6 +274,7 @@ input[type=text]:focus, input[type=password]:focus {
 
 }
 
+
 #error-messages {
 	color: #e31612;
 	font-family: "Kanit-Bold";
@@ -251,82 +286,99 @@ input[type=text]:focus, input[type=password]:focus {
 }
 
 
-@media screen and (min-width: 1200px) {
 
 
-form {
-	width: 60%;
 
+
+
+
+.loader-container {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 2;
 }
 
-}
+
 
 </style>
 <body>
-
+	<div id="moving-background-container">
+		<!-- Egérmozgásra mozgó háttérképet tartalmazó div -->	
+	</div>
 	<!-- Funkcionalitást tartalmazó div -->
-	<div class="container">
-		<div id="login-part">
-			<form method="POST" id="login-form">
-				{%csrf_token%}
-				<div class="input-container">
-					<input type="text" name="username" id="id_username" class="input">
-					<input type="password" name="password" id="id_password" class="input">
+	<div id="login-page-content">
+		<div id="login-page-header"></div>
+
+		<div id="login-page-container">
+			<div id="login-form-and-error-container">
+				<div id="login-form-container">
+					<form method="POST" id="login-form">
+						<div id="input-container">
+							{%csrf_token%}
+							<input type="text" name="username" id="id_username" class="input-field">
+							<input type="password" name="password" id="id_password" class="input-field">
+						</div>
+						<div id="error-container">
+							<div id="error-messages">
+								{% for error_message in messages %}
+									{{error_message}}
+								{% endfor %}
+							</div>		
+						</div>
+						<div id="submit-container">
+							<input type="submit" value="Belépés" id="login_button" class="submit-field">							
+						</div>
+
+
+					</form>
 				</div>
-
-				<input type="submit" value="Belépés" id="login_button" class="input">
-
-			</form>
-			<div id="error-messages">
-				{% for error_message in messages %}
-					{{error_message}}
-				{% endfor %}
 			</div>
-
 		</div>
-		<div id="redirect-register">
-			Nincs fiókod?  <img src="{% static 'images/register-icon.png' %}">  <a href="{% url 'register' %}">Regisztráció</a>
+		<div id="login-page-footer">
+			<div class="footer-content" id="footer-text">Nincs fiókod?</div>
+			<div class="footer-content" id="footer-image-div">
+				<img src="{% static 'images/register-icon.png' %}" id="footer-image">
+			</div>
+			<div class="footer-content" id="footer-link">
+				<a href="{% url 'register' %}" id="redirect-register-button">Regisztráció</a>
+			</div>	
 		</div>
 	</div>
-
-	<!-- Egérmozgásra mozgó háttérképet tartalmazó div -->
-	<div class="background-image-container" />
-
-
-
-	<!-- A fekete átmosást segítő div -->
-	<div class="fade-in-out-container" />
+	<div class="loader-container">
+		<!-- A fekete átmosást segítő div -->		
+	</div>
 
 <script>
 
 	$(window).on("load", function(){
-		$(".fade-in-out-container").fadeOut("slow")
+		$(".loader-container").fadeOut("slow")
 	})
 
 
 	moveBackgroundOnMouseMovement()
 
 	function moveBackgroundOnMouseMovement(){
-		console.log("hey")
-		const backgroundImageContainer = document.querySelector(".background-image-container");
-		const containerBackground = document.querySelector('.container'); //container lefedi az egesz kepes backgroundot, ezert azon kell erzekelni a mousemove-ot
-
+		const pageBackground = document.querySelector("#moving-background-container")
+		const containerBackground = document.querySelector("#login-page-content")
 
 		const windowWidth = window.innerWidth
 
 		$(containerBackground).mousemove(function(event){
-			console.log("mozag")
 			var moveDirX = event.clientX / (windowWidth / 2)
 
-			backgroundImageContainer.style.transform = `translate3d(-${moveDirX}%, 0, 0)`
-		});
-
-		console.log("yey")
-
+			pageBackground.style.transform = `translate3d(-${moveDirX}%, 0, 0)`
+		})
 	}
 
 
-
+	
 	$("#id_username").on("input", function(){
 		var errorField = document.getElementById("error-messages")
 		errorField.style.display = "none"
@@ -351,11 +403,12 @@ form {
 	    audio.play()
 
 	    return true; // false hogyha cancel form
-	});
+	})
+
 </script>
 
 
 </body>
 
-</html>
+{% endblock %}
 

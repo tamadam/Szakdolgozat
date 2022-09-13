@@ -25,7 +25,7 @@ from core.constants import *
 @anonymous_user
 def register_page_view(request):
 	form = AccountRegistrationForm()
-
+	character_type = None
 	if request.method == 'POST':
 		form = AccountRegistrationForm(request.POST)
 
@@ -44,11 +44,16 @@ def register_page_view(request):
 
 			updateRank()
 
+
 			return redirect('login')
+		
+		else:
+			character_type = form.cleaned_data.get('character_type')
 
-
-
-	context = {'form':form}
+	context = {
+			'form':form,
+			'character_type': character_type,
+		}
 
 
 	return render(request, 'account/register.html', context)

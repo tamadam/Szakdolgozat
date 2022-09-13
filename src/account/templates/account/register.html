@@ -1,23 +1,10 @@
+{% extends 'base_login_register.html' %}
 {% load static %}
-<html>
     
 <head>
-	<title>RoleGame - Regisztráció</title>
-
-
-	<!-- AJAXHOZ KELL JQUERY IMPORT -->
-	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-
-	<!-- JQUERY UI slide effecthez -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-
-
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-	<!-- disable favicon.ico error -->
-	<link rel="shortcut icon" href="#">
-	
+	{% block header %}
+		<title>A Szerepjáték - Regisztráció</title>
+	{% endblock%}
 </head>
 <!--
 <style>
@@ -756,25 +743,10 @@ body {
 	</script>
 
 -->
+{% block content %}
 
 <style>
-@font-face {
-	font-family: 'Kanit-Regular';
-	src: local('Kanit-Regular'),
-	url("{% static 'fonts/Kanit-Regular.ttf' %}");
-}
 
-@font-face {
-	font-family: 'Kanit-Bold';
-	src: local('Kanit-Bold'),
-	url("{% static 'fonts/Kanit-Bold.ttf' %}");
-}
-
-@font-face {
-	font-family: 'Kanit-Light';
-	src: local('Kanit-Light'),
-	url("{% static 'fonts/Kanit-Light.ttf' %}");
-}
 
 html, body {
 	margin: 0;
@@ -792,7 +764,7 @@ html, body {
 	left: 0;
 	top: 0;
 	position: absolute;
-	background: url("{% static 'images/login_background.jpg' %}");	
+	background: url("{% static 'images/register-background.jpg' %}");	
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -889,8 +861,7 @@ html, body {
 	width: 300%;
 	height: 60%;
 	left: 0;
-	background-color: white;
-	border:3px solid red;
+
 }
 
 #character-type-choice-buttons{
@@ -927,32 +898,28 @@ html, body {
 	float: left;
 }
 
-#choice1{
-	background-color: red;
-}
-
-#choice2{
-	background-color: green;
-}
-
-#choice3{
-	background-color: blue;
-}
 
 .choice-content{
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	width: 30%;
-	height: 100%;
-	border: 2px solid white;
+	width: 24%;
+	height: 80%;
+
+	border: 20px solid transparent;
+	border-image: url("{% static 'images/goldborder.png' %}") 20% round;
+
+	background: radial-gradient(rgba(286, 186, 76, 0.2), rgba(208, 150, 46, 0.6));
+	padding: 0.4em;
+	max-width: 600px;
 	min-width: 500px;
 }
 
 .choice-up{
 	display: flex;
 	flex-direction: row;
+	gap: 2%;
 	align-items: center;
 	justify-content: center;
 	width: 100%;
@@ -976,7 +943,7 @@ html, body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 50%;
+	width: 48%;
 	height: 100%;
 }
 
@@ -984,18 +951,45 @@ html, body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 50%;
+	width: 48%;
 	height: 100%;
 }
 
 .description{
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	width: 90%;
-	height: 50%;
-	background-color: yellow;
+	width: 60%;
+	height: 56%;
+	background-color: #e9cd94;
+	border: 40px solid transparent;
+	border-radius: 10px;
+	border-image: url("{% static 'images/border-description2.png' %}") 40% round;
+	box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
 }
+
+.description-span1{
+	width: 100%;
+	height: 20%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: "Kanit-Bold";
+	border-bottom: 2px solid black;
+}
+
+.description-span2{
+	width: 100%;
+	height: 80%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	
+
+}
+
 
 #choice1-description, #choice2-description, #choice3-description{
 	opacity: 0;
@@ -1013,6 +1007,8 @@ html, body {
 	background-repeat: no-repeat;
 	background-size: cover;
 	color: black;
+	font-size: 2vh;
+	font-weight: bold;
 
 }
 
@@ -1069,7 +1065,7 @@ html, body {
 	text-align: center;
 	font-family: "Kanit-Regular";
 	font-size: 1.8vh;
-	color: #fae455;
+	color: #d6ba22;
 
 }
 
@@ -1355,7 +1351,7 @@ input[type=submit]:active {
 
 <body>
 <div id="moving-background-container">
-	
+	<!-- Egérmozgásra mozgó háttérképet tartalmazó div -->
 </div>
 <div id="registration-page-content">
 	<div id="registration-page-header"></div>
@@ -1369,11 +1365,14 @@ input[type=submit]:active {
 			                	<img src="{% static 'images/swordsman.png' %}">
 							</div>
 							<div class="choice-content-right" id="choice1-content-right">
-								<div class="description" id="choice1-description"></div>
+								<div class="description" id="choice1-description">
+									<span class="description-span1">Harcos</span>
+									<span class="description-span2">Erős, masszív, de vajon ő a legerősebb?</span>
+								</div>
 							</div>						
 						</div>
 						<div class="choice-down">
-							<div class="choice-submit" id="choice1-submit">Ő legyen!</div>
+							<div class="choice-submit" id="choice1-submit">Kiválaszt</div>
 						</div>
 
 					</div>
@@ -1385,11 +1384,14 @@ input[type=submit]:active {
 								<img src="{% static 'images/wizard.png' %}">
 							</div>
 							<div class="choice-content-right" id="choice2-content-right">
-								<div class="description" id="choice2-description"></div>
+								<div class="description" id="choice2-description">
+									<span class="description-span1">Mágus</span>
+									<span class="description-span2">Szerinte a világ varázslatos tud lenni.</span>
+								</div>
 							</div>
 						</div>
 						<div class="choice-down">
-							<div class="choice-submit" id="choice2-submit">Ő legyen!</div>
+							<div class="choice-submit" id="choice2-submit">Kiválaszt</div>
 						</div>
 					</div>
 				</div>
@@ -1400,11 +1402,14 @@ input[type=submit]:active {
 								<img src="{% static 'images/archer.png' %}">
 							</div>
 							<div class="choice-content-right" id="choice3-content-right">
-								<div class="description" id="choice3-description"></div>
+								<div class="description" id="choice3-description">
+									<span class="description-span1">Íjász</span>
+									<span class="description-span2">Nagy kalandozó hírében áll.</span>
+								</div>
 							</div>						
 						</div>
 						<div class="choice-down">
-							<div class="choice-submit" id="choice3-submit">Ő legyen!</div>
+							<div class="choice-submit" id="choice3-submit">Kiválaszt</div>
 						</div>
 					</div>
 				</div>
@@ -1531,6 +1536,7 @@ input[type=submit]:active {
 	$(window).on("load", function(){
 		$(".loader-container").fadeOut("slow")
 		animateSwitchCharacterType(currentCharacterType, true)
+
 	})
 
 
@@ -1538,8 +1544,8 @@ input[type=submit]:active {
 	moveBackgroundOnMouseMovement()
 
 	function moveBackgroundOnMouseMovement(){
-		const pageBackground = document.querySelector("#moving-background-container");
-		const containerBackground = document.querySelector('#registration-page-content'); //registration-page-content lefedi az egesz kepes backgroundot, ezert azon kell erzekelni a mousemove-ot
+		const pageBackground = document.querySelector("#moving-background-container")
+		const containerBackground = document.querySelector("#registration-page-content") //registration-page-content lefedi az egesz kepes backgroundot, ezert azon kell erzekelni a mousemove-ot
 
 		const windowWidth = window.innerWidth
 
@@ -1698,7 +1704,7 @@ input[type=submit]:active {
 
 		$(".loader-container").fadeOut("fast")
 
-		setTimeout(animateChoosenCharacterType, 500)
+		setTimeout(animateChoosenCharacterType, 300)
     }
 
 
@@ -1710,7 +1716,13 @@ input[type=submit]:active {
 		//az animált választott karakternek az opacity-jét vissza kell állítani
 		$("#data-bottom-left").css("opacity", "0")
 
-    	
+		// error esetén, az oldal újratöltődik
+		// ezzel azt érjük el, hogyha error van és a felhasználó visszamegy a karakter választó oldalra
+		// akkor oda tekeri a karakterválasztót, ahol volt eredetileg
+  		$("#character-type-choice-field").animate({
+  			left: "-" + currentCharacterType * 100 + "%",
+  		}, 400)
+ 	
 		hideErrorMessage()
 
 		
@@ -1768,7 +1780,7 @@ input[type=submit]:active {
 
     function animateChoosenCharacterType(){
 		jQuery.easing.def = "linear"
-		$("#data-bottom-left").animate({"opacity": "1"}, 1000)
+		$("#data-bottom-left").animate({"opacity": "1"}, 200)
 
     }
  
@@ -1916,7 +1928,21 @@ input[type=submit]:active {
 	var errorMessageSeen = false
 
 	{% if form.errors %}
-		console.log("van")
+		console.log("van")	
+		var previousCharacterType = "{{character_type}}"
+		if(previousCharacterType == "warrior"){
+			currentCharacterType = 0
+		}
+		else if(previousCharacterType == "mage"){
+			currentCharacterType = 1
+		}
+		else if(previousCharacterType == "scout"){
+			currentCharacterType = 2
+		}
+		else{
+			currentCharacterType = 0
+		}
+
 		document.getElementById("error-messages-container").style.visibility = "visible"
 		showNextPart()
 		errorMessageSeen = true
@@ -1951,10 +1977,10 @@ input[type=submit]:active {
 	let warriorDescription = "Többet erővel mint ésszel.;Alaptulajdonságok:;Erő: 10;Ügyesség: 5;Értelem: 5;Életerő: 12;Szerencse:7";
 	let mageDescription = "A világ varázslatos tud lenni.Alaptulajdonságok:;Erő: 6;Ügyesség: 5;Értelem: 12;Életerő: 8;Szerencse:6";
 	let scoutDescription = "Kalandra fel, hív a vadon.Alaptulajdonságok:;Erő: 7;Ügyesség: 11;Értelem: 7;Életerő: 9;Szerencse:8";
-*/
-	let warriorDescription = "Erő: 10 Ügyesség: 5 Értelem: 5 Életerő: 12 Szerencse: 7";
-	let mageDescription = "A világ varázslatos tud lenni.Alaptulajdonságok:;Erő: 6;Ügyesség: 5;Értelem: 12;Életerő: 8;Szerencse:6";
-	let scoutDescription = "Kalandra fel, hív a vadon.Alaptulajdonságok:;Erő: 7;Ügyesség: 11;Értelem: 7;Életerő: 9;Szerencse:8";
+
+	var warriorDescription = "Harcos;Erős, masszív, de vajon ő a legerősebb?";
+	var mageDescription = "Mágus;Szerinte a világ varázslatos tud lenni.";
+	var scoutDescription = "Íjász;Nagy kalandozó hírében áll.";
 
 	function breakDescriptionLines(description){
 		description = description.split(";")
@@ -1966,10 +1992,11 @@ input[type=submit]:active {
 
 		return description
 	}
-
+*/
 
  	
 </script>
 
 </body>
-</html>
+
+{% endblock %}
