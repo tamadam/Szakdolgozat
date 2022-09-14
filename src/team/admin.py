@@ -1,6 +1,6 @@
 from django.contrib import admin
 from account.models import Account
-from .models import Team, Membership, TeamMessage, UnreadTeamMessages
+from .models import Team, Membership, TeamMessage, UnreadTeamMessages, TeamJoinRequest
 from django.core.paginator import Paginator
 from django.core.cache import cache
 
@@ -91,3 +91,15 @@ class UnreadTeamMessagesAdmin(admin.ModelAdmin):
 		model = UnreadTeamMessages
 
 admin.site.register(UnreadTeamMessages, UnreadTeamMessagesAdmin)
+
+
+class TeamJoinRequestAdmin(admin.ModelAdmin):
+	list_display = ['user', 'team', 'request_date']
+	search_fields = []
+	readonly_fields = ['id']
+	
+	class Meta:
+		model = TeamJoinRequest
+
+admin.site.register(TeamJoinRequest, TeamJoinRequestAdmin)
+

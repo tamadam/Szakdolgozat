@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from account.models import Account, Character
-from .models import Team, Membership, TeamMessage
+from .models import Team, Membership, TeamMessage, TeamJoinRequest
 from .forms import TeamCreationForm
 from django.conf import settings
 import json
@@ -110,25 +110,82 @@ def leave_team(request):
 	return HttpResponse(json.dumps(context), content_type='application/json')
 
 
-def join_team(request):
-	context = {}
+def fire_team_mate(request):
+	data = {}
 
-	user_id = request.POST.get('user_id')
-	#print('user_id ' + user_id)
+	return JsonResponse(data)
+
+
+def accept_user_join(request):
+	data = {}
+
+	user_id = request.GET.get('user_id')
 	user = Account.objects.get(id=user_id)
-	#print('felhasznalo ' + user.username)
 
-	team_id = request.POST.get('team_id')
-	#print('team_id ' + team_id)
+	team_id = request.GET.get('team_id')
 	team = Team.objects.get(id=team_id)
-	#print('csapat ' + team.name)
+
+	# hozzáadás a csapathoz
+	#Membership.objects.create(user=user, team=team)
 
 
-	Membership.objects.create(user=user, team=team)
+	# ha van a felhasználónak függő csatlakozási kérelme 
+	if TeamJoinRequest.objects.filter(user=user).exists():
+		# ha van a felhasználónak függő csatlakozási kérelme a csapathoz 
+		if TeamJoinRequest.objects.filter(user=user, team=team).exists():
+			# töröljük az összes csatlakozási kérelmet ami a felhasználóhoz köthető
+			TeamJoinRequest.objects.filter(user=user).delete()
+			# hozzáadás a csapathoz
+			Membership.objects.create(user=user, team=team)
+			data['is_joined'] = 'joined'
+	else:
+		data['is_joined'] = 'not_joined'
 
-	context['message'] = 'siker'
+	data['message'] = 'success'
 
-	return HttpResponse(json.dumps(context), content_type='application/json')
+	return JsonResponse(data)
+
+
+def decline_user_join(request):
+	data = {}
+
+	user_id = request.GET.get('user_id')
+	user = Account.objects.get(id=user_id)
+
+	team_id = request.GET.get('team_id')
+	team = Team.objects.get(id=team_id)
+
+	if TeamJoinRequest.objects.filter(user=user, team=team).exists():
+		TeamJoinRequest.objects.filter(user=user, team=team).delete()
+
+	data['message'] = 'success'
+
+	return JsonResponse(data)
+
+
+def send_join_request(request):
+	data = {}
+
+	user_id = request.GET.get('user_id')
+	user = Account.objects.get(id=user_id)
+
+	team_id = request.GET.get('team_id')
+	team = Team.objects.get(id=team_id)
+
+	print(user, team)
+
+	# ha már van request az adott csapathoz, ne hozzon létre mégegyet
+	if not TeamJoinRequest.objects.filter(user=user, team=team).exists():
+		TeamJoinRequest.objects.create(user=user, team=team)
+		data['request_state'] = "created"
+	else:
+		data['request_state'] = "exists"
+
+
+
+
+	return JsonResponse(data)
+
 
 
 @login_required(login_url='login')
@@ -197,6 +254,26 @@ def individual_team_view(request, *args, **kwargs):
 				'is_team_owner': is_team_owner,
 			})
 
+	
+	pending_requests_all = TeamJoinRequest.objects.get_all_requests(team)
+
+	pending_requests = []
+
+	for pending_request in pending_requests_all:
+
+		try:
+			profile_image = pending_request.user.profile_image.url
+		except Exception as e:
+			profile_image = STATIC_IMAGE_PATH_IF_DEFAULT_PIC_SET
+
+		print('pending_request', pending_request)
+
+		pending_requests.append({
+				'user_id': pending_request.user.id,
+				'user': pending_request.user,
+				'profile_image': profile_image,
+			})
+
 
 	context = {
 		'team': team,
@@ -206,6 +283,7 @@ def individual_team_view(request, *args, **kwargs):
 		'user_id': user.id,
 		'account': account,
 		'is_team_owner_description': is_team_owner_description,
+		'pending_requests': pending_requests,
 	}
 
 	# CHAT RÉSZ ------------------------

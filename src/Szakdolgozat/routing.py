@@ -31,9 +31,9 @@ application = ProtocolTypeRouter({
 	'websocket': AllowedHostsOriginValidator(
 		AuthMiddlewareStack( 
 			URLRouter([
-				path('public_chat/<room_id>/', PublicChatRoomConsumer.as_asgi()),
-				path('private_chat/<room_id>/', PrivateChatRoomConsumer.as_asgi()),
-				path('team/<room_id>/', TeamConsumer.as_asgi()),
+				path('kozosseg/<room_id>/', PublicChatRoomConsumer.as_asgi()), # public_chat_page.html-el van kapcsolatban, a ws-es rész (mar magyarra volt forditva mikor ez a ketto meg nem)
+				path('uzenetek/<room_id>/', PrivateChatRoomConsumer.as_asgi()), # private_chat_room.html-el van kapcsolatban -||-
+				path('csapat/<room_id>/', TeamConsumer.as_asgi()), #individual_team.html -||-
 				path('', NotificationConsumer.as_asgi()), 
 				]) 
 			)

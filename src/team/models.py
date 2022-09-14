@@ -175,3 +175,21 @@ def unread_messages_count_reset(sender, instance, **kwargs):
 				notification.delete()
 			except Notification.DoesNotExist:
 				pass
+
+
+class TeamJoinRequestManager(models.Manager):
+	def get_all_requests(self, team):
+		qs = TeamJoinRequest.objects.filter(team=team).order_by('request_date')
+		return qs
+
+
+class TeamJoinRequest(models.Model):
+	user 			= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	team			= models.ForeignKey(Team, on_delete=models.CASCADE)
+	request_date 	= models.DateTimeField(verbose_name = 'request date', auto_now_add = True)
+
+
+	def __str__(self):
+		return f'Csatlakozási kérelem {self.team} csapathoz {self.user} felhasználótól'
+
+	objects = TeamJoinRequestManager()

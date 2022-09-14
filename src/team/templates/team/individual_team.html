@@ -65,6 +65,7 @@
 	flex-direction: column;
 	max-width: 1900px;
 	color: #e3cc4a;
+	user-select: none;
 
 
 }
@@ -236,11 +237,21 @@
 
 }
 
+
+
 .profile-image:hover{
 	cursor: pointer;
 
 
 }
+
+.profile-image-owner-icon{
+	width: 2em;
+	height: 2em;
+	border-radius: 50%;
+}
+
+
 
 .message-text {
 
@@ -376,6 +387,28 @@
 }
 
 
+
+#pending-requests-container{
+	display: none;
+	flex-direction: column;
+	overflow-x: hidden;
+	overflow-y: auto;
+	height: 45%;
+	width: 60%;
+	margin-top: 2%;
+}
+
+
+#pending-requests{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	height: 100%;
+	width: 100%;
+}
+
+
 #join-or-leave-section{
 
 	display: flex;
@@ -386,6 +419,37 @@
 	height: 20%;
 
 }
+
+#team-navigation{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 80%;	
+}
+
+#join-requests-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 25%;
+	height: 100%;	
+}
+
+#show-requests{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+#show-requests:hover{
+	color: red;
+	cursor: pointer;
+}
+
+
 
 #join-leave-buttons-container{
 	display: flex;
@@ -398,8 +462,20 @@
 	font-weight: bold;
 }
 
+#start-attack-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 25%;
+	height: 100%;	
+}
+
 #error-field{
 	height: 20%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	color: red;
 	visibility: hidden;
 }
@@ -427,16 +503,58 @@
 	display: flex;
 	flex-direction: row;
 	width: 100%;
-	height: 100%;
-	max-height: 50px;
+	/*height: 100%;*/
+	height: 55px;
+
 }
 
-.team-member-container:hover{
+.team-member-detail-content{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: 80%;
+	height: 100%;
+}
+
+.team-member-detail-content:hover{
 	cursor: pointer;
 	background-color: rgba(165, 169, 174, 0.6);
+	border-radius: 20px;
+}
+
+.team-member-role-main-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20%;
+	height: 100%;
+}
+
+
+.current-pending-requests-container{
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	/*height: 100%;*/
+	min-height: 60px;
+}
+
+
+.current-pending-requests-container:hover{
+	cursor: pointer;
+	text-decoration: underline;
 }
 
 .team-member-container-profile-image{
+	width: 14%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-right: 4%;
+}
+
+.current-pending-requests-profile-image{
 	width: 14%;
 	display: flex;
 	justify-content: center;
@@ -451,6 +569,13 @@
 	justify-content: flex-start;
 }
 
+.current-pending-requests-member-name{
+	width: 56%;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;	
+}
+
 .team-member-role-icon-container{
 	width: 14%;
 	display: flex;
@@ -459,12 +584,35 @@
 }
 
 
-.profile-image{
-	width: 2em;
-	height: 2em;
-	border-radius: 50%;
+.current-pending-requests-add-user-to-team-container{
+	width: 14%;
+	display: flex;
+	justify-content: center;
+	align-items: center;	
+}
+
+.current-pending-requests-add-user-to-team-container:hover{
+	background-color: rgba(50, 186, 124, 0.6);
+	border-radius: 20px;
+}
+
+.current-pending-requests-remove-user{
+	width: 14%;
+	display: flex;
+	justify-content: center;
+	align-items: center;		
+}
+
+.current-pending-requests-remove-user:hover{
+	background-color: rgba(255, 0, 0, 0.6);
+	border-radius: 20px;
+}
 
 
+
+.profile-image-add-user{
+	max-width: 60%;
+	max-height: 60%;
 }
 
 
@@ -515,6 +663,7 @@
 	color: #fae455;
 
 }
+
 
 
 </style>
@@ -597,30 +746,69 @@
 			</div>
 			<div id="members-container">
 				{% for team_member in team_members %}
-					<div class="team-member-container" onclick="selectUser('{{team_member.member.id}}')">
-						<div class="team-member-container-profile-image">
-							<img class="profile-image" src="{{team_member.member_profile_image}}" alt="profilkep">
+					<div class="team-member-container">
+						<div class="team-member-detail-content" onclick="selectUser('{{team_member.member.id}}')">
+							<div class="team-member-container-profile-image">
+								<img class="profile-image" src="{{team_member.member_profile_image}}" alt="profilkep">
+							</div>
+							<div class="team-member-container-member-name">
+								{{team_member.member.username}} 							
+							</div>
 						</div>
-						<div class="team-member-container-member-name">
-							{{team_member.member.username}} 							
-						</div>
-						<div class="team-member-role-icon-container">
-							{% if team_member.is_team_owner %}
-								<img class="profile-image" src="{% static 'images/crown-team.png' %}" alt="korona">
-							{% endif %}
+						<div class="team-member-role-main-container">
+							<div class="team-member-role-icon-container"> 
+								{% if team_member.is_team_owner %}
+									<img class="profile-image-owner-icon" src="{% static 'images/crown-team.png' %}" alt="korona">
+								{% endif %}
+							</div>
 						</div>
 					</div>
 				{% endfor %}
 			</div>
+			<div id="pending-requests-container">
+				<div id="pending-requests">
+					{% for pending_request in pending_requests %}
+						<div class="current-pending-requests-container">
+							<div class="current-pending-requests-profile-image" onclick="selectUser('{{pending_request.user_id}}')">
+								<img class="profile-image" src="{{pending_request.profile_image}}" alt="profilkep">
+							</div>
+							<div class="current-pending-requests-member-name" onclick="selectUser('{{pending_request.user_id}}')">
+								{{pending_request.user}} 							
+							</div>
+							<div class="current-pending-requests-add-user-to-team-container" onclick="addUserToTeam('{{pending_request.user_id}}', '{{team.id}}')">
+								<img class="profile-image-add-user" src="{% static 'images/checked_team.png' %}" alt="hozzaad">
+							</div>
+							<div class="current-pending-requests-remove-user" onclick="deleteRequest('{{pending_request.user_id}}', '{{team.id}}')">
+								<img class="profile-image-add-user" src="{% static 'images/cancel.png' %}" alt="eltavolit">
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
 			<div id="join-or-leave-section">
-				<div id="join-leave-buttons-container">
-					{% if is_own_team %}
-						<div id="leave-team-button" class="team-join-leave-button" onclick="leaveTeam('{{user_id}}')">Csapat elhagyása</div>
-					{% else %}
-						<div id="join-team-button" class="team-join-leave-button" onclick="joinTeam('{{user_id}}', '{{team.id}}')">Csatlakozás</div>
+				<div id="team-navigation">
+					
+					<div id="join-requests-container">
+						{% if is_team_owner_description %}
+							<div id="show-requests">Csatlakozási kérelmek</div>
+						{% endif %}
+					</div>
+					<div id="join-leave-buttons-container">
+						{% if is_own_team %}
+							<div id="leave-team-button" class="team-join-leave-button" onclick="leaveTeam('{{user_id}}')">Csapat elhagyása</div>
+						{% else %}
+							<div id="join-team-button" class="team-join-leave-button" onclick="sendJoinRequest('{{user_id}}', '{{team.id}}')">Csatlakozás</div>
 
-					{% endif %}
+						{% endif %}
 
+					</div>
+
+					<div id="start-attack-container">
+						{% if is_team_owner_description %}
+							attack
+						{% endif %}
+					</div>
+					
 				</div>
 				<div id="error-field">
 					error
@@ -636,6 +824,123 @@
 </div>
 
 <script type="text/javascript">
+
+	var isPendingMembers = false
+	$("#show-requests").on("click", function(){
+		audio.currentTime = 0
+		audio.play()
+		if(!isPendingMembers){
+			$("#members-container").css("display", "none")
+			$("#pending-requests-container").css("display", "flex")
+			$("#show-requests").html("Vissza")
+		}
+		else{
+			$("#members-container").css("display", "block")
+			$("#pending-requests-container").css("display", "none")
+			$("#error-field").css("visibility", "hidden	")
+			$("#show-requests").html("Csatlakozási kérelmek")
+		}
+		
+		isPendingMembers = !isPendingMembers
+	})
+
+
+	// 5mp-nként nézi, jött e új csatlakozási kérelem
+	setInterval(function(){
+		refresh_page_part("#pending-requests")
+	}, 5000)
+
+
+	function addUserToTeam(userID, teamID){
+		audio.currentTime = 0
+		audio.play()
+		info_packet = {
+			"user_id": userID,	
+			"team_id": teamID,
+		}
+		
+		$.ajax({
+			dataType: "json",
+			url: "{% url 'team:accept_user_join' %}",
+			data: info_packet,
+			success: function(data) {
+				console.log('SUCCESS')
+				if(data.is_joined == "not_joined"){
+					var divError = document.getElementById("error-field")
+					divError.innerHTML = "Ez a kérelem már nem érvényes!"
+					divError.style.visibility = "visible"
+				}
+
+			},
+			error: function(data) {
+				console.log('ERROR')
+			},
+		}) 
+
+
+
+
+		refresh_page_part("#pending-requests")
+
+		refresh_page_part("#members-container")
+	}
+
+
+	function deleteRequest(userID, teamID){
+		audio.currentTime = 0
+		audio.play()
+
+		info_packet = {
+			"user_id": userID,	
+			"team_id": teamID,
+		}
+
+		$.ajax({
+			dataType: "json",
+			url: "{% url 'team:decline_user_join' %}",
+			data: info_packet,
+			success: function(data) {
+				console.log('SUCCESS')
+
+
+			},
+			error: function(data) {
+				console.log('ERROR')
+			},
+		}) 
+
+
+
+
+		refresh_page_part("#pending-requests")
+
+
+
+
+	}
+
+
+
+	function refresh_page_part(pagePart){
+
+		
+		$.get(window.location.href,{},function(response){
+			var new_version = $('<div></div>').append(response);
+			var new_result = new_version.find(pagePart);
+			if(new_result.length){
+				$(pagePart).html( new_result.html() );
+				console.log('update requests');
+			}
+			else{
+				console.log('something wrong');
+			}
+		});
+
+	}
+
+
+
+
 
 
 	var fadeOutLoaderScreen = null
@@ -665,6 +970,8 @@
 
 
 	})
+
+
 
 
 	/* CSAPAT LEÍRÁS KEZELÉSE */
@@ -762,39 +1069,30 @@
 
 
 
-	function joinTeam(userId, teamId){
+	function sendJoinRequest(userId, teamId){
 		audio.play()
-		console.log("joining team...")
+		console.log("send join request to team...")
 
 		//audio hallatszodjon
 		setTimeout(function(){
 			if ('{{has_team}}' == 'True'){
-				console.log("amíg csapatod van nem csatlakozhatsz")
+				//console.log("amíg csapatod van nem csatlakozhatsz")
 				var divError = document.getElementById("error-field")
 				divError.innerHTML = "Nem csatlakozhatsz amíg másik csapat tagja vagy"
 				divError.style.visibility = "visible"
 			}
 			else{
-				console.log("JOIN TEAM")
+				console.log("SEND TEAM JOIN REQUEST")
 				payload = {
-					"csrfmiddlewaretoken": "{{csrf_token}}",
 					"user_id": userId,
 					"team_id": teamId,
 				}
 				$.ajax({
-					type: "POST",
 					dataType: "json",
-					url: "{% url 'team:join_team' %}",
+					url: "{% url 'team:send_join_request' %}",
 					data: payload,
-					timeout: 5000,
 					success: function(response) {
-						console.log('success')
-
-						sessionStorage.setItem("reloading", "true");
-						location.reload()
-
-
-
+						handleResponseMessage(response)
 
 					},
 					error: function(response) {
@@ -806,6 +1104,24 @@
 
 
 
+	}
+
+	function handleResponseMessage(response){
+		if(response.request_state == "created"){
+			var divError = document.getElementById("error-field")
+			divError.innerHTML = "Jelentkezés sikeresen elküldve!"
+			divError.style.visibility = "visible"
+			divError.style.color = "green"
+		}
+		else if(response.request_state == "exists"){
+			var divError = document.getElementById("error-field")
+			divError.innerHTML = "Már elküldted a jelentkezésed!"
+			divError.style.visibility = "visible"
+			divError.style.color = "red"
+		}
+
+		//sessionStorage.setItem("reloading", "true");
+		//location.reload()
 	}
 
 
@@ -885,9 +1201,9 @@
 		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
 
 		if ("{{ debug_mode }}")
-			var ws_path = ws_scheme + "://" + window.location.host + "/team/" + roomId + "/"; // fejlesztéshez
+			var ws_path = ws_scheme + "://" + window.location.host + "/csapat/" + roomId + "/"; // fejlesztéshez
 		else
-			var ws_path = ws_scheme + "://" + window.location.host + ":8001/team/" + roomId + "/"; // élesben
+			var ws_path = ws_scheme + "://" + window.location.host + ":8001/csapat/" + roomId + "/"; // élesben
 
 		// websocket beállítás
 		teamSocket = new WebSocket(ws_path)
