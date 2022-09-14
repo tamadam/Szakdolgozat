@@ -113,6 +113,24 @@ def leave_team(request):
 def fire_team_mate(request):
 	data = {}
 
+	user_id = request.GET.get('user_id')
+	user = Account.objects.get(id=user_id)
+
+	try:
+		team_id = user.team_set.all()[0].id
+	except Exception as e:
+		print(f'Team id not found for user {request.user} ' + str(e))
+	try:
+		user_team = Team.objects.get(id=team_id)
+	except Exception as e:
+		print(f'Team id not found in leave team ' + str(e))
+
+
+
+	# felhasználó törlése a csapatból
+	user_team.users.remove(user)
+
+	
 	return JsonResponse(data)
 
 

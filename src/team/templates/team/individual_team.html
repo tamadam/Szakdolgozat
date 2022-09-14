@@ -664,7 +664,17 @@
 
 }
 
+.profile-image-delete-user-icon{
+	visibility: hidden;
+	width: 2em;
+	height: 2em;
+	border-radius: 50%;
+}
 
+
+.profile-image-delete-user-icon:hover{
+	cursor: pointer;
+}
 
 </style>
 
@@ -759,6 +769,9 @@
 							<div class="team-member-role-icon-container"> 
 								{% if team_member.is_team_owner %}
 									<img class="profile-image-owner-icon" src="{% static 'images/crown-team.png' %}" alt="korona">
+								{% else %}
+									<img class="profile-image-delete-user-icon" src="{% static 'images/trash-bin.png' %}" alt="kuka" onclick="fireUser('{{team_member.member.id}}')">
+
 								{% endif %}
 							</div>
 						</div>
@@ -929,6 +942,12 @@
 			var new_result = new_version.find(pagePart);
 			if(new_result.length){
 				$(pagePart).html( new_result.html() );
+
+				// hogy ne tunjon el a kuka refreshkor
+				{% if is_team_owner_description %}
+					$(".profile-image-delete-user-icon").css("visibility", "visible")
+				{% endif %}
+
 				console.log('update requests');
 			}
 			else{
@@ -968,6 +987,9 @@
 			$(".loader-container").fadeOut("slow")
 		}		
 
+		{% if is_team_owner_description %}
+			$(".profile-image-delete-user-icon").css("visibility", "visible")
+		{% endif %}
 
 	})
 
@@ -1164,6 +1186,33 @@
 
 
 
+	function fireUser(userID){
+		console.log(userID)
+		{% if is_team_owner_description %}
+			
+			audio.play()
+
+			info_packet = {
+				"user_id": userID,
+			}
+			$.ajax({
+				dataType: "json",
+				url: "{% url 'team:fire_team_mate' %}",
+				data: info_packet,
+				success: function(response){
+					console.log("success")
+					refresh_page_part("#members-container")
+
+				},	
+				error: function(response){
+					console.log("error at fireuser")
+				},
+
+			})
+
+
+		{% endif %}
+	}
 
 
 
