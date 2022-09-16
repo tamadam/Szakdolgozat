@@ -141,6 +141,14 @@ class CharacterManager(models.Manager):
 		return accounts_ordered_list
 
 
+	def get_characters_from_list_in_ordered_list_by_level(self, account_list):
+		characters = [Character.objects.get(account=user) for user in account_list]
+
+		characters = sorted(characters, key=lambda character: character.level)
+
+		return characters
+
+
 
 class Character(models.Model):
 	account = models.OneToOneField(Account, on_delete=models.CASCADE, primary_key=True) 
@@ -221,9 +229,11 @@ def pre_save_image(sender, instance, *args, **kwargs):
 		#print('instanceprof: ', instance.profile_image, 'accountprof ', account.profile_image)
 		if instance.profile_image and account.profile_image != instance.profile_image:
 			account.profile_image.delete(False)
+
 		if not instance.profile_image and account.profile_image:
 			account.profile_image.delete(False)
-
+		
+		
 
 	#instance.profile_image : az aktuálisan feltöltött profilkép
 	#account.profile_image  : a régebbi profilkép

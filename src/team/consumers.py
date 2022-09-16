@@ -332,7 +332,7 @@ def get_team_chat_room(room_id, user):
 
 	# ellenőrizzük, hogy a felhasználó abban a csapatban van-e amelyet épp megnyitott az oldalon
 	if user not in room.users.all():
-		raise ClientError('ERROR', 'You have to be in the same team to chat')
+		raise ClientError('ERROR', 'Ugyanabban a csapatban kell legyetek a chateléshez!')
 
 
 	return room

@@ -1,0 +1,199 @@
+{% extends 'base_new.html' %}
+
+{% load static %}
+
+{% block content %}
+<style>
+@font-face {
+	font-family: 'Kanit-Regular';
+	src: local('Kanit-Regular'),
+	url("{% static 'fonts/Kanit-Regular.ttf' %}");
+}
+
+@font-face {
+	font-family: 'Kanit-Bold';
+	src: local('Kanit-Bold'),
+	url("{% static 'fonts/Kanit-Bold.ttf' %}");
+}
+
+@font-face {
+	font-family: 'Kanit-Light';
+	src: local('Kanit-Light'),
+	url("{% static 'fonts/Kanit-Light.ttf' %}");
+}
+
+
+#team-arena-content{
+	background-color: white;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: "Kanit-Regular";
+	font-size: 1.8vh;
+
+}
+
+
+</style>
+<div id="team-arena-content">
+
+
+	
+	<h1>Team arena</h1>
+	{{attacker_team}}
+	{{defender_team}}
+	
+</div>
+<script>
+
+	var attackerTeamHealthValues = []
+	var defenderTeamHealthValues = []
+
+	$(window).on("load", function(){
+
+		{% for single_round in rounds %}
+			//console.log("{{single_round.attacker.id}}")
+			//console.log("{{single_round.defender.id}}")
+			var attackerhealthValues = "{{single_round.attacker_health_values}}".slice(1,-1).split(",")
+			attackerTeamHealthValues.push(attackerhealthValues)
+			var defenderHealthValues = "{{single_round.defender_health_values}}".slice(1,-1).split(",")
+			defenderTeamHealthValues.push(defenderHealthValues)
+
+		{% endfor %}
+
+		console.log(attackerTeamHealthValues)
+		console.log(attackerTeamHealthValues.length)
+		console.log(defenderTeamHealthValues)
+
+		startFight()
+		})
+
+
+	// 1-ről indítjuk ezeket a countereket, valamint az i és j-t is mivel az első érték mindig a kiinduló életerő
+	// azt a program állítja be es utana kezdodik a sebzés
+	
+	var attackerCounter = 1
+	var defenderCounter = 1
+
+	function startFight(){
+		
+		var attacker = getSingleValues(attackerTeamHealthValues[attackerCounter])
+		var defender = getSingleValues(defenderTeamHealthValues[defenderCounter])
+
+		console.log("startFight")
+		console.log(attacker)
+		console.log(defender)
+
+		j = 1
+
+		defenderLoop(defender)
+
+		i = 1
+		setTimeout(function(){
+			attackerLoop(attacker)
+		}, 500)
+
+
+	}
+
+
+
+	//console.log(attackerTeamHealthValues)
+	//console.log(defenderTeamHealthValues)
+
+	function getSingleValues(attackerCharacterHealthValues){
+		var currentAttacker = []
+		for(var i = 0; i < attackerCharacterHealthValues.length; i++){
+			currentAttacker.push(attackerCharacterHealthValues[i])
+		}
+
+		return currentAttacker
+	}
+
+
+
+
+
+
+	var i = 1                  
+	var attackerTimeout = null           
+
+	function attackerLoop(attacker) {         //  create a loop function
+	  attackerTimeout = setTimeout(function() {   //  call a 3s setTimeout when the loop is called
+	    console.log('attacker', attacker[i]);   //  your code here
+	    i++;                    //  increment the counter
+	    if (i < attacker.length) {           //  if the counter < 10, call the loop function
+	      attackerLoop(attacker);             //  ..  again which will trigger another 
+	    }      
+	    else{
+	    	setTimeout(function(){
+	    		if(attacker[attacker.length -1] == 0){
+		    		console.log("attacker dead")
+	    			clearTimeout(defenderTimeout)
+	    			attackerCounter++
+	    			defenderCounter++
+	    			if(attackerCounter < attackerTeamHealthValues.length){
+		    			setTimeout(function(){
+		    				startFight()
+		    			}, 400)
+	    			}
+	    			else{
+	    				console.log("attacker vesztett")
+	    			}
+
+
+	    		}
+
+	    		
+	    	}, 400)
+	    }
+	  }, 1200)
+	}
+
+
+
+	var j = 1       
+	var defenderTimeout = null           
+
+	function defenderLoop(defender) {         //  create a loop function
+	 	defenderTimeout = setTimeout(function() {   //  call a 3s setTimeout when the loop is called
+	    console.log('defender', defender[j]);   //  your code here
+	    j++;                    //  increment the counter
+	    if (j < defender.length) {           //  if the counter < 10, call the loop function
+	      defenderLoop(defender);             //  ..  again which will trigger another 
+	    }      
+	    else{
+	    	setTimeout(function(){
+	    		if(defender[defender.length-1] == 0){
+		    		console.log("defender dead")
+	    			clearTimeout(attackerTimeout)
+	    			defenderCounter++
+	       			attackerCounter++
+
+	       			if (defenderCounter < defenderTeamHealthValues.length){
+			    		setTimeout(function(){
+			    			startFight()
+			    		}, 400)
+	       			}
+	       			else{
+	       				console.log("defender vesztett")
+	       			}
+
+	    		}
+
+	    	}, 400)
+	    }
+	  }, 1200)
+	}
+	
+
+
+
+
+
+</script>
+
+	
+{% endblock %}

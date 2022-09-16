@@ -8,6 +8,8 @@ from game.views import (
 	finished_game,
 	arena_view,
 	arena_fight,
+	set_team_arena_sessions,
+	team_arena_view,
 	)
 
 app_name = 'game'
@@ -20,4 +22,6 @@ urlpatterns = [
 	path('finished_game',finished_game, name='finished_game'),
 	path('arena/', arena_view, name='arena'),
 	path('arena_fight', arena_fight, name='arena_fight'),
+	path('set_team_arena_sessions', set_team_arena_sessions, name='set_team_arena_sessions'),
+	path('csapat-arena/', team_arena_view, name='team_arena'),
 ]

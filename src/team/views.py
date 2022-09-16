@@ -226,6 +226,12 @@ def individual_team_view(request, *args, **kwargs):
 	# ha nincs, akkor ellenőrizzük azt, hogy van-e csapata 
 	has_team = True
 	is_own_team = True
+
+	# ez a másik csapat támadásához szükséges
+	# csak a csapat tulaja támadhat más csapatokat
+	has_team_and_owner_of_team = False
+	attacker_team = None
+
 	try:
 		team_membership = Membership.objects.get(user=user.id, team=team.id)
 		#print('csapattag')
@@ -235,6 +241,10 @@ def individual_team_view(request, *args, **kwargs):
 		try:
 			membership = Membership.objects.get(user=user.id)
 			#print('van csapata')
+			if membership.team.owner_of_team == user:
+				has_team_and_owner_of_team = True
+				attacker_team = user.team_set.all()[0]
+
 		except Membership.DoesNotExist:
 			#print('nincs csapata')
 			has_team = False
@@ -302,6 +312,8 @@ def individual_team_view(request, *args, **kwargs):
 		'account': account,
 		'is_team_owner_description': is_team_owner_description,
 		'pending_requests': pending_requests,
+		'has_team_and_owner_of_team': has_team_and_owner_of_team,
+		'attacker_team': attacker_team,
 	}
 
 	# CHAT RÉSZ ------------------------

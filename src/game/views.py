@@ -2,7 +2,7 @@ from django.shortcuts import render
 from account.models import Account, Character, CharacterHistory
 
 from game.models import Arena
-
+from team.models import Team
 from django.http import JsonResponse
 from core.constants import *
 import math
@@ -11,6 +11,8 @@ from django.core import serializers
 import json
 
 from account.utils import EncodeAccountObject
+
+from django.shortcuts import redirect
 
 
 def game_choice_view(request):
@@ -590,3 +592,275 @@ def updateRank():
 		character.rank = rank_counter
 		rank_counter += 1
 		character.save()
+
+
+
+def set_team_arena_sessions(request):
+	"""
+	Beállítom a session-öket, hogy az arena_team_view-ban le tudjam kérdezni a két csapatot, akik harcolnak
+	Ezzel nem kell a linken keresztül elküldeni az adatot
+	"""
+
+	data = {}
+
+	attacker_team_id = request.GET.get('attacker_team_id')
+	defender_team_id = request.GET.get('defender_team_id')
+
+	try:
+		attacker_team = Team.objects.get(id=attacker_team_id)
+		defender_team = Team.objects.get(id=defender_team_id)
+		data['error_in_teams'] = 0
+	except Exception as exception:
+		attacker_team = None
+		defender_team = None
+		print(exception)
+		data['error_in_teams'] = 1
+
+		return JsonResponse(data)
+
+
+	request.session['attacker_team_id'] = attacker_team.id
+	request.session['defender_team_id'] = defender_team.id
+
+
+	return JsonResponse(data)
+
+
+# team arena 
+def team_arena_view(request):
+	context = {}
+
+	# a sessiönökből kiszedjük a csapat ID-kat, majd a csapatokat, kivételkezeléssel
+	try:
+		attacker_team_id = request.session['attacker_team_id']
+		defender_team_id = request.session['defender_team_id']
+
+	except Exception as exception:
+		print(exception)
+		attacker_team_id = None
+		defender_team_id = None
+
+	if attacker_team_id and defender_team_id:
+		try:
+			attacker_team = Team.objects.get(id=attacker_team_id)
+			defender_team = Team.objects.get(id=defender_team_id)
+		except Exception as exception:
+			print(exception)
+			return redirect('team:user_team_view')
+
+
+	else:
+		return redirect('team:user_team_view')
+
+
+	# ha idáig eljut a program, megvan a 2 csapat objektum
+	context['attacker_team'] = attacker_team
+	context['defender_team'] = defender_team
+
+	# csapattagok listája szint szerint növekvő sorrendben
+	attackers_list = Character.objects.get_characters_from_list_in_ordered_list_by_level(attacker_team.users.all())
+	defenders_list = Character.objects.get_characters_from_list_in_ordered_list_by_level(defender_team.users.all())
+
+	attacker_length = len(attackers_list)
+	defender_length = len(defenders_list)
+
+
+	i = 0
+	j = 0
+	attacker_health_left = None
+	defender_health_left = None
+
+	#print(attacker_length, "--", defender_length)
+
+	s = EncodeAccountObject()
+
+	rounds = []
+
+	while True:
+		print(i, j)
+		print(attackers_list[i], "--", defenders_list[j] )
+		winner, attacker_health_values, defender_health_values = decide_winner_team(attackers_list[i], defenders_list[j], attacker_health_left, defender_health_left)
+
+
+		attacker = attackers_list[i].account
+		defender = defenders_list[j].account
+
+		#s.serialize([attacker])[0]
+		#s.serialize([defender])[0]
+
+		rounds.append({
+			'attacker': s.serialize([attacker])[0],
+			'defender': s.serialize([defender])[0],
+			'winner': serializers.serialize('json', [winner.account]),
+			'attacker_health_values': attacker_health_values,
+			'defender_health_values': defender_health_values,
+		})
+
+		print(attacker_health_values)
+
+		if winner in attackers_list:
+			j += 1
+			attacker_health_left = attacker_health_values[-1]
+			defender_health_left = None
+		else:
+			i += 1
+			defender_health_left = defender_health_values[-1]
+			attacker_health_left = None
+
+		if j >= defender_length:
+			print("defender csapat vesztett")
+			context['winner_of_all'] = 'attacker'
+			break
+
+		if i >= attacker_length:
+			print("attacker csapat vesztett")
+			context['winner_of_all'] = 'defender'
+			break
+
+		#print(i, j)
+
+	#print(attackers_list, "--", defenders_list)
+	#print(attacker_length)
+	#print(defender_length)
+
+	for single_round in rounds:
+		print(single_round)
+		print()
+
+	context['rounds'] = rounds
+
+
+	return render(request, "game/team_arena.html", context)
+
+
+
+def decide_winner_team(attacker, defender, attacker_left_health, defender_left_health):
+	attacker_role = attacker.character_type
+	defender_role = defender.character_type
+
+	if attacker_left_health:
+		attacker_health = attacker_left_health
+	else:
+		attacker_health = attacker.health_point * 30
+		#attacker_luck_value = attacker.fortune
+	
+	if defender_left_health:
+		defender_health = defender_left_health
+	else:
+		defender_health = defender.health_point * 30
+		#defender_luck_value = defender.fortune
+
+	attacker_health_value_list = []
+	defender_health_value_list = []
+	attacker_health_value_list.append(int(attacker_health))
+	defender_health_value_list.append(int(defender_health))
+
+	print('KEZDO ÉLETERO: ATTACKER - DEFENDER', attacker_health, defender_health)
+
+	# a casthoz tartozó fő tulajdonságok meghatározása
+	"""
+	harcos - harcos
+	harcos - mágus
+	harcos - íjász
+	mágus - mágus
+	mágus - íjász
+	íjász - íjász
+
+
+	mágus - harcos
+	íjász - harcos
+	íjász - mágus
+	"""
+	if attacker_role == 'warrior' and defender_role == 'warrior':
+		attacker_main_attr_value = attacker.strength
+		defender_main_attr_value = defender.strength
+		attacker_protect_attr_value = 0
+		defender_protect_attr_value = 0
+
+	elif attacker_role == 'warrior' and defender_role == 'mage':
+		attacker_main_attr_value = attacker.strength
+		defender_main_attr_value = defender.intelligence
+		attacker_protect_attr_value = attacker.intelligence
+		defender_protect_attr_value = defender.strength
+
+	elif attacker_role == 'warrior' and defender_role == 'scout':
+		attacker_main_attr_value = attacker.strength
+		defender_main_attr_value = defender.skill
+		attacker_protect_attr_value = attacker.skill
+		defender_protect_attr_value = defender.strength
+
+	elif attacker_role == 'mage' and defender_role == 'mage':
+		attacker_main_attr_value = attacker.intelligence
+		defender_main_attr_value = defender.intelligence
+		attacker_protect_attr_value = 0
+		defender_protect_attr_value = 0
+
+	elif attacker_role == 'mage' and defender_role == 'scout':
+		attacker_main_attr_value = attacker.intelligence
+		defender_main_attr_value = defender.skill
+		attacker_protect_attr_value = attacker.skill
+		defender_protect_attr_value = defender.intelligence
+
+	elif attacker_role == 'scout' and defender_role == 'scout':
+		attacker_main_attr_value = attacker.skill
+		defender_main_attr_value = defender.skill
+		attacker_protect_attr_value = 0
+		defender_protect_attr_value = 0
+
+	elif attacker_role == 'mage' and defender_role == 'warrior':
+		attacker_main_attr_value = attacker.intelligence
+		defender_main_attr_value = defender.strength
+		attacker_protect_attr_value = attacker.strength
+		defender_protect_attr_value = defender.intelligence
+
+	elif attacker_role == 'scout' and defender_role == 'warrior':
+		attacker_main_attr_value = attacker.skill
+		defender_main_attr_value = defender.strength
+		attacker_protect_attr_value = attacker.strength
+		defender_protect_attr_value = defender.skill
+
+	elif attacker_role == 'scout' and defender_role == 'mage':
+		attacker_main_attr_value = attacker.skill
+		defender_main_attr_value = defender.intelligence
+		attacker_protect_attr_value = attacker.intelligence
+		defender_protect_attr_value = defender.skill
+
+
+	did_attacker_win = False
+
+	
+	while True:
+		# mindig a támadó kezd tehát mindig a védekező sérül először
+		defender_health -= attacker_main_attr_value * 10
+
+
+
+		if defender_health <= 0:
+			defender_health_value_list.append(int(0))
+			did_attacker_win = True
+			break
+
+		defender_health_value_list.append(int(defender_health))
+
+		# ha nem halt meg a védekező, akkor ő jön, a támadó sebződik
+
+		attacker_health -= defender_main_attr_value * 10
+
+
+		if attacker_health <= 0:
+			attacker_health_value_list.append(int(0))
+			break
+
+
+		attacker_health_value_list.append(int(attacker_health))
+		#print('DEF HEALTH', defender_health)
+		#print('ATTACK HEALTH', attacker_health)
+
+
+	#print('ATTACKER HEALTH LIST', attacker_health_value_list)
+	#print('DEFENDER_HEALTH_LIST', defender_health_value_list)
+
+	if did_attacker_win:
+		return attacker, attacker_health_value_list, defender_health_value_list
+
+	return defender, attacker_health_value_list, defender_health_value_list

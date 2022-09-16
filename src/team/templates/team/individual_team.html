@@ -367,7 +367,7 @@
 #title-description{
 	height: 20%;
 	font-size: 0.9em;
-	border
+
 }
 
 #description-text{
@@ -434,7 +434,9 @@
 	align-items: center;
 	justify-content: center;
 	width: 25%;
-	height: 100%;	
+	height: 80%;	
+	font-size: 1em;
+	color: #fae455;
 }
 
 #show-requests{
@@ -442,10 +444,17 @@
 	align-items: center;
 	justify-content: center;
 	text-align: center;
+	background-color: rgba(0, 0, 0, 0.6);
+	border: 2px solid #fae455;
+	border-radius: 10px;
+	height: 80%;
+	width: 80%;
+
 }
 
 #show-requests:hover{
 	color: red;
+	border: 2px solid red;
 	cursor: pointer;
 }
 
@@ -467,7 +476,28 @@
 	align-items: center;
 	justify-content: center;
 	width: 25%;
-	height: 100%;	
+	height: 80%;	
+	font-size: 1em;
+	color: #fae455;
+}
+
+#team-attack-button{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	background-color: rgba(0, 0, 0, 0.6);
+	border: 2px solid #fae455;
+	border-radius: 10px;
+	height: 80%;
+	width: 80%;
+}
+
+
+#team-attack-button:hover{
+	color: red;
+	border: 2px solid red;
+	cursor: pointer;	
 }
 
 #error-field{
@@ -661,6 +691,7 @@
 
 #team-description-textarea::placeholder {
 	color: #fae455;
+	font-style: italic;
 
 }
 
@@ -673,6 +704,31 @@
 
 
 .profile-image-delete-user-icon:hover{
+	cursor: pointer;
+	scale: 1.1;
+}
+
+#attack-enemy-team-icon-container{
+	display: none;
+	align-items: center;
+	justify-content: center;
+}
+
+.enemy-team-attack-image{
+	max-width: 60%;
+	max-height: 60%;
+	border-radius: 50%;
+	padding: 0.4em;
+	border: 4px solid #fae455;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: rgba(0,0,0, 0.6);
+}
+
+.enemy-team-attack-image:hover{
+	background-color: rgba(0,0,0, 0.8);
+	border: 4px solid red;
 	cursor: pointer;
 }
 
@@ -803,7 +859,7 @@
 					
 					<div id="join-requests-container">
 						{% if is_team_owner_description %}
-							<div id="show-requests">Csatlakozási kérelmek</div>
+							<div id="show-requests">Kérelmek</div>
 						{% endif %}
 					</div>
 					<div id="join-leave-buttons-container">
@@ -818,7 +874,7 @@
 
 					<div id="start-attack-container">
 						{% if is_team_owner_description %}
-							attack
+							<div id="team-attack-button">Támadás</div>
 						{% endif %}
 					</div>
 					
@@ -830,7 +886,9 @@
 		</div>
 	</div>
 	<div id="team-footer">
-		<!--footer-->
+		<div id="attack-enemy-team-icon-container">
+			<img class="enemy-team-attack-image" src="{% static 'images/swords-team.png' %}" alt="tamadas">
+		</div>
 	</div>
 	<div class="loader-container">
 	</div>
@@ -851,7 +909,7 @@
 			$("#members-container").css("display", "block")
 			$("#pending-requests-container").css("display", "none")
 			$("#error-field").css("visibility", "hidden	")
-			$("#show-requests").html("Csatlakozási kérelmek")
+			$("#show-requests").html("Kérelmek")
 		}
 		
 		isPendingMembers = !isPendingMembers
@@ -991,9 +1049,78 @@
 			$(".profile-image-delete-user-icon").css("visibility", "visible")
 		{% endif %}
 
+		// csapat támadás ikon: csak az ellenfél csapat tulajdonosainak látható
+
+		{% if has_team_and_owner_of_team %}
+			//console.log("tamadhatja")
+			$("#attack-enemy-team-icon-container").css("display", "flex")
+		{% endif %}
+
 	})
 
 
+	// átirányítjuk a csapat kereső oldalra, onnan fog tudni támadást indítani
+	$("#start-attack-container").on("click", function () {
+		audio.play()
+		setTimeout(function(){
+			try {
+				var url = "{% url 'search' %}?csapat=1"
+				var win = window.location.replace(url)
+				win.focus()
+			}
+			catch(error){
+				console.log(error)
+			}
+
+		}, 200)
+		$(".loader-container").fadeIn("fast")
+	})
+
+
+	// a tényleges harc indítása a másik csapat ellen
+	$("#attack-enemy-team-icon-container").on("click", function(){
+		audio.play()
+
+		info_packet = {
+			"attacker_team_id": "{{attacker_team.id}}",	
+			"defender_team_id": "{{team.id}}",
+		}
+		
+		$.ajax({
+			dataType: "json",
+			url: "{% url 'game:set_team_arena_sessions' %}",
+			data: info_packet,
+			success: function(data) {
+				if(data.error_in_teams == 0){
+					setTimeout(function(){
+						try {
+							var url = "{% url 'game:team_arena' %}"
+							var win = window.location.replace(url)
+							win.focus()
+						}
+						catch(error){
+							console.log(error)
+						}
+
+					}, 200)
+					
+					$(".loader-container").fadeIn("fast")
+				}
+				else if(data.error_in_teams == 1){
+					console.log("Hiba a harc indításakor: a csapat nem található")
+				}
+
+
+			},
+			error: function(data) {
+				console.log("ERROR")
+			},
+		}) 
+
+
+
+
+	})
 
 
 	/* CSAPAT LEÍRÁS KEZELÉSE */
