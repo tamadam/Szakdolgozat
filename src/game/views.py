@@ -630,15 +630,21 @@ def set_team_arena_sessions(request):
 def team_arena_view(request):
 	context = {}
 
+	# ha már nincs érvényes sessiön, akkor szintén visszairányítjuk a csapat oldalra
+	# így nem lehet megnyitni a csapat arénát, csak ha ténylegesen harcot indíott valaki
+	if request.session['attacker_team_id'] == None or request.session['defender_team_id'] == None:
+		return redirect('team:user_team_view')
+
 	# a sessiönökből kiszedjük a csapat ID-kat, majd a csapatokat, kivételkezeléssel
 	try:
 		attacker_team_id = request.session['attacker_team_id']
 		defender_team_id = request.session['defender_team_id']
-
 	except Exception as exception:
 		print(exception)
 		attacker_team_id = None
 		defender_team_id = None
+		return redirect('team:user_team_view')
+
 
 	if attacker_team_id and defender_team_id:
 		try:
@@ -728,6 +734,10 @@ def team_arena_view(request):
 		print()
 
 	context['rounds'] = rounds
+
+	# sessiönök visszaállítása
+	#request.session['attacker_team_id'] = None
+	#request.session['defender_team_id'] = None
 
 
 	return render(request, "game/team_arena.html", context)

@@ -25,35 +25,482 @@
 
 #team-arena-content{
 	background-color: white;
+	background: url("{% static 'images/battlefield.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
 	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-family: "Kanit-Regular";
+	font-size: 1.8vh;
+	max-width: 1900px;
+	user-select: none;
+
+}
+
+#team-arena-header{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 12%;
+}
+
+#team-arena-container{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 78%;	
+}
+
+#team-arena-footer{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 10%;	
+}
+
+#left-team-side{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 100%;
+}
+
+#right-team-side{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 100%;
+}
+
+#left-team-side-header{
+
+}
+
+.team-side-container{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 50%;	
+}
+
+
+
+
+#right-team-side-header{
+
+}
+
+
+
+.team-side-footer{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 40%;	
+	color: white;
+}
+
+.team-footer-character-name-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 20%;
+}
+
+.team-footer-character-name{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 100%;
+	background: url("{% static 'images/keret2.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 50% 86%;
+	color: white;
+	font-size: 1.26em;
+}
+
+.team-footer-character-details-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 80%;
+
+}
+
+.team-footer-character-details{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 80%;
+	background-color: black;
+	background: url("{% static 'images/keret4.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.team-header{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 10%;
+}
+
+
+.team-header-team-name{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 100%;
+	background: url("{% static 'images/keret1.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 50% 100%;
+	color: white;
+	font-size: 1.4em;
+}
+
+
+/*
+.team-header-character-name{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 40%;
+
+}
+*/
+
+.character-container{
+	flex: 1 0 auto;
+	aspect-ratio: 1 / 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 80%;
+	width: 50%;
+	min-width: 200px;
+	max-width: 430px;
+	flex-direction: column;
+	background-color: rgba(0, 0, 0, 0.6);
+	position: relative; /* a health bar igazításhoz */
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	border: 12px solid transparent;
+	border-image: url("{% static 'images/goldborder.png' %}") 10% round;
+	transition: box-shadow 0.4s;
+}
+
+
+
+.character-health-bar-container{
+	visibility: hidden;
+    text-align: center;
+    background-color: black;
+    width: 100%;
+    height: 8%;
+    position: absolute;
+    bottom: 0;
+}
+
+.health-bar {
+    background-color: red;
+    height: 100%;
+    width: 100%; /* ez "csökkenti" az életerőt */
+}
+
+.health-bar-percentage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    font-size: 1em;
+    color:white;
+}
+
+
+/* --- title */
+#team-arena-title-left{
+	width: 14%;
+	height: 100%;
+}
+
+#team-arena-title-center{
+	width: 72%;
 	height: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	text-align: center;
+	color: #fae455;
+
+}
+
+#team-arena-title-right{
+	width: 14%;
+	height: 100%;
+}
+
+
+#main-page-button {
+	display: flex;
+	justify-content: center;
+	align-items: center; 
+	width: 100%;
+	height: 100%;
+
+}
+
+#main-page-button img{
+	max-width: 90%;
+	max-height: 90%;
+
+}
+
+.go-to-main-page:hover {
+	cursor: pointer;
+}
+
+
+
+.go-to-main-page:active {
+	content:url("{% static 'images/previous-button-purple.png' %}");
+}
+
+/* --- */
+
+
+.loader-container {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 10;
+	color: white;
 	font-family: "Kanit-Regular";
 	font-size: 1.8vh;
 
 }
 
 
+#start-fight-simulation{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 80%;
+	color: white;
+	font-size: 1.8em;
+
+}
+
+
+#start-fight-simulation:hover{
+	cursor: pointer;
+	color: #fae455;
+}
+
+.cover-before-simulation{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	color: white;
+}
+
 </style>
 <div id="team-arena-content">
+	<div id="team-arena-header">
+		<div id="team-arena-title-left">
+			<div id="main-page-button">
+				<img src="{% static 'images/previous-button.png' %}" alt="Vissza" class="go-to-main-page" onmouseover="changeColor(this)" onmouseout="resetColor(this)">
+			</div>
+		</div>
+		<div id="team-arena-title-center">
+			<h1>Csapat aréna</h1>
+		</div>
+		<div id="team-arena-title-right">	
+		</div>
+			
+	</div>
+	<div id="team-arena-container">
+		<div id="left-team-side">
+			<div class="team-header" id="left-team-side-header">
+				<div class="team-header-team-name">{{attacker_team}}</div>
+			</div>
+			<div class="team-side-container">
+				<div class="character-container" id="left-character-container">
+					<div class="cover-before-simulation">
+						<div class="cover-text">Várakozás az indításra...</div>
+					</div>
+					<div class="character-health-bar-container">
+						<div class="health-bar" id="left-character-health-bar">
+							<p class="health-bar-percentage" id="left-health-bar-percentage">100%</p>
+						</div>
+					</div>
+				</div>
 
+			</div>
+			<div class="team-side-footer">
+				<div class="team-footer-character-name-container">
+					<div class="team-footer-character-name" id="left-character-name">Játékos 1</div>
+				</div>
+				<div class="team-footer-character-details-container">
+					<div class="team-footer-character-details" id="left-character-details">Játékos 1 adatok</div>
+				</div>
+			</div>
+		</div>
+		<div id="right-team-side">
+			<div class="team-header" id="right-team-side-header">
+				<div class="team-header-team-name">{{defender_team}}</div>
+			</div>
+			<div class="team-side-container">
+				<div class="character-container" id="right-character-container">
+					<div class="cover-before-simulation">
+						<div class="cover-text">Várakozás az indításra...</div>
+					</div>
+					<div class="character-health-bar-container">
+						<div class="health-bar" id="right-character-health-bar">
+							<p class="health-bar-percentage" id="right-health-bar-percentage">100%</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="team-side-footer">
+				<div class="team-footer-character-name-container">
+					<div class="team-footer-character-name" id="right-character-name">Játékos 2</div>
+				</div>
+				<div class="team-footer-character-details-container">
+					<div class="team-footer-character-details" id="right-character-details">Játékos 2 adatok</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="team-arena-footer">
+		<div id="start-fight-simulation">Szimuláció indítása</div>
+	</div>
+	<div class="loader-container">
+	</div>
 
 	
-	<h1>Team arena</h1>
-	{{attacker_team}}
-	{{defender_team}}
 	
 </div>
 <script>
 
+	const audio = new Audio()
+	audio.src = "{% static 'audios/button_click.mp3' %}"
+
+	const audioFight1 = new Audio()
+	audioFight1.src = "{% static 'audios/fight1.mp3' %}"
+
+
+	function changeColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/previous-button-red.png' %}")
+	}
+
+	function resetColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/previous-button.png' %}")
+	}
+
+
+
+	$(".go-to-main-page").click(function(){
+    	audio.play()
+
+    	setTimeout(function(){
+	    	try {
+
+				var url = "{% url 'home_page' %}"
+				var win = window.location.replace(url) 
+				win.focus()
+			}
+			catch(error){
+				console.log(error)
+			}
+
+    	}, 200)
+    	$(".loader-container").fadeIn("fast")
+	})
+
+
+
+	/* ARENA RESZ */
+
+	// minden körben adunk egy elemet a tömbhöz:
+	// az adott körben harcolók nevét, életereinek értékét és profilképük url-jét
+	// tehát ha egy harcost nem tudnak legyozni, akkor többször is szerepel a tömbben
+
+	var startSimulation = true
+	var skipSimulation = false
+
+
+	$("#start-fight-simulation").on("click", function() {
+		if(startSimulation){
+			audio.play()
+			$(".character-health-bar-container").css("visibility", "visible")
+			$(".cover-before-simulation").css("display", "none")
+			$("#start-fight-simulation").html("Ugrás a végére")
+			startSimulation = false
+			skipSimulation = true
+			startFight()
+		}
+		else if(skipSimulation){
+			audio.play()
+			console.log("kihagyas")
+		}
+
+	})
+
+
 	var attackerTeamHealthValues = []
 	var defenderTeamHealthValues = []
+
+	var attackerUsernames = []
+	var defenderUsernames = []
+
+	var attackerProfileImages = []
+	var defenderProfileImages = []
 
 	$(window).on("load", function(){
 
 		{% for single_round in rounds %}
+
 			//console.log("{{single_round.attacker.id}}")
 			//console.log("{{single_round.defender.id}}")
 			var attackerhealthValues = "{{single_round.attacker_health_values}}".slice(1,-1).split(",")
@@ -61,21 +508,43 @@
 			var defenderHealthValues = "{{single_round.defender_health_values}}".slice(1,-1).split(",")
 			defenderTeamHealthValues.push(defenderHealthValues)
 
+			attackerUsernames.push("{{single_round.attacker.username}}")
+			defenderUsernames.push("{{single_round.defender.username}}")
+
+			attackerProfileImages.push("{{single_round.attacker.profile_image}}")
+			defenderProfileImages.push("{{single_round.defender.profile_image}}")
+			//console.log("{{single_round.attacker.profile_image}}")
+
 		{% endfor %}
 
 		console.log(attackerTeamHealthValues)
-		console.log(attackerTeamHealthValues.length)
+		//console.log(attackerTeamHealthValues.length)
 		console.log(defenderTeamHealthValues)
+		console.log(attackerUsernames)
+		console.log(defenderUsernames)
 
-		startFight()
+		$(".loader-container").fadeOut("slow")
+
+
+
 		})
 
 
-	// 1-ről indítjuk ezeket a countereket, valamint az i és j-t is mivel az első érték mindig a kiinduló életerő
+	var attackerUsernamesCounter = 0
+	var defenderUsernamesCounter = 0
+
+	var attackerProfileImagesCounter = 0
+	var defenderProfileImagesCounter = 0
+
+	var attackerCounter = 0
+	var defenderCounter = 0
+
+	var setLeftCharacter = true
+	var setRightCharacter = true
+
+
+	// 1-ről indítjuk az i és j-t is mivel az első érték mindig a kiinduló életerő
 	// azt a program állítja be es utana kezdodik a sebzés
-	
-	var attackerCounter = 1
-	var defenderCounter = 1
 
 	function startFight(){
 		
@@ -84,7 +553,32 @@
 
 		console.log("startFight")
 		console.log(attacker)
-		console.log(defender)
+		console.log(defender) // ezek az életerők
+
+		console.log(attackerUsernames[attackerUsernamesCounter])
+		console.log(attackerProfileImages[attackerProfileImagesCounter])
+
+		console.log((defenderUsernames[defenderUsernamesCounter]))
+		console.log((defenderProfileImages[defenderProfileImagesCounter]))
+
+		if (setLeftCharacter){
+			console.log("set left character image and name...")
+			$("#left-character-name").html(attackerUsernames[attackerUsernamesCounter])
+
+
+
+			$("#left-character-container").css("background-image", "url(" + attackerProfileImages[attackerProfileImagesCounter] + ")" );
+			setLeftCharacter = false
+		}
+
+		if (setRightCharacter){
+			console.log("set right character image and name...")
+			$("#right-character-name").html(defenderUsernames[defenderUsernamesCounter])
+			$("#right-character-container").css("background-image", "url(" + defenderProfileImages[defenderProfileImagesCounter] + ")" );
+			setRightCharacter = false
+		}
+
+
 
 		j = 1
 
@@ -93,7 +587,7 @@
 		i = 1
 		setTimeout(function(){
 			attackerLoop(attacker)
-		}, 500)
+		}, 1000)
 
 
 	}
@@ -114,15 +608,45 @@
 
 
 
-
+	var healthBars = $(".health-bar")
 
 
 	var i = 1                  
 	var attackerTimeout = null           
+	var attackerHealthPercent = 100     
+
+	var firstAttackValue = null
+	var changeFirstAttackValue = true	
 
 	function attackerLoop(attacker) {         //  create a loop function
 	  attackerTimeout = setTimeout(function() {   //  call a 3s setTimeout when the loop is called
-	    console.log('attacker', attacker[i]);   //  your code here
+	    //console.log('attacker', attacker[i]);   //  your code here
+
+	    if (changeFirstAttackValue){
+	    	firstAttackValue = attacker[0]
+	    	console.log("FIRST ATTACKER VALUE" + attacker[0])
+	    	changeFirstAttackValue = false
+	    }
+
+
+	    attackerHealthPercent = calculatePercentDef(attacker, i, firstAttackValue)
+
+	    //console.log("attackerpercent " + attackerHealthPercent)
+    	healthBars.eq(0).animate({width:attackerHealthPercent + "%"}, 800)   
+   		$("#left-health-bar-percentage").html(attackerHealthPercent + "%")
+
+		audioFight1.play()
+        $("#left-character-container").css({
+        	boxShadow: "rgba(240, 28, 28, 1.0) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset"
+        })
+
+        setTimeout(function(){
+        	$("#left-character-container").css({
+        		boxShadow: "none"
+        	})	
+        }, 300)
+
+
 	    i++;                    //  increment the counter
 	    if (i < attacker.length) {           //  if the counter < 10, call the loop function
 	      attackerLoop(attacker);             //  ..  again which will trigger another 
@@ -134,9 +658,22 @@
 	    			clearTimeout(defenderTimeout)
 	    			attackerCounter++
 	    			defenderCounter++
+	    			attackerUsernamesCounter++
+	    			defenderUsernamesCounter++
+					attackerProfileImagesCounter++
+					defenderProfileImagesCounter++
+					setLeftCharacter = true
+
 	    			if(attackerCounter < attackerTeamHealthValues.length){
+	  				   	healthBars.eq(0).animate({width: 100 + "%"}, 100)   
+
+			       		console.log("change first attack value...")
+			       		changeFirstAttackValue = true
+
 		    			setTimeout(function(){
+		    				$("#left-health-bar-percentage").html(100 + "%")
 		    				startFight()
+
 		    			}, 400)
 	    			}
 	    			else{
@@ -147,49 +684,135 @@
 	    		}
 
 	    		
-	    	}, 400)
+	    	}, 200)
 	    }
-	  }, 1200)
+	  }, 2000)
 	}
 
 
 
 	var j = 1       
-	var defenderTimeout = null           
+	var defenderTimeout = null    
+	var defenderHealthPercent = 100    
 
-	function defenderLoop(defender) {         //  create a loop function
-	 	defenderTimeout = setTimeout(function() {   //  call a 3s setTimeout when the loop is called
-	    console.log('defender', defender[j]);   //  your code here
-	    j++;                    //  increment the counter
-	    if (j < defender.length) {           //  if the counter < 10, call the loop function
-	      defenderLoop(defender);             //  ..  again which will trigger another 
-	    }      
-	    else{
-	    	setTimeout(function(){
-	    		if(defender[defender.length-1] == 0){
-		    		console.log("defender dead")
-	    			clearTimeout(attackerTimeout)
-	    			defenderCounter++
-	       			attackerCounter++
 
-	       			if (defenderCounter < defenderTeamHealthValues.length){
-			    		setTimeout(function(){
-			    			startFight()
-			    		}, 400)
-	       			}
-	       			else{
-	       				console.log("defender vesztett")
-	       			}
+	// ezek arra kellenek, hogy amíg életben van egy játékos, mindig az eredeti tömb első eleméhez képest 
+	// számítsa a százalékot
+	// pl.: 660 550
+	// 		550 430
+	// 		430 100
+	//  	100   0
+	// ezekben az esetekben ne az 550 430...-hoz számolja a százalékot, hanem az eredeti, 660-hoz képest
+	var firstDefendValue = null
+	var changeFirstDefendValue = true
 
-	    		}
+	function defenderLoop(defender) {         
+	 	defenderTimeout = setTimeout(function() {   
+		    //console.log('defender', defender[j])
+		    
 
-	    	}, 400)
-	    }
-	  }, 1200)
+		    if (changeFirstDefendValue){
+		    	firstDefendValue = defender[0]
+		    	console.log("FIRST DEFENDER VALUE" + defender[0])
+		    	changeFirstDefendValue = false
+		    }
+
+		  	defenderHealthPercent = calculatePercentDef(defender, j, firstDefendValue)
+	    	
+	    	//console.log("defenderpercent " + defenderHealthPercent)
+
+        	healthBars.eq(1).animate({width:defenderHealthPercent + "%"}, 800)   
+       		$("#right-health-bar-percentage").html(defenderHealthPercent + "%")
+
+			audioFight1.play()
+		    $("#right-character-container").css({
+		    	boxShadow: "rgba(240, 28, 28, 1.0) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset"
+		    })
+
+		    setTimeout(function(){
+		    	$("#right-character-container").css({
+		    		boxShadow: "none"
+		    	})	
+		    }, 300)
+
+
+
+		    j++;                    
+		    if (j < defender.length) {           
+		      defenderLoop(defender);            
+		    }      
+		    else{
+		    	setTimeout(function(){
+		    		if(defender[defender.length-1] == 0){
+			    		console.log("defender dead")
+		    			clearTimeout(attackerTimeout)
+		    			defenderCounter++
+		       			attackerCounter++
+		       			defenderUsernamesCounter++
+		       			attackerUsernamesCounter++
+						attackerProfileImagesCounter++
+						defenderProfileImagesCounter++
+						setRightCharacter = true
+
+		       			if (defenderCounter < defenderTeamHealthValues.length){
+				        	healthBars.eq(1).animate({width: 100 + "%"}, 100)   
+
+				       		console.log("change first defend value...")
+				       		changeFirstDefendValue = true
+				    		setTimeout(function(){
+				    			$("#right-health-bar-percentage").html(100 + "%")
+				    			startFight()
+				    		}, 400)
+		       			}
+		       			else{
+		       				console.log("defender vesztett")
+		       			}
+
+		    		}
+
+		    	}, 200)
+		    }
+	  }, 2000)
 	}
 	
 
 
+	function calculatePercent(arrayOfHealthValues, currentIndex, firstElement){
+	    var firstElement = arrayOfHealthValues[0];
+	    console.log(firstElement)
+	    var length = arrayOfHealthValues.length
+	    if (currentIndex < length){
+	        var nextElement = arrayOfHealthValues[currentIndex];
+	        var healthPercent = (nextElement / firstElement) * 100;
+
+	        healthPercent = Math.round(healthPercent);
+	        //console.log(healthPercent);
+
+	        return healthPercent;
+	    }
+
+	    return 0 
+
+	}
+
+
+	function calculatePercentDef(arrayOfHealthValues, currentIndex, firstElement){
+	    //var firstElement = arrayOfHealthValues[0];
+	    console.log(firstElement)
+	    var length = arrayOfHealthValues.length
+	    if (currentIndex < length){
+	        var nextElement = arrayOfHealthValues[currentIndex];
+	        var healthPercent = (nextElement / firstElement) * 100;
+
+	        healthPercent = Math.round(healthPercent);
+	        //console.log(healthPercent);
+
+	        return healthPercent;
+	    }
+
+	    return 0 
+
+	}
 
 
 
