@@ -2,9 +2,19 @@
 	
 	function attackChoosenPlayer(userID){ //id akit támadunk
 		console.log("ATTACK CHOOSEN PLAYER")
-		var url = "{% url 'game:arena' %}?ellenfel_id=" + userID 
-		var win = window.location.replace(url) //open same page
-		win.focus()
+    	setTimeout(function(){
+	    	try {
+
+				var url = "{% url 'game:arena' %}?ellenfel_id=" + userID 
+				var win = window.location.replace(url)
+				win.focus()
+			}
+			catch(error){
+				console.log(error)
+			}
+
+    	}, 200)
+
 	}
 
 

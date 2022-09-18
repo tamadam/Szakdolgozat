@@ -42,275 +42,336 @@ body {
 
 }
 
-/* ARENA FIGHT SCENE */
+
+#arena-header{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 18%;
+}
+
+/* --- title */
+#arena-title-left{
+	width: 14%;
+	height: 100%;
+}
+
+#arena-title-center{
+	width: 72%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	color: #fae455;
+
+}
+
+
+#arena-title-center h1{
+	background-color: rgba(0, 0, 0, 0.8);
+	padding: 0.2em;
+	border-radius: 10px;
+	min-width: 200px;
+}
+
+#arena-title-right{
+	width: 14%;
+	height: 100%;
+}
+
+
+#main-page-button {
+	display: flex;
+	justify-content: center;
+	align-items: center; 
+	width: 100%;
+	height: 100%;
+
+}
+
+#main-page-button img{
+	max-width: 90%;
+	max-height: 90%;
+
+}
+
+.go-to-main-page:hover {
+	cursor: pointer;
+}
+
+
+
+.go-to-main-page:active {
+	content:url("{% static 'images/previous-button-purple.png' %}");
+}
+
+/* --- */
+
+
+#arena-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 60%;
+}
+
+#arena-footer{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 22%;
+}
+
+/* ELLENFÉL VÁLASZTÓ */
+#opponent-choice {
+	display: flex;
+	flex-direction: row;
+	gap: 10%;
+	align-items: top;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+}
+
+.option-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 50%;
+	width: 30%;
+	border: 6px solid transparent;
+	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;	
+}
+
+
+.option-container:hover{
+	cursor: pointer;
+	border: 6px solid transparent;
+	border-image: url("{% static 'images/button-back-red.png' %}") 30 stretch;
+}
+
+
+.option-character{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 100%;
+
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	position: relative;
+}
+
+
+.option-description{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 100%;
+
+	background-color: rgba(0, 0, 0, 0.8);
+}
+
+.option-character-name {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	color: black;
+	text-align: center;
+
+
+	background: url("{% static 'images/button-back.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+/* ARENA HARC */
 #fight-with-opponent {
 	display: none;
-	height: 30%;
-	padding: 5px;
+	width: 100%;
+	height: 100%;
+
 }
 
-
-#right-character-side {
-
-	flex: 1;
+.opponent-side{
+	display: flex;
+	flex-direction: column;
+	gap: 4%;
+	align-items: center;
+	justify-content: center;
 	width: 50%;
 	height: 100%;
-	/*
-	min-height: 300px;
-	min-width: 300px;
-	max-height: 600px;
-	max-width: 600px;
-	*/
-	background: url("{% static 'images/blank_profile_image.png' %}");	
-	background-position: center;
-	background-repeat: no-repeat;
-	/*
-	To scale the background image to fit inside the div:
-	background-size: contain;
-	*/
-	/*To scale the background image to cover the whole div:*/
-	background-size: cover;
-
-	background-color: lightgrey;
-	text-align: center;
-	position: relative;
-	margin-right: 20%;
-	margin-left: 4%;
-	border: 6px solid transparent;
-	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
-	border-width: 0 3 0 0px;
-	transition: box-shadow 0.4s;
-	/*box-shadow: rgba(240, 28, 28, 0.6) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;*/
 }
 
-
-#left-character-side {
-
-	flex: 1;
-	width: 50%;
-	height: 100%;
-	/*
-	min-height: 300px;
-	min-width: 300px;
-	max-height: 600px;
-	max-width: 600px;
-	*/
+.opponent-character{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 48%;
+	height: 54%;
 	background: url("{% static 'images/blank_profile_image.png' %}");	
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
-
-	background-color: lightgrey;
-	
-	text-align: center;
 	position: relative;
-	margin-right: 4%;
-	margin-left: 20%;
-	border: 6px solid transparent;
-	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
-	border-width: 0 3 0 0px;
+	background-color: rgba(0, 0, 0, 0.8);
+	border: 8px solid transparent;
+	border-image: url("{% static 'images/goldborder.png' %}") 10% round;
 	transition: box-shadow 0.4s;
-
 }
 
-.characters-details{
-	display: none;
-	height: 30%;
-	padding: 5px;
-	margin-top: 5%;
-
-
+.opponent-detail{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 48%;
+	background-color: rgba(0, 0, 0, 0.8);
+	border: 4px solid #fae455;
+	border-radius: 20px;
 }
 
-#left-detail {
-
-	flex: 1;
+.opponent-detail-left{
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	width: 50%;
 	height: 100%;
-	/*
-	min-height: 300px;
-	min-width: 300px;
-	max-height: 600px;
-	max-width: 600px;
-	*/
-	background-color: lightgrey;
-
-	background: url("{% static 'images/grey-sand.jpg' %}");	
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: cover;
-	text-align: center;
-	position: relative;
-	margin-right: 4%;
-	margin-left: 20%;
-
-	border: 6px solid transparent;
-	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
-	border-width: 0 3 0 0px;
-
-	display: flex;
-}
-
-#right-detail {
-
-
-	flex: 1;
-	width: 50%;
-	height: 100%;
-	/*
-	min-height: 300px;
-	min-width: 300px;
-	max-height: 600px;
-	max-width: 600px;
-	*/
-	background-color: lightgrey;
-	background: url("{% static 'images/grey-sand.jpg' %}");	
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: cover;
-	text-align: center;
-	position: relative;
-	margin-right: 20%;
-	margin-left: 4%;
-	border: 6px solid transparent;
-
-	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
-
-	display: flex;
-}
-
-
-#left-detail #role-picture {
-	flex: 1;
-	width: 50%;
+	background: none;
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: contain;
-
 }
 
-#left-detail #character-attrs{
-	flex: 1;
+.opponent-detail-right{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 	width: 50%;
-}
-
-
-
-#right-detail #role-picture {
-	flex: 1;
-	width: 50%;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: contain;
-
-}
-
-#right-detail #character-attrs{
-	flex: 1;
-	width: 50%;
-}
-
-
-
-
-
-#left-character-side #player-name{
-	margin: 0 auto;
-}
-
-#right-character-side #player-name{
-	margin: 0 auto;
-}
-
-#player {
-	background-color: red;
-	margin: 0 auto;
-}
-
-
-#left-tool{
-	position: absolute;
 	height: 100%;
-	width: 100%;
-	color:red;
-	top:0;
-
-}
-/* align item right and vertical middle */
-#left-tool img {
-	position: absolute;
-	width: 20%;
-	top: 50%;
-	right: -20%;
-	transform: translate(-50%, -50%);
-	opacity: 0;
-	visibility: none;
 }
 
-
-#right-tool{
-	position: absolute;
+.attribute-values-in-arena {
+	display: flex; 
+    justify-content: center;
+	align-items: center;
+	color: white;
+	height: 20%;
 	width: 100%;
+}
+
+.attribute-name{
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	width: 60%;
 	height: 100%;
-	top: 0;
-	color: yellow;
-
-}
-#right-tool img {
-	position: absolute;
-	width: 20%;
-	top: 50%;
-	left: 0%;
-	transform: translate(-50%, -50%);
-	opacity: 0;
-	visibility: none;
 
 }
 
-
-#player-name{
-	font-weight: bold;
-	font-size: 2.0vh;
-	background-image: url("{% static 'images/button-back.png' %}");
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: cover;
-
-	width: 30%;
-	min-width: 200px;	/* harc kozben felso nev */
-	height: auto;
-	color: black;
+.attribute-value{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40%;
+	height: 100%;
 }
 
-#health-bar-container {
+.character-health-bar-container{
     text-align: center;
     background-color: black;
     width: 100%;
-    /*margin: 0 auto;*/
+    height: 8%;
     position: absolute;
     bottom: 0;
-
 }
 
 .health-bar {
     background-color: red;
-    height: 20px;
-    width:100%;
+    height: 100%;
+    width: 100%; /* ez "csökkenti" az életerőt */
 }
 
-.health-bar-text {
-    font-size: .9em;
+.health-bar-percentage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
     position: absolute;
-    margin: 0;
-    left: 0;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
+    font-size: 1em;
     color:white;
+}
+
+.character-top-name {
+	position: absolute;
+	top: -1.7vh;
+	width: 80%;
+	height: 12%;
+	background-color: yellow;
+	background: url("{% static 'images/button-back.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.character-top-name h4{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	width: 100%;
+	color: black;
+
+}
+
+.fight-tool {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	height: 140%;
+	width: 140%;
+}
+
+.fight-tool-image{
+	opacity: 0;
+	visibility: hidden;
+	max-width: 40%;
+	max-height: 40%;
+}
+
+#left-tool{
+	justify-content: flex-end;
+}
+
+#right-tool{
+	justify-content: flex-start;
+}
+
+#left-tool-image{
+    transition: transform 0.2s linear;
+   	transform: rotate(10deg);
+}
+
+#right-tool-image{
+    transition: transform 0.2s linear;
+   	transform: rotate(-10deg);
 }
 
 
 /* a jobb oldalon a választott player adatait jelenítjuk meg */
+/*
 #player2-left {
 	display: none;
 }
@@ -318,193 +379,168 @@ body {
 #player2-right {
 	display: none;
 }
+*/
 
+#left-character-detail{
+	display: none;
+
+}
+
+#right-character-detail{
+	display: none;
+}
 
 /* felugró ablak css */
 .cover {
+	display: none; 
+	align-items: center;
+	justify-content: center;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
     position: fixed; 
     background-color: rgba(175, 174, 174, 0.2); 
-    display: none; 
-	align-items: ;
 	z-index: 2;
 
 }
 
-.message {
-    position: relative; 
-	border: 6px solid transparent;
-	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
-	border-width: 0 3 0 0px;
-    margin: auto;
-    height: 20%; 
-    width: 20%;
-    background-color: white; 
-	background: url("{% static 'images/grey-sand.jpg' %}");	
+.result-message-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 20%;
+	width: 20%;
+	background-color: white;
+	background: url("{% static 'images/paper-old.jpg' %}");	
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
-    padding: 10px;
+	box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
 
 }
 
-
-
-
-
-
-#navigation {
+#result-text {
 	display: flex;
+	flex-direction: column;
+	align-items: center;
 	justify-content: center;
-	position: relative;
-	margin-top: 4%;
+	width: 100%;
+	height: 80%;
+}
+
+
+#result-message{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 60%;
+}
+
+#gained-honor-container{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 40%;
+	gap: 10%;
+}
+
+#gained-honor-image{
+	display: flex;
+	align-items: top;
+	justify-content: flex-end;
+	height: 100%;
+	width: 50%;
+}
+
+#gained-honor-text{
+	display: flex;
+	align-items: top;
+	justify-content: flex-start;
+	height: 100%;
+	width: 50%;
+	font-size: 1.4em;
+}
+
+#gained-honor-arena-image{
+	max-width: 80%;
+	max-height: 80%;
+}
+
+#result-button-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	width: 100%;
 	height: 20%;
-	text-align: center;
-
-}
-
-.nav-buttons {
-	width: 20%;
-
 }
 
 
 
-#navigation div {
-	background-image: url("{% static 'images/button-back.png' %}");
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: cover;
-
-	width: 10%;
-	min-width: 200px;
-	height: 14%;
-	border: none;
-	outline: none;
-	font-family: 'Kanit-Regular';
-	font-size: 1.8vh;
-
-
-}
-
-
-#navigation div:hover {
-	background-image: url("{% static 'images/button-back-red.png' %}");
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: cover;
-	color: #b8a529;
-
-}
-
-#skip-button {
-	display: none;
-}
-
-#player-name-content {
-    margin:auto;
-    margin-top: -2vh;
-    margin-bottom: 2vh;
-    text-align: center;
-    padding:5px;
-    width: 20%;
-    min-width: 300px;
-}
-
-
-#left-character-detail{
-	display: none;
-	height: 100%;
-}
-
-#right-character-detail{
-	display: none;
-	height: 100%;
-}
-
-
-
-
-
-
-.attribute-values-in-arena {
-	display: flex; 
-    justify-content: center;
+#result-button {
+	display: flex;
 	align-items: center;
-	color: red;
-	height: 20%;
-
-
-}
-
-#arena-main-title{
-
-	font-family: 'Kanit-Bold';
-	font-size: 4vh;
-	text-align: center;
-	padding: 2vh;
-	color: #b8a529;
-
-}
-
-
-#arena-main-title P{
-	margin: 0 auto;
-	width: 30%;
-	min-width: fit-content;
-	background-color: rgba(0,0,0,0.8);
-}
-
-
-#cover-button {
-	
+	justify-content: center;
+	width: 60%;
+	height: 80%;
 	background: url("{% static 'images/button-back.png' %}");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
-	padding: 6px;
-	min-width: 15%;
-
-	border: none;
 	color: black;
 	font-family: "Kanit-Regular";
 	font-size: 1.8vh;
 	font-weight: bold;
-
-
-	bottom: 0;
-	right: 0;
-	left: 0;
-	position: absolute;
-	width: 40%;
-	margin: 0 auto;
-
 }
 
 
 
-#cover-button:hover {
-	
+#result-button:hover {
 	background: url("{% static 'images/button-back-red.png' %}");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
-	color: #b8a529;
-
+	color: #fae455;
+	cursor: pointer;
 }
 
 
-#info-after-match {
-	height: 100%;
-	width: 100%;
-	position: relative;
-	text-align: center;
 
+/* ------- */
+
+#skip-button-container{
+	display: none;
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 80%;
 }
+
+#skip-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 30%;
+	height: 20%;
+	background: url("{% static 'images/button-back.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+#skip-button:hover {
+	background: url("{% static 'images/button-back-red.png' %}");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: #fae455;
+	cursor: pointer;
+}
+
 
 .loader-container {
 	width: 100%;
@@ -521,282 +557,224 @@ body {
 
 
 
-
-/* ARENA CHOICE SCENE */
-#opponent-choice {
-
-	width: 40%;
-	display: flex;
-	justify-content: space-between;
-	height: 20%;
-	margin: 0 auto;
-}
-
-
-#option-left {
-	flex: 1;
-	width: 50%;
-	height: 100%;
-	text-align: center;
-	display: flex;
-	border: 6px solid transparent;
-	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
-	margin: 0 1% 0 0;
-
-
-
-}
-
-#option-left:hover {
-
-	border: 6px solid transparent;
-	border-image: url("{% static 'images/button-back-red.png' %}") 30 stretch;
-
-
-
-}
-
-
-
-
-#option-right {
-	flex: 1;
-	width: 50%;
-	text-align: center;
-	height: 100%;
-	display: flex;
-	border: 6px solid transparent;
-	border-image: url("{% static 'images/button-back.png' %}") 30 stretch;
-	margin: 0 0 0 1%;
-}
-
-#option-right:hover {
-
-	border: 6px solid transparent;
-	border-image: url("{% static 'images/button-back-red.png' %}") 30 stretch;
-
-
-
-}
-
-#option-left-character{
-	flex: 1;
-	height: 100%;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: cover;
-	position: relative;
-}
-
-
-
-#option-left-description{
-	flex: 1;
-	background-color: lightgrey;
-	background: url("{% static 'images/grey-sand.jpg' %}");	
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: cover;
-}
-
-
-
-#option-right-character{
-	flex: 1;
-	height: 100%;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: cover;
-	position: relative;
-
-}
-
-
-
-
-#option-right-description{
-	flex: 1;
-	background-color: lightgrey;
-	background-color: lightgrey;
-	background: url("{% static 'images/grey-sand.jpg' %}");	
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: cover;
-}
-
-
-.option-character-name {
-	color: black;
-	position: absolute;
-	bottom: 0;
-	background: url("{% static 'images/button-back.png' %}");
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: cover;
-	width: 100%;
-}
-
-
 </style>
 <div id="arena-content-page">
-	<div id="arena-main-title">
-		<p>AJÁNLOTT ELLENFELEK</p>
+	<div id="arena-header">
+		<div id="arena-title-left">
+			<div id="main-page-button">
+				<img src="{% static 'images/previous-button.png' %}" alt="Vissza" class="go-to-main-page" onmouseover="changeColor(this)" onmouseout="resetColor(this)">
+			</div>
+		</div>
+		<div id="arena-title-center">
+			<h1>Ajánlott ellenfelek</h1>
+		</div>
+		<div id="arena-title-right">	
+		</div>
 	</div>
-
-
-
-		<div class="cover">
-		 	<div class="message">
-				<div id="info-after-match">
-
-					<p id="after-match-message">Vege a meccsnek</p>
-
-					<button id="cover-button">Rendben</button>
-
+	<div id="arena-container">
+		<!-- Ellenfél választás -->
+		<div id="opponent-choice">
+			<div class="option-container" id="option-left">
+				<div class="option-character" id="option-left-character">
+					<div class="option-character-name">{{left_character}}</div>
 				</div>
-
-		 	</div>
-		</div>
-
-
-	<!-- Ellenfél választás -->
-	<div id="opponent-choice">
-		<div id="option-left">
-
-			<div id="option-left-character">
-				<div class="option-character-name">{{left_character}}</div>
-			</div>
-			<div id="option-left-description">
-				<span class="attribute-values-in-arena">Erő: {{left_character.strength}}</span>
-				<span class="attribute-values-in-arena">Ügyesség: {{left_character.skill}}</span>
-				<span class="attribute-values-in-arena">Értelem: {{left_character.intelligence}}</span>
-				<span class="attribute-values-in-arena">Kitartás: {{left_character.health_point}}</span>
-				<span class="attribute-values-in-arena">Szerencse: {{left_character.fortune}}</span>
-			</div>
-
-
-		</div>
-		<div id="option-right">
-			<div id="option-right-character">
-				<div class="option-character-name">{{right_character}}</div>
-
-			</div>
-			<div id="option-right-description">
-				<span class="attribute-values-in-arena">Erő: {{left_character.strength}}</span>
-				<span class="attribute-values-in-arena">Ügyesség: {{left_character.skill}}</span>
-				<span class="attribute-values-in-arena">Értelem: {{left_character.intelligence}}</span>
-				<span class="attribute-values-in-arena">Kitartás: {{left_character.health_point}}</span>
-				<span class="attribute-values-in-arena">Szerencse: {{left_character.fortune}}</span>
-			</div>
-
-		</div>
-
-
-	</div>
-
-
-	<!-- Kiválasztott ellenfél elleni harc -->
-	<div id="fight-with-opponent">
-
-		<div id="left-character-side">
-			<div id="player-name-content">
-				<h4 id="player-name">{{current_character}}</h4>
-			</div>
-
-			<div id="left-tool"><img src="{% static 'images/sword.png' %}"></div>
-
-			<div id="health-bar-container">
-				<div class="health-bar">
-					<p class="health-bar-text" id="player1-percentage">100%</p>
-				</div>
-			</div>
-
-
-		</div>
-
-
-
-
-		<div id="right-character-side">
-
-			<!-- Ezek közül mindig csak a választott karakter jelenik meg -->
-			<div id="player2-left">
-				<div id="player-name-content">
-					<h4 id="player-name">{{left_character}}</h4>
-				</div>
-			</div>
-			<div id="player2-right">
-				<div id="player-name-content">
-					<h4 id="player-name" name="another-character">{{right_character}}</h4>
-				</div>
-			</div>
-
-			<div id="right-tool"><img src="{% static 'images/sword_other.png' %}"></div>
-
-			<div id="health-bar-container">
-				<div class="health-bar">
-					<p class="health-bar-text" id="player2-percentage">100%</p>
-				</div>
-			</div>
-
-		</div>
-
-
-	</div>
-	<div class="characters-details">
-		<!-- a támadó karakter -->
-		<div id="left-detail">
-			<div id="role-picture">
-
-			</div>
-			<div id="character-attrs">
-				<span class="attribute-values-in-arena">Erő:{{current_character.strength}}</span>
-				<span class="attribute-values-in-arena">Ügyesség:{{current_character.skill}}</span>
-				<span class="attribute-values-in-arena">Értelem: {{current_character.intelligence}}</span>
-				<span class="attribute-values-in-arena">Kitartás: {{current_character.health_point}}</span>
-				<span class="attribute-values-in-arena">Szerencse: {{current_character.fortune}}</span>
-			</div>
-		</div>
-
-		<div id="right-detail">
-			<div id="role-picture">
-
-			</div>
-			<div id="character-attrs">
-				{% if is_user_to_attack %}
-					<span class="attribute-values-in-arena">Erő: {{user_to_attack.strength}}</span>
-					<span class="attribute-values-in-arena">Ügyesség: {{user_to_attack.skill}}</span>
-					<span class="attribute-values-in-arena">Értelem: {{user_to_attack.intelligence}}</span>
-					<span class="attribute-values-in-arena">Kitartás: {{user_to_attack.health_point}}</span>
-					<span class="attribute-values-in-arena">Szerencse: {{user_to_attack.fortune}}</span>
-				{% else %}
-					<div id="left-character-detail">
-						<span class="attribute-values-in-arena">Erő: {{left_character.strength}}</span>
-						<span class="attribute-values-in-arena">Ügyesség: {{left_character.skill}}</span>
-						<span class="attribute-values-in-arena">Értelem: {{left_character.intelligence}}</span>
-						<span class="attribute-values-in-arena">Kitartás: {{left_character.health_point}}</span>
-						<span class="attribute-values-in-arena">Szerencse: {{left_character.fortune}}</span>
+				<div class="option-description" id="option-left-description">
+					<div class="attribute-values-in-arena">
+						<div class="attribute-name">Erő</div>
+						<div class="attrbiute-value">{{left_character.strength}}</div>
 					</div>
-					<div id="right-character-detail">
-						<span class="attribute-values-in-arena">Erő: {{right_character.strength}}</span>
-						<span class="attribute-values-in-arena">Ügyesség: {{right_character.skill}}</span>
-						<span class="attribute-values-in-arena">Értelem: {{right_character.intelligence}}</span>
-						<span class="attribute-values-in-arena">Kitartás: {{right_character.health_point}}</span>
-						<span class="attribute-values-in-arena">Szerencse: {{right_character.fortune}}</span>
+					<div class="attribute-values-in-arena">
+						<div class="attribute-name">Ügyesség</div>
+						<div class="attrbiute-value">{{left_character.skill}}</div>
 					</div>
-				{% endif %}
+					<div class="attribute-values-in-arena">
+						<div class="attribute-name">Értelem</div>
+						<div class="attrbiute-value">{{left_character.intelligence}}</div>
+					</div>
+					<div class="attribute-values-in-arena">
+						<div class="attribute-name">Kitartás</div>
+						<div class="attrbiute-value">{{left_character.health_point}}</div>
+					</div>
+					<div class="attribute-values-in-arena">
+						<div class="attribute-name">Szerencse</div>
+						<div class="attrbiute-value">{{left_character.fortune}}</div>
+					</div>
+				</div>
 			</div>
-
-			
+			<div class="option-container" id="option-right">
+				<div class="option-character" id="option-right-character">
+					<div class="option-character-name">{{right_character}}</div>
+				</div>
+				<div class="option-description" id="option-right-description">
+					<div class="attribute-values-in-arena">
+						<div class="attribute-name">Erő</div>
+						<div class="attrbiute-value">{{right_character.strength}}</div>
+					</div>
+					<div class="attribute-values-in-arena">
+						<div class="attribute-name">Ügyesség</div>
+						<div class="attrbiute-value">{{right_character.skill}}</div>
+					</div>
+					<div class="attribute-values-in-arena">
+						<div class="attribute-name">Értelem</div>
+						<div class="attrbiute-value">{{right_character.intelligence}}</div>
+					</div>
+					<div class="attribute-values-in-arena">
+						<div class="attribute-name">Kitartás</div>
+						<div class="attrbiute-value">{{right_character.health_point}}</div>
+					</div>
+					<div class="attribute-values-in-arena">
+						<div class="attribute-name">Szerencse</div>
+						<div class="attrbiute-value">{{right_character.fortune}}</div>
+					</div>
+				</div>
+			</div>
 		</div>
 
+		<!-- Kiválasztott ellenfél elleni harc -->
+		<div id="fight-with-opponent">
+			<div class="opponent-side" id="left-character-side">
+				<div class="opponent-character" id="left-character">					
+					<div class="character-top-name">
+						<h4 id="player-name">{{current_character}}</h4>
+					</div>	
+					<div class="fight-tool" id="left-tool"><img src="{% static 'images/sword-2.png' %}" alt="harci-eszkoz" class="fight-tool-image" id="left-tool-image"></div>
+					<div class="character-health-bar-container">
+						<div class="health-bar" id="right-character-health-bar">
+							<p class="health-bar-percentage" id="player1-percentage">100%</p>
+						</div>
+					</div>
+				</div>
+				<div class="opponent-detail" id="left-detail">
+					<div class="opponent-detail-left" id="role-picture">
 
+					</div>
+					<div class="opponent-detail-right" id="character-attrs">
+						<div class="attribute-values-in-arena">
+							<div class="attribute-name">Erő</div>
+							<div class="attrbiute-value">{{current_character.strength}}</div>
+						</div>
+						<div class="attribute-values-in-arena">
+							<div class="attribute-name">Ügyesség</div>
+							<div class="attrbiute-value">{{current_character.skill}}</div>
+						</div>
+						<div class="attribute-values-in-arena">
+							<div class="attribute-name">Értelem</div>
+							<div class="attrbiute-value">{{current_character.intelligence}}</div>
+						</div>
+						<div class="attribute-values-in-arena">
+							<div class="attribute-name">Kitartás</div>
+							<div class="attrbiute-value">{{current_character.health_point}}</div>
+						</div>
+						<div class="attribute-values-in-arena">
+							<div class="attribute-name">Szerencse</div>
+							<div class="attrbiute-value">{{current_character.fortune}}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="opponent-side" id="right-character-side">
+
+				<!-- Ezek közül mindig csak a választott karakter jelenik meg -->
+				<div class="opponent-character" id="right-character">
+					<div class="character-top-name" id="player2-left">
+						<h4 id="player-name">{{left_character}}</h4>
+					</div>
+					<div class="character-top-name" id="player2-right">
+						<h4 id="player-name">{{right_character}}</h4>
+					</div>
+
+
+					<div class="fight-tool" id="right-tool"><img src="{% static 'images/sword-2.png' %}" alt="harci-eszkoz" class="fight-tool-image" id="right-tool-image"></div>
+
+					<div class="character-health-bar-container">
+						<div class="health-bar" id="right-character-health-bar">
+							<p class="health-bar-percentage" id="player2-percentage">100%</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="opponent-detail" id="right-detail">
+					<div class="opponent-detail-left" id="role-picture">
+
+					</div>
+					{% if is_user_to_attack %}
+						<div class="opponent-detail-right" id="character-attrs">
+							<div class="attribute-values-in-arena">
+								<div class="attribute-name">Erő</div>
+								<div class="attrbiute-value">{{user_to_attack.strength}}</div>
+							</div>
+							<div class="attribute-values-in-arena">
+								<div class="attribute-name">Ügyesség</div>
+								<div class="attrbiute-value">{{user_to_attack.skill}}</div>
+							</div>
+							<div class="attribute-values-in-arena">
+								<div class="attribute-name">Értelem</div>
+								<div class="attrbiute-value">{{user_to_attack.intelligence}}</div>
+							</div>
+							<div class="attribute-values-in-arena">
+								<div class="attribute-name">Kitartás</div>
+								<div class="attrbiute-value">{{user_to_attack.health_point}}</div>
+							</div>
+							<div class="attribute-values-in-arena">
+								<div class="attribute-name">Szerencse</div>
+								<div class="attrbiute-value">{{user_to_attack.fortune}}</div>
+							</div>
+						</div>
+					{% else %}
+						<div class="opponent-detail-right" id="left-character-detail">
+							<div class="attribute-values-in-arena">
+								<div class="attribute-name">Erő</div>
+								<div class="attrbiute-value">{{left_character.strength}}</div>
+							</div>
+							<div class="attribute-values-in-arena">
+								<div class="attribute-name">Ügyesség</div>
+								<div class="attrbiute-value">{{left_character.skill}}</div>
+							</div>
+							<div class="attribute-values-in-arena">
+								<div class="attribute-name">Értelem</div>
+								<div class="attrbiute-value">{{left_character.intelligence}}</div>
+							</div>
+							<div class="attribute-values-in-arena">
+								<div class="attribute-name">Kitartás</div>
+								<div class="attrbiute-value">{{left_character.health_point}}</div>
+							</div>
+							<div class="attribute-values-in-arena">
+								<div class="attribute-name">Szerencse</div>
+								<div class="attrbiute-value">{{left_character.fortune}}</div>
+							</div>
+						</div>
+						<div class="opponent-detail-right" id="right-character-detail">
+							<div class="attribute-values-in-arena">
+								<div class="attribute-name">Erő</div>
+								<div class="attrbiute-value">{{right_character.strength}}</div>
+							</div>
+							<div class="attribute-values-in-arena">
+								<div class="attribute-name">Ügyesség</div>
+								<div class="attrbiute-value">{{right_character.skill}}</div>
+							</div>
+							<div class="attribute-values-in-arena">
+								<div class="attribute-name">Értelem</div>
+								<div class="attrbiute-value">{{right_character.intelligence}}</div>
+							</div>
+							<div class="attribute-values-in-arena">
+								<div class="attribute-name">Kitartás</div>
+								<div class="attrbiute-value">{{right_character.health_point}}</div>
+							</div>
+							<div class="attribute-values-in-arena">
+								<div class="attribute-name">Szerencse</div>
+								<div class="attrbiute-value">{{right_character.fortune}}</div>
+							</div>
+						</div>
+					{% endif %}					
+				</div>
+			</div>
+		</div>		
 	</div>
-
-	<div id="navigation">
-
-		<div class="nav-buttons" id="skip-button">Kihagyás</div><br>
-		<div class="nav-buttons" id="go-to-main-page">Vissza</div>
+	<div id="arena-footer">
+		<div id="skip-button-container">
+			<div id="skip-button">Kihagyás</div>	
+		</div>
 	</div>
 </div>
 
@@ -804,11 +782,66 @@ body {
 	
 </div>
 
+<div class="cover">
+	 	<div class="result-message-container">
+			<div id="result-text">
+				<div id="result-message">Vége a meccsnek</div>
+				<div id="gained-honor-container">
+					<div id="gained-honor-image">
+						<img src="{% static 'images/badge.png' %}" alt="becsuletpont" id="gained-honor-arena-image">
+					</div>
+					<div id="gained-honor-text">...</div>
+				</div>
+			</div>
+			<div id="result-button-container">
+				<div id="result-button">Rendben</div>		
+			</div>
+
+	 	</div>
+	</div>
+
 
 <script>
 
 
-	loadEnemyPicturesOnStart()
+	const audio = new Audio()
+	audio.src = "{% static 'audios/button_click.mp3' %}"
+
+	const attackerSound = new Audio()
+	attackerSound.src = "{% static 'audios/fight1.mp3' %}"
+
+	const defenderSound = new Audio()
+	defenderSound.src = "{% static 'audios/fight1.mp3' %}"
+
+
+	function changeColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/previous-button-red.png' %}")
+	}
+
+	function resetColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/previous-button.png' %}")
+	}
+
+
+
+	$(".go-to-main-page").click(function(){
+    	audio.play()
+
+    	setTimeout(function(){
+	    	try {
+
+				var url = "{% url 'home_page' %}"
+				var win = window.location.replace(url) 
+				win.focus()
+			}
+			catch(error){
+				console.log(error)
+			}
+
+    	}, 200)
+    	$(".loader-container").fadeIn("fast")
+	})
+
 
 	function loadEnemyPicturesOnStart(){
 		$("#option-left-character").css("background-image", "url('{{left_character_profile_image}}')")
@@ -818,18 +851,11 @@ body {
 
 
 
-	const audio = new Audio()
-	audio.src = "{% static 'audios/button_click.mp3' %}"
 
-	const audioFight1 = new Audio()
-	audioFight1.src = "{% static 'audios/fight1.mp3' %}"
-
-	const audioFight2 = new Audio()
-	audioFight2.src = "{% static 'audios/fight2.mp3' %}"
 
 	$(window).on("load", function(){
 		$(".loader-container").fadeOut("slow")
-
+		loadEnemyPicturesOnStart()
 
 	})
 
@@ -837,7 +863,7 @@ body {
 
 
 
-    $("#cover-button").click(function () {
+    $("#result-button").click(function () {
     	audio.play()
 		$(".cover").css("display", "none")
 			setTimeout(function(){
@@ -855,36 +881,26 @@ body {
 
 
 
-    $("#go-to-main-page").click(function() {
-    	audio.play()
-
-    	setTimeout(function(){
-	    	try {
-
-				var url = "{% url 'home_page' %}"
-				var win = window.location.replace(url) 
-				win.focus()
-			}
-			catch(error){
-				console.log(error)
-			}
-
-    	}, 100)
-
-
-    })
 
 
 
 	function setBackgroundToDescription(){
 		{% if current_character.character_type == "warrior" %}
 			$("#left-detail #role-picture").css("background-image", "url('{% static 'images/swordsman.png' %}')")
+			attackerSound.src = "{% static 'audios/warrior-attack.mp3' %}"
+			$("#left-tool-image").attr("src", "{% static 'images/sword-2.png' %}")
 		{% elif current_character.character_type == "mage" %}
 			$("#left-detail #role-picture").css("background-image", "url('{% static 'images/wizard.png' %}')")
+			attackerSound.src = "{% static 'audios/mage-attack.mp3' %}"
+			$("#left-tool-image").attr("src", "{% static 'images/wand-2.png' %}")
 		{% elif current_character.character_type == "scout" %}		
 			$("#left-detail #role-picture").css("background-image", "url('{% static 'images/archer.png' %}')")
+			attackerSound.src = "{% static 'audios/scout-attack.mp3' %}"
+			$("#left-tool-image").attr("src", "{% static 'images/bow-2.png' %}")
 		{% else %}
 			$("#left-detail #role-picture").css("background-image", "url('{% static 'images/swordsman.png' %}')")
+			attackerSound.src = "{% static 'audios/warrior-attack.mp3' %}"
+			$("#left-tool-image").attr("src", "{% static 'images/sword-2.png' %}")
 		{% endif %}
 
 	}
@@ -933,7 +949,7 @@ body {
 	$("#option-left").click(function() {
 		opponent = "{{left_character}}"
 		opponentID = "{{left_character_id}}"
-		$("#right-character-side").css("background-image", "url('{{left_character_profile_image}}')");
+		$("#right-character").css("background-image", "url('{{left_character_profile_image}}')");
 
 		$(".loader-container").fadeIn("fast")
 		//console.log(opponentID)
@@ -946,7 +962,7 @@ body {
 	$("#option-right").click(function() {
 		opponent = "{{right_character}}"
 		opponentID = "{{right_character_id}}"
-		$("#right-character-side").css("background-image", "url('{{right_character_profile_image}}')");
+		$("#right-character").css("background-image", "url('{{right_character_profile_image}}')");
 		//console.log(opponentID)
 		$(".loader-container").fadeIn("fast")
 		audio.play()
@@ -959,32 +975,41 @@ body {
 
 	function switchToFightScreen(showLeftPlayer, anotherPlayer){
 		$(".loader-container").fadeOut("slow")
-		$("#arena-main-title p").html("ARÉNA")
-		$("#go-to-main-page").css("display", "none")
+		$("#arena-title-center h1").html("Aréna")
+		$("#main-page-button").css("visibility", "hidden")
+
 		setBackgroundToDescription() //csak a current userhez
 		document.getElementById("opponent-choice").style.display = "none"
 		document.getElementById("fight-with-opponent").style.display = "flex"
-		$(".characters-details").css("display", "flex")
-		$("#skip-button").css("display", "block")
 
-		$("#left-character-side").css("background-image", "url('{{current_character_profile_image}}')");
+		$("#skip-button-container").css("display", "flex")
+
+		$("#left-character").css("background-image", "url('{{current_character_profile_image}}')");
 
 		if (anotherPlayer){
-			$("#player2-right #player-name-content #player-name").html(opponent)
+			$("#player2-right #player-name").html(opponent)
 
 
-			$("#right-character-side").css("background-image", "url('{{user_to_attack_profile_image}}')");
+			$("#right-character").css("background-image", "url('{{user_to_attack_profile_image}}')");
 			$("#player2-right").css("display", "block")
-			$("#right-character-detail").css("display", "block")
+			$("#right-character-detail").css("display", "flex")
 			$("#player2-left").css("display", "none")
 			{% if user_to_attack.character_type == "warrior" %}
 				$("#right-detail #role-picture").css("background-image", "url('{% static 'images/swordsman.png' %}')")
+				defenderSound.src = "{% static 'audios/warrior-attack.mp3' %}"
+				$("#right-tool-image").attr("src", "{% static 'images/sword-2.png' %}")
 			{% elif user_to_attack.character_type == "mage" %}
 				$("#right-detail #role-picture").css("background-image", "url('{% static 'images/wizard.png' %}')")
+				defenderSound.src = "{% static 'audios/mage-attack.mp3' %}"
+				$("#right-tool-image").attr("src", "{% static 'images/wand-2.png' %}")
 			{% elif user_to_attack.character_type == "scout" %}		
 				$("#right-detail #role-picture").css("background-image", "url('{% static 'images/archer.png' %}')")
+				defenderSound.src = "{% static 'audios/scout-attack.mp3' %}"
+				$("#right-tool-image").attr("src", "{% static 'images/bow-2.png' %}")
 			{% else %}
 				$("#right-detail #role-picture").css("background-image", "url('{% static 'images/swordsman.png' %}')")
+				defenderSound.src = "{% static 'audios/warrior-attack.mp3' %}"
+				$("#right-tool-image").attr("src", "{% static 'images/sword-2.png' %}")
 			{% endif %}
 
 		}
@@ -993,30 +1018,46 @@ body {
 			//document.getElementById("left-character-side").innerHTML = "{{current_character}}"
 			if (showLeftPlayer){
 				$("#player2-left").css("display", "block")
-				$("#left-character-detail").css("display", "block")
+				$("#left-character-detail").css("display", "flex")
 				$("#player2-right").css("display", "none")
 				{% if left_character.character_type == "warrior" %}
 					$("#right-detail #role-picture").css("background-image", "url('{% static 'images/swordsman.png' %}')")
+					defenderSound.src = "{% static 'audios/warrior-attack.mp3' %}"
+					$("#right-tool-image").attr("src", "{% static 'images/sword-2.png' %}")
 				{% elif left_character.character_type == "mage" %}
 					$("#right-detail #role-picture").css("background-image", "url('{% static 'images/wizard.png' %}')")
+					defenderSound.src = "{% static 'audios/mage-attack.mp3' %}"
+					$("#right-tool-image").attr("src", "{% static 'images/wand-2.png' %}")
 				{% elif left_character.character_type == "scout" %}		
 					$("#right-detail #role-picture").css("background-image", "url('{% static 'images/archer.png' %}')")
+					defenderSound.src = "{% static 'audios/scout-attack.mp3' %}"
+					$("#right-tool-image").attr("src", "{% static 'images/bow-2.png' %}")
 				{% else %}
 					$("#right-detail #role-picture").css("background-image", "url('{% static 'images/swordsman.png' %}')")
+					defenderSound.src = "{% static 'audios/warrior-attack.mp3' %}"
+					$("#right-tool-image").attr("src", "{% static 'images/sword-2.png' %}")
 				{% endif %}
 			}
 			else {
 				$("#player2-right").css("display", "block")
-				$("#right-character-detail").css("display", "block")
+				$("#right-character-detail").css("display", "flex")
 				$("#player2-left").css("display", "none")
 				{% if right_character.character_type == "warrior" %}
 					$("#right-detail #role-picture").css("background-image", "url('{% static 'images/swordsman.png' %}')")
+					defenderSound.src = "{% static 'audios/warrior-attack.mp3' %}"
+					$("#right-tool-image").attr("src", "{% static 'images/sword-2.png' %}")
 				{% elif right_character.character_type == "mage" %}
 					$("#right-detail #role-picture").css("background-image", "url('{% static 'images/wizard.png' %}')")
+					defenderSound.src = "{% static 'audios/mage-attack.mp3' %}"
+					$("#right-tool-image").attr("src", "{% static 'images/wand-2.png' %}")
 				{% elif right_character.character_type == "scout" %}		
 					$("#right-detail #role-picture").css("background-image", "url('{% static 'images/archer.png' %}')")
+					defenderSound.src = "{% static 'audios/scout-attack.mp3' %}"
+					$("#right-tool-image").attr("src", "{% static 'images/bow-2.png' %}")
 				{% else %}
 					$("#right-detail #role-picture").css("background-image", "url('{% static 'images/swordsman.png' %}')")
+					defenderSound.src = "{% static 'audios/warrior-attack.mp3' %}"
+					$("#right-tool-image").attr("src", "{% static 'images/sword-2.png' %}")
 				{% endif %}
 			}
 
@@ -1030,10 +1071,12 @@ body {
 	}
 
 
+	var gainedHonor = null
+	var lostHonor = null
+
 	function simulateFight(){
 		console.log("fight")
 		info_packet = {
-			"csrfmiddlewaretoken": "{{csrf_token}}",
 			"attacker_user_id": "{{current_character_id}}",
 			"defender_user_id": opponentID
 		}
@@ -1054,6 +1097,8 @@ body {
 				defenderHealthValuesLength = defenderHealthValues.length
 				// kiszedjuk a winnert egy globalis valtozoba
 				winner = data.user_win
+				gainedHonor = data.gained_honor_points
+				lostHonor = data.lost_honor_points
 				simulateDefenderHealthBar();    
 				attackTimeoutSecond = setTimeout(simulateAttackerHealthBar, 1000)
 			},
@@ -1074,22 +1119,18 @@ function showFinalHealthBars(){
 	var attackerLastHealthValue = attackerHealthValues[attackerHealthValuesLength-1]
 
 	var attackerFinalPercent = Math.round((attackerLastHealthValue / attackerFirstHealthValue) * 100)
+    var defenderFinalPercent = Math.round((defenderLastHealthValue / defenderFirstHealthValue) * 100)
+    //console.log("deffinal " + defenderFinalPercent)
+    //console.log("attackfinal" + attackerFinalPercent)
+
+
+	bars.eq(0).finish()
+	bars.eq(1).finish()
+    bars.eq(0).css("width", attackerFinalPercent +"%") 
     document.getElementById("player1-percentage").innerHTML = attackerFinalPercent + "%";
 
-
-    var defenderFinalPercent = Math.round((defenderLastHealthValue / defenderFirstHealthValue) * 100)
-    console.log("deffinal " + defenderFinalPercent)
-    console.log("attackfinal" + attackerFinalPercent)
-    document.getElementById("player2-percentage").innerHTML = defenderFinalPercent + "%";
-
-    bars.eq(0).css("width", attackerFinalPercent +"%") 
 	bars.eq(1).css("width", defenderFinalPercent +"%")
-
-	// animacio meg mindig tarthat valahol, ezert ez a biztonsagi beallitas, 300ms-nel mar nem jo
-    setTimeout(function() {
-   		bars.eq(0).css("width", attackerFinalPercent +"%") 
-		bars.eq(1).css("width", defenderFinalPercent +"%")
-    }, 600)
+    document.getElementById("player2-percentage").innerHTML = defenderFinalPercent + "%";
 
 }
 
@@ -1127,20 +1168,34 @@ function simulateDefenderHealthBar() {
         }
         bars.eq(1).animate({width:defenderHealthPercent +"%"}, 800)   
 
-        audioFight1.play()
-        $("#right-character-side").css({
-        	boxShadow: "rgba(240, 28, 28, 0.6) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset"
+        attackerSound.play()
+
+        $("#right-character").css({
+        	boxShadow: "rgba(240, 28, 28, 1.0) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset"
         })
-        $("#left-tool img").css({opacity: 0.0, visibility:"visible"}).animate({opacity: 1.0}, 400, function() {
-        	$("#left-tool img").css({opacity: 1.0, visibility:"visible"}).animate({opacity: 0.0}, 400)
-        });
+
+        $("#left-tool img").css({
+        	opacity: 0.0,
+        	visibility:"visible",
+        	transform: "rotate(80deg)",
+        }).animate({
+        	opacity: 1.0,
+        }, 400, function() {
+        	$("#left-tool img").css({
+        		opacity: 1.0,
+        		visibility:"visible",
+        		transform: "rotate(10deg)",
+        	}).animate({opacity: 0.0}, 400)
+        })
+
 
 
         setTimeout(function(){
-			$("#right-character-side").css({
-			boxShadow: "none"
+			$("#right-character").css({
+				boxShadow: "none"
         	})  	
         }, 300)
+
         document.getElementById("player2-percentage").innerHTML = defenderHealthPercent + "%";
 
         indexDefender++;               
@@ -1170,16 +1225,30 @@ function simulateAttackerHealthBar() {
         	showEndingMessage()
         }
         bars.eq(0).animate({width:attackerHealthPercent +"%"}, 800) 
-        audioFight1.play()
-        $("#left-character-side").css({
-        	boxShadow: "rgba(240, 28, 28, 0.6) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset"
+        defenderSound.play()
+        $("#left-character").css({
+        	boxShadow: "rgba(240, 28, 28, 1.0) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset"
         })  
-        $("#right-tool img").css({opacity: 0.0, visibility:"visible"}).animate({opacity: 1.0}, 400, function() {
-        	$("#right-tool img").css({opacity: 1.0, visibility:"visible"}).animate({opacity: 0.0}, 400)
-        });
+
+
+        $("#right-tool img").css({
+        	opacity: 0.0,
+        	visibility:"visible",
+        	transform: "rotate(-80deg)",
+        }).animate({
+        	opacity: 1.0,
+        }, 400, function() {
+        	$("#right-tool img").css({
+        		opacity: 1.0,
+        		visibility:"visible",
+        		transform: "rotate(-10deg)",
+        	}).animate({opacity: 0.0}, 400)
+        })
+
+
         setTimeout(function(){
-			$("#left-character-side").css({
-			boxShadow: "none"
+			$("#left-character").css({
+				boxShadow: "none"
         	})  	
         }, 300)
         document.getElementById("player1-percentage").innerHTML = attackerHealthPercent + "%";
@@ -1214,7 +1283,7 @@ function calculatePercent(arrayOfHealthValues, currentIndex){
         return healthPercent;
     }
 
-    return 0 // TODO, mit adjon vissza ha nem jó az if
+    return 0 
 
 }
 
@@ -1233,14 +1302,17 @@ var interval = setInterval(function(){
 
 function showEndingMessage(){
 	if (winner.username == "{{current_character}}"){
-		document.getElementById("after-match-message").innerHTML = "Győztél"
+		document.getElementById("result-message").innerHTML = "Győztél"
+		document.getElementById("gained-honor-text").innerHTML = gainedHonor
 	}
 	else{
-		document.getElementById("after-match-message").innerHTML = "Vesztettél"
+		document.getElementById("result-message").innerHTML = "Vesztettél"
+		document.getElementById("gained-honor-text").innerHTML = "-" + lostHonor
+
 	}
 
 	$(".cover").css("display", "flex");
-	$("#skip-button").css("display", "none")
+	$("#skip-button-container").css("display", "none")
 }
 
 

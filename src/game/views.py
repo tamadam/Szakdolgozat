@@ -534,10 +534,11 @@ def arena_fight(request):
 	print(type(attacker_health_values))
 	if winner == attacker_user:
 		user_win = 'attacker'
-
+		gained_honor_points = DEFAULT_GAIN_HONOR_POINTS_ARENA_FIGHTS
+		lost_honor_points = 0
 		# becsületpont
-		attacker_user.honor += 20
-		defender_user.honor -= 20
+		attacker_user.honor += DEFAULT_GAIN_HONOR_POINTS_ARENA_FIGHTS
+		defender_user.honor -= DEFAULT_LOST_HONOR_POINTS_ARENA_FIGHTS
 		if defender_user.honor < 0:
 			defender_user.honor = 0
 
@@ -546,10 +547,11 @@ def arena_fight(request):
 		defender_user_history.fights_lost += 1
 	elif winner == defender_user:
 		user_win = 'defender'
+		gained_honor_points = 0
+		lost_honor_points = DEFAULT_LOST_HONOR_POINTS_ARENA_FIGHTS
 
-
-		defender_user.honor += 20
-		attacker_user.honor -= 20
+		defender_user.honor += DEFAULT_GAIN_HONOR_POINTS_ARENA_FIGHTS
+		attacker_user.honor -= DEFAULT_LOST_HONOR_POINTS_ARENA_FIGHTS
 		if attacker_user.honor < 0:
 			attacker_user.honor = 0
 
@@ -577,6 +579,9 @@ def arena_fight(request):
 		'attacker_health_values': attacker_health_values,
 		'defender_health_values': defender_health_values,
 		'user_win': account_object['winner_id'], #átadjuk az account objectet jsonre serializaljuk eloszor
+		'gained_honor_points': gained_honor_points,
+		'lost_honor_points': lost_honor_points,
+
 	}
 
 	return JsonResponse(data)
