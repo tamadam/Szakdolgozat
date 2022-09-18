@@ -806,7 +806,7 @@
 				</div>
 					<div id="description-text">
 						<!--<h3>{{team.description}}</h3>-->
-						<textarea id="team-description-textarea"></textarea>
+						<textarea id="team-description-textarea" maxlength="100"></textarea>
 					</div>	
 
 			</div>
@@ -1132,21 +1132,26 @@
 
 	// ha a leírás üres, akkor egy placeholdert jelenítünk meg
 	// amúgy a rendes leírást
-	if ("{{team.description}}" == ""){
+	if (`{{team.description}}` == ""){
 		$("#team-description-textarea").attr("placeholder", "Nincs megjeleníthető leírás.")
 	}
 	else{
-		$("#team-description-textarea").val("{{team.description}}")
+		// `` kell a többsoros string miatt
+		var encodedDescription = $("<p/>").html(`{{team.description}}`).text(); // &gt-t kapnank ha a user > hasznalja meg hasonlokat, ezt csereljük ki
+		$("#team-description-textarea").val(encodedDescription)
 	}
 
 
-
-	// megakadalyozzuk a new line-t : todo: kicserelni ezt hogy lehessen new line
+	/*
+	// megakadalyozzuk a new line-t : todo: kicserelni ezt hogy lehessen new line; solved
     $("#team-description-textarea").keypress(function(event) {
+    	
         if (event.keyCode == 13) {
             event.preventDefault();
         }
+
     });
+    */
 	
 	// a textareabol kilépést követően mentjük a leírást
 	$("#team-description-textarea").focusout(function(){

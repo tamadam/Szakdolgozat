@@ -835,7 +835,8 @@ body {
 
 		//ha van description, jelenítse meg, ha nincs akkor ha a tulaj nézi, placeholder, ha nem üres string
 		{% if description %}
-			$("#description-text-area").val("{{description}}")	
+			var encodedDescription = $("<p/>").html(`{{description}}`).text(); // &gt-t kapnank ha a user > hasznalja meg hasonlokat, ezt csereljük ki
+			$("#description-text-area").val(encodedDescription)				   // `` kell a többsoros string miatt
 		{% else %}
 			{% if is_owner %}
 				$("#description-text-area").attr("placeholder", "Adj meg leírást...")	
@@ -910,13 +911,14 @@ body {
     	$(".loader-container").fadeIn("fast")
 	})
 
-
-	// megakadalyozzuk a new line-t : todo: kicserelni ezt hogy lehessen new line
+	/*
+	// megakadalyozzuk a new line-t : todo: kicserelni ezt hogy lehessen new line; solved
     $("#description-text-area").keypress(function(event) {
         if (event.keyCode == 13) {
             event.preventDefault();
         }
     });
+    */
 
 
 	// a textareabol kilépést követően mentjük a leírást
@@ -925,6 +927,8 @@ body {
 
 
 		var textAreaContent = $("#description-text-area").val()
+
+
 
 		info_packet = {
 			"csrfmiddlewaretoken": "{{csrf_token}}",

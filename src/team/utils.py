@@ -13,6 +13,7 @@ class EncodeTeamObject(Serializer):
 			'description': str(obj.description),
 			'members_number': str(len(obj.users.all())),
 			'rank': str(obj.rank),
+			'honor': str(obj.honor),
 		}
 
 		return team_object

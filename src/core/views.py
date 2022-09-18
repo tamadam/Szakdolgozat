@@ -242,7 +242,7 @@ def get_search_results(request):
 
 		if len(searched_text) > 0:
 			teams = Team.objects.filter(name__icontains=searched_text)
-			team_results = sorted(teams, key=lambda team: team.date_created) # a létrehozás dátuma alapján rendszerezzük
+			team_results = sorted(teams, key=lambda team: team.honor, reverse=True) 
 			results = t.serialize(team_results)
 
 		print(results)

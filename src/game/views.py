@@ -784,8 +784,8 @@ def team_arena_view(request):
 	context['rounds'] = rounds
 
 	# sessiönök visszaállítása
-	#request.session['attacker_team_id'] = None
-	#request.session['defender_team_id'] = None
+	request.session['attacker_team_id'] = None
+	request.session['defender_team_id'] = None
 
 
 	return render(request, "game/team_arena.html", context)

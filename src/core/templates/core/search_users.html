@@ -393,14 +393,6 @@ input:checked + .slider:before {
 }
 
 #teams-header-team-name{
-	width: 40%;
-
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-#teams-header-team-members-count{
 	width: 30%;
 
 	display: flex;
@@ -408,6 +400,22 @@ input:checked + .slider:before {
 	justify-content: center;
 }
 
+#teams-header-team-members-count{
+	width: 25%;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+
+#teams-header-team-honor{
+	width: 15%;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
 
 .user-div-paginate {
 
@@ -511,7 +519,7 @@ input:checked + .slider:before {
 }
 
 
-.user-div-paginate-team {
+.team-div-paginate {
 	min-height: 50px;
 	max-height: 80px;
 
@@ -527,12 +535,12 @@ input:checked + .slider:before {
 
 }
 
-.user-div-paginate-team:hover{
+.team-div-paginate:hover{
 	cursor: pointer;
 	background-color: rgba(127, 96, 84, 0.4);
 }
 
-.user-div-search-paginate-team{
+.team-div-search-paginate{
 	min-height: 50px;
 	max-height: 80px;
 
@@ -544,7 +552,7 @@ input:checked + .slider:before {
 	border-bottom: 1px solid rgba(251, 244, 193, 0.6);
 }
 
-.user-div-search-paginate-team:hover{
+.team-div-search-paginate:hover{
 	cursor: pointer;
 	background-color: rgba(127, 96, 84, 0.4);
 }
@@ -574,7 +582,7 @@ input:checked + .slider:before {
 }
 
 .username-field-team{
-	width: 40%;
+	width: 30%;
 
 	display: flex;
 	align-items: center;
@@ -582,8 +590,15 @@ input:checked + .slider:before {
 }
 
 .level-field-team{
-	width: 30%;
+	width: 25%;
 
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.team-honor-field{
+	width: 15%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -684,6 +699,7 @@ input:checked + .slider:before {
 			<div id="teams-header-image"></div>
 			<div id="teams-header-team-name">Csapatnév</div>
 			<div id="teams-header-team-members-count">Csapattagok száma</div>
+			<div id="teams-header-team-honor">Becsületpont</div>
 		</div>
 		<div id="teams">
 			
@@ -789,16 +805,16 @@ input:checked + .slider:before {
 			if(results != null && results != "undefined" && results != "None"){
 				console.log(results)
 				activeTeamSearch = true
-				$(".user-div-paginate-team").css("display", "none")
-				$(".user-div-search-paginate-team").remove()
+				$(".team-div-paginate").css("display", "none")
+				$(".team-div-search-paginate").remove()
 				results.forEach(function(team){
 					appendSearchResultsTeam(team)
 				})
 			}
 			else{
 				activeTeamSearch = false
-				$(".user-div-search-paginate-team").remove()
-				$(".user-div-paginate-team").css("display", "flex")
+				$(".team-div-search-paginate").remove()
+				$(".team-div-paginate").css("display", "flex")
 			}	
 		}
 
@@ -823,9 +839,10 @@ input:checked + .slider:before {
 		teamDescription = team.description
 		teamMembersNum = team.members_number
 		teamRank = team.rank
+		teamHonor = team.honor
 
 
-		createSearchedTeamElement(teamID, teamName, teamDescription, teamMembersNum, teamRank)
+		createSearchedTeamElement(teamID, teamName, teamDescription, teamMembersNum, teamRank, teamHonor)
 	}
 
 
@@ -924,11 +941,11 @@ input:checked + .slider:before {
 	}
 
 
-	function createSearchedTeamElement(teamID, teamName, teamDescription, teamMembersNum, teamRank){
+	function createSearchedTeamElement(teamID, teamName, teamDescription, teamMembersNum, teamRank, teamHonor){
 		var teamsListDiv = document.getElementById("teams")
 
 		var newTeamDiv = document.createElement("div")
-		newTeamDiv.classList.add("user-div-search-paginate-team")
+		newTeamDiv.classList.add("team-div-search-paginate") 
 		newTeamDiv.addEventListener("click", function(event){
 			selectTeam(teamID)
 		})
@@ -949,38 +966,49 @@ input:checked + .slider:before {
 
 		rankField.appendChild(rankFieldSpan)
 
-		var characterTypeField = document.createElement("div")
-		characterTypeField.classList.add("character-type-field-team")
+		var teamLogo = document.createElement("div")
+		teamLogo.classList.add("character-type-field-team")
 
-		var characterTypeFieldImg = document.createElement("img")
-		characterTypeFieldImg.src = "{% static 'images/team-icon.png' %}"
-		characterTypeFieldImg.classList.add("character-type-field-img-team")
+		var teamLogoImg = document.createElement("img")
+		teamLogoImg.src = "{% static 'images/team-icon.png' %}"
+		teamLogoImg.classList.add("character-type-field-img-team")
 
-		characterTypeField.appendChild(characterTypeFieldImg)
+		teamLogo.appendChild(teamLogoImg)
 
-		var usernameField = document.createElement("div")
-		//usernameField.innerHTML = username
-		usernameField.classList.add("username-field-team")
+		var teamNameField = document.createElement("div")
+		teamNameField.classList.add("username-field-team")
 
-		var usernameFieldSpan = document.createElement("span")
-		usernameFieldSpan.innerHTML = teamName
+		var teamNameFieldSpan = document.createElement("span")
+		teamNameFieldSpan.innerHTML = teamName
 
-		usernameField.appendChild(usernameFieldSpan)
+		teamNameField.appendChild(teamNameFieldSpan)
 
 
-		var levelField = document.createElement("div")
-		levelField.classList.add("level-field-team")
+		var membersCountField = document.createElement("div")
+		membersCountField.classList.add("level-field-team")
 
-		var levelFieldSpan = document.createElement("span")
-		levelFieldSpan.innerHTML = teamMembersNum
+		var membersCountFieldSpan = document.createElement("span")
+		membersCountFieldSpan.innerHTML = teamMembersNum
 
-		levelField.appendChild(levelFieldSpan)
+		membersCountField.appendChild(membersCountFieldSpan)
+
+
+
+		var teamHonorField = document.createElement("div")
+		teamHonorField.classList.add("team-honor-field")
+
+		var teamHonorFieldSpan = document.createElement("span")
+		teamHonorFieldSpan.innerHTML = teamHonor
+
+		teamHonorField.appendChild(teamHonorFieldSpan)
+
 
 
 		newTeamDiv.appendChild(rankField)
-		newTeamDiv.appendChild(characterTypeField)
-		newTeamDiv.appendChild(usernameField)
-		newTeamDiv.appendChild(levelField)
+		newTeamDiv.appendChild(teamLogo)
+		newTeamDiv.appendChild(teamNameField)
+		newTeamDiv.appendChild(membersCountField)
+		newTeamDiv.appendChild(teamHonorField)
 
 		teamsListDiv.appendChild(newTeamDiv)
 	}
@@ -1246,8 +1274,9 @@ input:checked + .slider:before {
 		teamDescription = team.description
 		teamMembersNum = team.members_number
 		teamRank = team.rank
+		teamHonor = team.honor
 
-		createTeamElement(teamID, teamName, teamDescription, teamMembersNum, teamRank)
+		createTeamElement(teamID, teamName, teamDescription, teamMembersNum, teamRank, teamHonor)
 	}
 
 
@@ -1352,13 +1381,13 @@ input:checked + .slider:before {
 
 
 
-	function createTeamElement(teamID, teamName, teamDescription, teamMembersNum, teamRank){
+	function createTeamElement(teamID, teamName, teamDescription, teamMembersNum, teamRank, teamHonor){
 		console.log(teamID, teamName, teamDescription)
 
 		var teamsListDiv = document.getElementById("teams")
 
 		var newTeamDiv = document.createElement("div")
-		newTeamDiv.classList.add("user-div-paginate-team")
+		newTeamDiv.classList.add("team-div-paginate")
 		newTeamDiv.addEventListener("click", function(event){
 			selectTeam(teamID)
 		})
@@ -1380,38 +1409,47 @@ input:checked + .slider:before {
 
 		rankField.appendChild(rankFieldSpan)
 
-		var characterTypeField = document.createElement("div")
-		characterTypeField.classList.add("character-type-field-team")
+		var teamLogo = document.createElement("div")
+		teamLogo.classList.add("character-type-field-team")
 
-		var characterTypeFieldImg = document.createElement("img")
-		characterTypeFieldImg.src = "{% static 'images/team-icon.png' %}"
-		characterTypeFieldImg.classList.add("character-type-field-img-team")
+		var teamLogoImg = document.createElement("img")
+		teamLogoImg.src = "{% static 'images/team-icon.png' %}"
+		teamLogoImg.classList.add("character-type-field-img-team")
 
-		characterTypeField.appendChild(characterTypeFieldImg)
+		teamLogo.appendChild(teamLogoImg)
 
-		var usernameField = document.createElement("div")
+		var teamNameField = document.createElement("div")
 		//usernameField.innerHTML = username
-		usernameField.classList.add("username-field-team")
+		teamNameField.classList.add("username-field-team")
 
-		var usernameFieldSpan = document.createElement("span")
-		usernameFieldSpan.innerHTML = teamName
+		var teamNameFieldSpan = document.createElement("span")
+		teamNameFieldSpan.innerHTML = teamName
 
-		usernameField.appendChild(usernameFieldSpan)
+		teamNameField.appendChild(teamNameFieldSpan)
 
 
-		var levelField = document.createElement("div")
-		levelField.classList.add("level-field-team")
+		var membersCountField = document.createElement("div")
+		membersCountField.classList.add("level-field-team")
 
-		var levelFieldSpan = document.createElement("span")
-		levelFieldSpan.innerHTML = teamMembersNum
+		var membersCountFieldSpan = document.createElement("span")
+		membersCountFieldSpan.innerHTML = teamMembersNum
 
-		levelField.appendChild(levelFieldSpan)
+		membersCountField.appendChild(membersCountFieldSpan)
 
+		var teamHonorField = document.createElement("div")
+		teamHonorField.classList.add("team-honor-field")
+
+		var teamHonorFieldSpan = document.createElement("span")
+		teamHonorFieldSpan.innerHTML = teamHonor
+
+
+		teamHonorField.appendChild(teamHonorFieldSpan)
 
 		newTeamDiv.appendChild(rankField)
-		newTeamDiv.appendChild(characterTypeField)
-		newTeamDiv.appendChild(usernameField)
-		newTeamDiv.appendChild(levelField)
+		newTeamDiv.appendChild(teamLogo)
+		newTeamDiv.appendChild(teamNameField)
+		newTeamDiv.appendChild(membersCountField)
+		newTeamDiv.appendChild(teamHonorField)
 
 		teamsListDiv.appendChild(newTeamDiv)
 
