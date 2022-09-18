@@ -48,3 +48,24 @@ class EncodeCharacterObject(Serializer):
 		}
 
 		return character_object
+
+
+class EncodeCharacterObjectInDetail(Serializer):
+	def get_dump_object(self, obj):
+		"""
+		Szerializáljuk a character objectet JSON formátumra, amelyet utána visszaküldünk a viewhoz, az attributumokkal együtt
+		"""
+
+		character_object = {
+			'id': str(obj.account.id),
+			'account': str(obj.account),
+			'character_type': str(obj.character_type),
+			'level': str(obj.level),
+			'strength': str(obj.strength),
+			'skill': str(obj.skill),
+			'intelligence': str(obj.intelligence),
+			'health_point': str(obj.health_point),
+			'fortune': str(obj.fortune),
+		}
+
+		return character_object

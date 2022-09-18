@@ -10,7 +10,7 @@ import math
 from django.core import serializers
 import json
 
-from account.utils import EncodeAccountObject
+from account.utils import EncodeAccountObject, EncodeCharacterObjectInDetail
 
 from django.shortcuts import redirect
 
@@ -595,6 +595,20 @@ def updateRank():
 
 
 
+
+def update_team_rank():
+	print('updating team ranks...')
+	rank_counter = 1
+	teams = Team.objects.all()
+	teams = sorted(teams, key=lambda team: team.honor, reverse=True)
+
+	for team in teams:
+		team.rank = rank_counter
+		rank_counter += 1
+		team.save()
+
+
+
 def set_team_arena_sessions(request):
 	"""
 	Beállítom a session-öket, hogy az arena_team_view-ban le tudjam kérdezni a két csapatot, akik harcolnak
@@ -630,11 +644,6 @@ def set_team_arena_sessions(request):
 def team_arena_view(request):
 	context = {}
 
-	# ha már nincs érvényes sessiön, akkor szintén visszairányítjuk a csapat oldalra
-	# így nem lehet megnyitni a csapat arénát, csak ha ténylegesen harcot indíott valaki
-	if request.session['attacker_team_id'] == None or request.session['defender_team_id'] == None:
-		return redirect('team:user_team_view')
-
 	# a sessiönökből kiszedjük a csapat ID-kat, majd a csapatokat, kivételkezeléssel
 	try:
 		attacker_team_id = request.session['attacker_team_id']
@@ -644,6 +653,15 @@ def team_arena_view(request):
 		attacker_team_id = None
 		defender_team_id = None
 		return redirect('team:user_team_view')
+
+	try:
+		# ha már nincs érvényes sessiön, akkor szintén visszairányítjuk a csapat oldalra
+		# így nem lehet megnyitni a csapat arénát, csak ha ténylegesen harcot indíott valaki
+		if request.session['attacker_team_id'] == None or request.session['defender_team_id'] == None:
+			return redirect('team:user_team_view')
+	except Exception as exception:
+		return redirect('team:user_team_view')
+
 
 
 	if attacker_team_id and defender_team_id:
@@ -680,6 +698,8 @@ def team_arena_view(request):
 
 	s = EncodeAccountObject()
 
+	sc = EncodeCharacterObjectInDetail()
+
 	rounds = []
 
 	while True:
@@ -691,12 +711,16 @@ def team_arena_view(request):
 		attacker = attackers_list[i].account
 		defender = defenders_list[j].account
 
+		attacker_character = attackers_list[i]
+		defender_character = defenders_list[j]
 		#s.serialize([attacker])[0]
 		#s.serialize([defender])[0]
 
 		rounds.append({
 			'attacker': s.serialize([attacker])[0],
 			'defender': s.serialize([defender])[0],
+			'attacker_character': sc.serialize([attacker_character])[0],
+			'defender_character': sc.serialize([defender_character])[0],
 			'winner': serializers.serialize('json', [winner.account]),
 			'attacker_health_values': attacker_health_values,
 			'defender_health_values': defender_health_values,
@@ -716,11 +740,33 @@ def team_arena_view(request):
 		if j >= defender_length:
 			print("defender csapat vesztett")
 			context['winner_of_all'] = 'attacker'
+			context['gained_honor_points'] = DEFAULT_GAIN_HONOR_POINTS_TEAM_FIGHTS
+			context['lost_honor_points'] = 0
+
+			attacker_team.honor += DEFAULT_GAIN_HONOR_POINTS_TEAM_FIGHTS
+			if defender_team.honor >= DEFAULT_LOST_HONOR_POINTS_TEAM_FIGHTS:
+				defender_team.honor -= DEFAULT_LOST_HONOR_POINTS_TEAM_FIGHTS
+			else:
+				defender_team.honor = 0
+
+			defender_team.save()
+			attacker_team.save()
 			break
 
 		if i >= attacker_length:
 			print("attacker csapat vesztett")
 			context['winner_of_all'] = 'defender'
+			context['gained_honor_points'] = 0
+			context['lost_honor_points'] = DEFAULT_LOST_HONOR_POINTS_TEAM_FIGHTS
+
+			defender_team.honor += DEFAULT_GAIN_HONOR_POINTS_TEAM_FIGHTS
+			if attacker_team.honor >= DEFAULT_LOST_HONOR_POINTS_TEAM_FIGHTS:
+				attacker_team.honor -= DEFAULT_LOST_HONOR_POINTS_TEAM_FIGHTS
+			else:
+				attacker_team.honor = 0
+				
+			defender_team.save()
+			attacker_team.save()
 			break
 
 		#print(i, j)
@@ -728,6 +774,8 @@ def team_arena_view(request):
 	#print(attackers_list, "--", defenders_list)
 	#print(attacker_length)
 	#print(defender_length)
+
+	update_team_rank()
 
 	for single_round in rounds:
 		print(single_round)

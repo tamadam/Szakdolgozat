@@ -325,12 +325,11 @@ def individual_team_view(request, *args, **kwargs):
 
 
 
-
 def update_team_rank():
 	print('updating team ranks...')
 	rank_counter = 1
 	teams = Team.objects.all()
-	teams = sorted(teams, key=lambda team: team.date_created)
+	teams = sorted(teams, key=lambda team: team.honor, reverse=True)
 
 	for team in teams:
 		team.rank = rank_counter

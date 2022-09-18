@@ -169,7 +169,7 @@ def load_users_pagination(request):
 def load_teams_pagination(request):
 	try:
 
-		teams = Team.objects.all()
+		teams = Team.objects.get_all_teams_in_ordered_list()
 
 		data = {}
 		page_number = request.GET.get('page_number')

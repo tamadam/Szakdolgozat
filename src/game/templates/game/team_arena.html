@@ -149,18 +149,68 @@
 
 }
 
+
+
+
 .team-footer-character-details{
 	display: flex;
+	flex-direction: row;
 	align-items: center;
 	justify-content: center;
 	width: 50%;
 	height: 80%;
-	background-color: black;
-	background: url("{% static 'images/keret4.png' %}");	
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: cover;
+	background-color: rgba(0, 0, 0, 0.8);
+	border-radius: 10px;
+	border: 4px solid #fae455;
 }
+
+.character-details-type{
+	display: none; /* flex */
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 100%;
+}
+
+.character-type-image{
+	max-width: 80%;
+	max-height: 80%;
+}
+
+.character-details-attributes{
+	display: none; /* flex */
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 100%;
+}
+
+.attribute-item{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 20%;
+}
+
+.single-attr-item-title{
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	width: 70%;
+	height: 100%;
+}
+
+.single-attr-item{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 30%;
+	height: 100%;
+}
+
 
 .team-header{
 	display: flex;
@@ -344,6 +394,159 @@
 	color: white;
 }
 
+.result-container {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: rgba(239, 239, 240, 0.4);
+	display: none; /* flex */
+	justify-content: center;
+	align-items: center;
+	z-index: 9;
+	color: white;
+	font-family: "Kanit-Regular";
+	font-size: 1.8vh;
+
+}
+
+
+#result-message-container{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 14%;
+	height: 20%;
+	background-color: rgba(0, 0, 0, 0.9);
+	border-radius: 20px;
+	color: white;
+	font-family: "Kanit-Regular";
+	font-size: 1.8vh;
+	padding: 0.4em;
+
+
+}
+
+#result-message{
+	width: 100%;
+	height: 78%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+#res-message{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 50%;
+	width: 80%;
+	font-size: 1.6em;
+}
+
+#got-stat{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	height: 50%;
+	width: 80%;	
+}
+
+
+#got-stat-image{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-end;
+	height: 100%;
+	width: 50%;
+}
+
+#xp-image{
+	max-width: 86%;
+	max-height: 86%;
+}
+
+
+
+#got-stat-text{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	width: 50%;
+	font-size: 1.6em;
+}
+
+
+
+
+#result-button{
+	font-size: 1.2em;
+	width: 40%;
+	height: 22%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: white;
+	background: url("{% static 'images/button-back.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: black;
+
+}
+
+
+#result-button:hover{
+	background: url("{% static 'images/button-back-red.png' %}");	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: #fae455;
+	cursor: pointer;
+}
+
+
+.fight-tool {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	height: 140%;
+	width: 140%;
+}
+
+.fight-tool-image{
+	opacity: 0;
+	visibility: hidden;
+	max-width: 40%;
+	max-height: 40%;
+}
+
+#left-tool{
+	justify-content: flex-end;
+}
+
+#right-tool{
+	justify-content: flex-start;
+}
+
+#left-tool-image{
+    transition: transform 0.2s linear;
+   	transform: rotate(10deg);
+}
+
+#right-tool-image{
+    transition: transform 0.2s linear;
+   	transform: rotate(-10deg);
+}
+
+
+
 </style>
 <div id="team-arena-content">
 	<div id="team-arena-header">
@@ -369,6 +572,10 @@
 					<div class="cover-before-simulation">
 						<div class="cover-text">Várakozás az indításra...</div>
 					</div>
+
+					<div class="fight-tool" id="left-tool"><img src="{% static 'images/sword-2.png' %}" alt="harci-eszkoz" class="fight-tool-image" id="left-tool-image"></div>
+
+
 					<div class="character-health-bar-container">
 						<div class="health-bar" id="left-character-health-bar">
 							<p class="health-bar-percentage" id="left-health-bar-percentage">100%</p>
@@ -382,7 +589,38 @@
 					<div class="team-footer-character-name" id="left-character-name">Játékos 1</div>
 				</div>
 				<div class="team-footer-character-details-container">
-					<div class="team-footer-character-details" id="left-character-details">Játékos 1 adatok</div>
+					<div class="team-footer-character-details" id="left-character-details">
+
+						<div class="cover-before-simulation">
+							<div class="cover-text">Várakozás az indításra...</div>
+						</div>
+
+						<div class="character-details-type">
+							<img src="" alt="tipus-kep" id="player1-character-type" class="character-type-image">
+						</div>
+						<div class="character-details-attributes">
+							<div class="attribute-item">
+								<div class="single-attr-item-title">Erő</div>
+								<div class="single-attr-item" id="player1-strength">...</div>
+							</div>
+							<div class="attribute-item">
+								<div class="single-attr-item-title">Ügyesség</div>
+								<div class="single-attr-item" id="player1-skill">...</div>
+							</div>
+							<div class="attribute-item">
+								<div class="single-attr-item-title">Értelem</div>
+								<div class="single-attr-item" id="player1-intelligence">...</div>
+							</div>
+							<div class="attribute-item">
+								<div class="single-attr-item-title">Kitartás</div>
+								<div class="single-attr-item" id="player1-health_point">...</div>		
+							</div>
+							<div class="attribute-item">
+								<div class="single-attr-item-title">Szerencse</div>
+								<div class="single-attr-item" id="player1-fortune">...</div>	
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -395,6 +633,10 @@
 					<div class="cover-before-simulation">
 						<div class="cover-text">Várakozás az indításra...</div>
 					</div>
+
+					<div class="fight-tool" id="right-tool"><img src="{% static 'images/wand-2.png' %}" alt="harci-eszkoz" class="fight-tool-image" id="right-tool-image"></div>
+
+
 					<div class="character-health-bar-container">
 						<div class="health-bar" id="right-character-health-bar">
 							<p class="health-bar-percentage" id="right-health-bar-percentage">100%</p>
@@ -407,7 +649,37 @@
 					<div class="team-footer-character-name" id="right-character-name">Játékos 2</div>
 				</div>
 				<div class="team-footer-character-details-container">
-					<div class="team-footer-character-details" id="right-character-details">Játékos 2 adatok</div>
+					<div class="team-footer-character-details" id="right-character-details">
+
+						<div class="cover-before-simulation">
+							<div class="cover-text">Várakozás az indításra...</div>
+						</div>
+						<div class="character-details-type">
+							<img src="" alt="tipus-kep" id="player2-character-type" class="character-type-image">
+						</div>
+						<div class="character-details-attributes">
+							<div class="attribute-item">
+								<div class="single-attr-item-title">Erő</div>
+								<div class="single-attr-item" id="player2-strength">...</div>
+							</div>
+							<div class="attribute-item">
+								<div class="single-attr-item-title">Ügyesség</div>
+								<div class="single-attr-item" id="player2-skill">...</div>
+							</div>
+							<div class="attribute-item">
+								<div class="single-attr-item-title">Értelem</div>
+								<div class="single-attr-item" id="player2-intelligence">...</div>
+							</div>
+							<div class="attribute-item">
+								<div class="single-attr-item-title">Kitartás</div>
+								<div class="single-attr-item" id="player2-health_point">...</div>		
+							</div>
+							<div class="attribute-item">
+								<div class="single-attr-item-title">Szerencse</div>
+								<div class="single-attr-item" id="player2-fortune">...</div>	
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -415,6 +687,26 @@
 	<div id="team-arena-footer">
 		<div id="start-fight-simulation">Szimuláció indítása</div>
 	</div>
+
+	<!-- eredmény megjelenítése harc után -->
+	<div class="result-container">
+		<div id="result-message-container">
+			<div id="result-message">
+				<div id="got-stat">
+					<div id="got-stat-image">
+						<img src="{% static 'images/badge.png' %}" alt="xp" id="xp-image">
+					</div>
+					<div id="got-stat-text">
+						<span id="xp-span">...</span>
+					</div>
+				</div>
+				<div id="res-message">...</div>
+
+			</div>
+			<div id="result-button">Rendben</div>
+		</div>
+	</div>
+
 	<div class="loader-container">
 	</div>
 
@@ -426,8 +718,12 @@
 	const audio = new Audio()
 	audio.src = "{% static 'audios/button_click.mp3' %}"
 
-	const audioFight1 = new Audio()
-	audioFight1.src = "{% static 'audios/fight1.mp3' %}"
+	const attackerSound = new Audio()
+	attackerSound.src = "{% static 'audios/fight1.mp3' %}"
+
+	const defenderSound = new Audio()
+	defenderSound.src = "{% static 'audios/fight1.mp3' %}"
+
 
 
 	function changeColor(imageElement){
@@ -474,6 +770,8 @@
 		if(startSimulation){
 			audio.play()
 			$(".character-health-bar-container").css("visibility", "visible")
+			$(".character-details-type").css("display", "flex")
+			$(".character-details-attributes").css("display", "flex")
 			$(".cover-before-simulation").css("display", "none")
 			$("#start-fight-simulation").html("Ugrás a végére")
 			startSimulation = false
@@ -483,9 +781,22 @@
 		else if(skipSimulation){
 			audio.play()
 			console.log("kihagyas")
+			cancelAllTimeouts()
+			setLeftCharacterSide(true)
+			setRightCharacterSide(true)
+			finishTeamFight(0)
 		}
 
 	})
+
+
+	function cancelAllTimeouts(){
+		clearTimeout(startFightAttackerTimeout)
+		clearTimeout(leftHealthBarTimeout)
+		clearTimeout(rightHealthBarTimeout)
+		clearTimeout(defenderTimeout)
+		clearTimeout(attackerTimeout)
+	}
 
 
 	var attackerTeamHealthValues = []
@@ -496,6 +807,33 @@
 
 	var attackerProfileImages = []
 	var defenderProfileImages = []
+
+	var attackerAttributes = []
+	var defenderAttributes = []
+
+
+	//var lastAttackerHealthValue	= null
+	//var lastDefenderHealthValue = null
+	var lastAttackerHealthValueFirst = null
+	var lastAttackerHealthValueLast = null
+
+	var lastDefenderHealthValueFirst = null
+	var lastDefenderHealthValueLast = null
+
+	var lastAttackerUsername = null
+	var lastDefenderUsername = null
+
+	var lastAttackerProfileImage = null
+	var lastDefenderProfileImage = null
+
+
+	var lastAttackerAttributes = null
+	var lastDefenderAttributes = null
+
+
+	var currentAttackerType = null
+	var currentDefenderType = null
+
 
 	$(window).on("load", function(){
 
@@ -515,13 +853,73 @@
 			defenderProfileImages.push("{{single_round.defender.profile_image}}")
 			//console.log("{{single_round.attacker.profile_image}}")
 
+
+			attackerAttributes.push({
+				strength: "{{single_round.attacker_character.strength}}",
+				skill: "{{single_round.attacker_character.skill}}",
+				intelligence: "{{single_round.attacker_character.intelligence}}",
+				health_point: "{{single_round.attacker_character.health_point}}",
+				fortune: "{{single_round.attacker_character.fortune}}",
+				character_type: "{{single_round.attacker_character.character_type}}"
+			})
+
+			defenderAttributes.push({
+				strength: "{{single_round.defender_character.strength}}",
+				skill: "{{single_round.defender_character.skill}}",
+				intelligence: "{{single_round.defender_character.intelligence}}",
+				health_point: "{{single_round.defender_character.health_point}}",
+				fortune: "{{single_round.defender_character.fortune}}",
+				character_type: "{{single_round.defender_character.character_type}}"
+
+			})
+
 		{% endfor %}
 
-		console.log(attackerTeamHealthValues)
-		//console.log(attackerTeamHealthValues.length)
-		console.log(defenderTeamHealthValues)
-		console.log(attackerUsernames)
-		console.log(defenderUsernames)
+		//console.log(attackerTeamHealthValues)
+		//console.log(attackerTeamHealthValues[attackerTeamHealthValues.length-1])
+		//console.log(defenderTeamHealthValues)
+		//console.log(attackerUsernames)
+		//console.log(defenderUsernames)
+		//console.log(attackerProfileImages)
+		//console.log(defenderProfileImages)
+		//console.log(attackerAttributes)
+		//console.log(defenderAttributes)
+
+		/* a kihagyás gombra nyomás miatt kellenek az utolsó értékek mindenből */
+
+		var lastAttackerHealthValue = attackerTeamHealthValues[attackerTeamHealthValues.length-1]
+		lastAttackerHealthValueFirst = lastAttackerHealthValue[0]
+		lastAttackerHealthValueLast = lastAttackerHealthValue[lastAttackerHealthValue.length-1]
+
+		var lastDefenderHealthValue = defenderTeamHealthValues[defenderTeamHealthValues.length-1]
+		lastDefenderHealthValueFirst = lastDefenderHealthValue[0]		
+		lastDefenderHealthValueLast = lastDefenderHealthValue[lastDefenderHealthValue.length-1]		
+
+		lastAttackerUsername = attackerUsernames[attackerUsernames.length-1]
+		lastDefenderUsername = defenderUsernames[defenderUsernames.length-1]
+
+		lastAttackerProfileImage = attackerProfileImages[attackerProfileImages.length-1]
+		lastDefenderProfileImage = defenderProfileImages[defenderProfileImages.length-1]
+
+		lastAttackerAttributes = attackerAttributes[attackerAttributes.length-1]
+		lastDefenderAttributes = defenderAttributes[defenderAttributes.length-1]
+
+		//console.log(lastAttackerHealthValue)
+		//console.log(lastAttackerHealthValueFirst)
+		//console.log(lastAttackerHealthValueLast)
+
+
+		//console.log(lastDefenderHealthValue)
+		//console.log(lastDefenderHealthValueFirst)
+		//console.log(lastDefenderHealthValueLast)
+		//console.log(lastAttackerUsername)
+		//console.log(lastDefenderUsername)
+		//console.log(lastAttackerProfileImage)
+		//console.log(lastDefenderProfileImage)
+		//console.log(lastAttackerAttributes)
+		//console.log(lastDefenderAttributes)
+
+		setResultContainerValues()
 
 		$(".loader-container").fadeOut("slow")
 
@@ -536,6 +934,9 @@
 	var attackerProfileImagesCounter = 0
 	var defenderProfileImagesCounter = 0
 
+	var attackerAttributesCounter = 0
+	var defenderAttributesCounter = 0
+
 	var attackerCounter = 0
 	var defenderCounter = 0
 
@@ -545,6 +946,8 @@
 
 	// 1-ről indítjuk az i és j-t is mivel az első érték mindig a kiinduló életerő
 	// azt a program állítja be es utana kezdodik a sebzés
+
+	var startFightAttackerTimeout = null
 
 	function startFight(){
 		
@@ -563,18 +966,17 @@
 
 		if (setLeftCharacter){
 			console.log("set left character image and name...")
-			$("#left-character-name").html(attackerUsernames[attackerUsernamesCounter])
 
+			setLeftCharacterSide(false)
 
-
-			$("#left-character-container").css("background-image", "url(" + attackerProfileImages[attackerProfileImagesCounter] + ")" );
 			setLeftCharacter = false
 		}
 
 		if (setRightCharacter){
 			console.log("set right character image and name...")
-			$("#right-character-name").html(defenderUsernames[defenderUsernamesCounter])
-			$("#right-character-container").css("background-image", "url(" + defenderProfileImages[defenderProfileImagesCounter] + ")" );
+
+			setRightCharacterSide(false)
+
 			setRightCharacter = false
 		}
 
@@ -585,10 +987,150 @@
 		defenderLoop(defender)
 
 		i = 1
-		setTimeout(function(){
+		startFightAttackerTimeout = setTimeout(function(){
 			attackerLoop(attacker)
 		}, 1000)
 
+
+	}
+
+
+
+
+	function setLeftCharacterSide(isSkip){
+		if(!isSkip){
+			$("#left-character-name").html(attackerUsernames[attackerUsernamesCounter])
+			$("#left-character-container").css("background-image", "url(" + attackerProfileImages[attackerProfileImagesCounter] + ")" );
+			$("#player1-strength").html(attackerAttributes[attackerAttributesCounter].strength)
+			$("#player1-skill").html(attackerAttributes[attackerAttributesCounter].skill)
+			$("#player1-intelligence").html(attackerAttributes[attackerAttributesCounter].intelligence)
+			$("#player1-health_point").html(attackerAttributes[attackerAttributesCounter].health_point)
+			$("#player1-fortune").html(attackerAttributes[attackerAttributesCounter].fortune)
+
+			if (attackerAttributes[attackerAttributesCounter].character_type == "warrior") {
+				$("#player1-character-type").attr("src", "{% static 'images/swordsman.png' %}")
+				$("#left-tool-image").attr("src", "{% static 'images/sword-2.png' %}")
+				attackerSound.src = "{% static 'audios/warrior-attack.mp3' %}"
+			}
+			else if(attackerAttributes[attackerAttributesCounter].character_type == "mage"){
+				$("#player1-character-type").attr("src", "{% static 'images/wizard.png' %}")
+				$("#left-tool-image").attr("src", "{% static 'images/wand-2.png' %}")
+				attackerSound.src = "{% static 'audios/mage-attack.mp3' %}"
+
+			}
+			else if(attackerAttributes[attackerAttributesCounter].character_type == "scout"){
+				$("#player1-character-type").attr("src", "{% static 'images/archer.png' %}")
+				$("#left-tool-image").attr("src", "{% static 'images/bow-2.png' %}")
+				attackerSound.src = "{% static 'audios/scout-attack.mp3' %}"
+
+			}
+			else{
+				$("#player1-character-type").attr("src", "{% static 'images/swordsman.png' %}")
+				$("#left-tool-image").attr("src", "{% static 'images/sword-2.png' %}")
+				attackerSound.src = "{% static 'audios/warrior-attack.mp3' %}"
+			}
+		}
+		else{
+			var leftHealthPercent = (lastAttackerHealthValueLast / lastAttackerHealthValueFirst) * 100
+			leftHealthPercent = Math.round(leftHealthPercent)
+	   		$("#left-health-bar-percentage").html(leftHealthPercent + "%")
+
+			healthBars.eq(0).finish()
+	    	healthBars.eq(0).css("width", leftHealthPercent + "%")
+
+
+
+
+			$("#left-character-name").html(lastAttackerUsername)
+			$("#left-character-container").css("background-image", "url(" + lastAttackerProfileImage + ")" );
+			$("#player1-strength").html(lastAttackerAttributes.strength)
+			$("#player1-skill").html(lastAttackerAttributes.skill)
+			$("#player1-intelligence").html(lastAttackerAttributes.intelligence)
+			$("#player1-health_point").html(lastAttackerAttributes.health_point)
+			$("#player1-fortune").html(lastAttackerAttributes.fortune)
+
+			if (lastAttackerAttributes.character_type == "warrior") {
+				$("#player1-character-type").attr("src", "{% static 'images/swordsman.png' %}")
+			}
+			else if(lastAttackerAttributes.character_type == "mage"){
+				$("#player1-character-type").attr("src", "{% static 'images/wizard.png' %}")
+			}
+			else if(lastAttackerAttributes.character_type == "scout"){
+				$("#player1-character-type").attr("src", "{% static 'images/archer.png' %}")
+			}
+			else{
+				$("#player1-character-type").attr("src", "{% static 'images/swordsman.png' %}")
+			}
+
+		}
+
+	}
+
+	function setRightCharacterSide(isSkip){
+		if(!isSkip){
+			$("#right-character-name").html(defenderUsernames[defenderUsernamesCounter])
+			$("#right-character-container").css("background-image", "url(" + defenderProfileImages[defenderProfileImagesCounter] + ")" );
+			$("#player2-strength").html(defenderAttributes[defenderAttributesCounter].strength)
+			$("#player2-skill").html(defenderAttributes[defenderAttributesCounter].skill)
+			$("#player2-intelligence").html(defenderAttributes[defenderAttributesCounter].intelligence)
+			$("#player2-health_point").html(defenderAttributes[defenderAttributesCounter].health_point)
+			$("#player2-fortune").html(defenderAttributes[defenderAttributesCounter].fortune)
+
+			if (defenderAttributes[defenderAttributesCounter].character_type == "warrior") {
+				$("#player2-character-type").attr("src", "{% static 'images/swordsman.png' %}")
+				$("#right-tool-image").attr("src", "{% static 'images/sword-2.png' %}")
+				defenderSound.src = "{% static 'audios/warrior-attack.mp3' %}"
+
+			}
+			else if(defenderAttributes[defenderAttributesCounter].character_type == "mage"){
+				$("#player2-character-type").attr("src", "{% static 'images/wizard.png' %}")
+				$("#right-tool-image").attr("src", "{% static 'images/wand-2.png' %}")
+				defenderSound.src = "{% static 'audios/mage-attack.mp3' %}"
+			}
+			else if(defenderAttributes[defenderAttributesCounter].character_type == "scout"){
+				$("#player2-character-type").attr("src", "{% static 'images/archer.png' %}")
+				$("#right-tool-image").attr("src", "{% static 'images/bow-2.png' %}")
+				defenderSound.src = "{% static 'audios/scout-attack.mp3' %}"
+			}
+			else{
+				$("#player2-character-type").attr("src", "{% static 'images/swordsman.png' %}")
+				$("#right-tool-image").attr("src", "{% static 'images/sword-2.png' %}")
+				defenderSound.src = "{% static 'audios/warrior-attack.mp3' %}"
+			}
+		}
+		else{
+
+			var rightHealthPercent = (lastDefenderHealthValueLast / lastDefenderHealthValueFirst) * 100
+			rightHealthPercent = Math.round(rightHealthPercent)
+   			$("#right-health-bar-percentage").html(rightHealthPercent + "%")
+
+   			healthBars.eq(1).finish()
+    		healthBars.eq(1).css("width", rightHealthPercent + "%")
+
+
+
+			$("#right-character-name").html(lastDefenderUsername)
+			$("#right-character-container").css("background-image", "url(" + lastDefenderProfileImage + ")" );
+			$("#player2-strength").html(lastDefenderAttributes.strength)
+			$("#player2-skill").html(lastDefenderAttributes.skill)
+			$("#player2-intelligence").html(lastDefenderAttributes.intelligence)
+			$("#player2-health_point").html(lastDefenderAttributes.health_point)
+			$("#player2-fortune").html(lastDefenderAttributes.fortune)
+
+			if (lastDefenderAttributes.character_type == "warrior") {
+				$("#player2-character-type").attr("src", "{% static 'images/swordsman.png' %}")
+			}
+			else if(lastDefenderAttributes.character_type == "mage"){
+				$("#player2-character-type").attr("src", "{% static 'images/wizard.png' %}")
+			}
+			else if(lastDefenderAttributes.character_type == "scout"){
+				$("#player2-character-type").attr("src", "{% static 'images/archer.png' %}")
+			}
+			else{
+				$("#player2-character-type").attr("src", "{% static 'images/swordsman.png' %}")
+			}
+
+		}
 
 	}
 
@@ -618,6 +1160,8 @@
 	var firstAttackValue = null
 	var changeFirstAttackValue = true	
 
+	var leftHealthBarTimeout
+
 	function attackerLoop(attacker) {         //  create a loop function
 	  attackerTimeout = setTimeout(function() {   //  call a 3s setTimeout when the loop is called
 	    //console.log('attacker', attacker[i]);   //  your code here
@@ -629,13 +1173,28 @@
 	    }
 
 
-	    attackerHealthPercent = calculatePercentDef(attacker, i, firstAttackValue)
+	    attackerHealthPercent = calculatePercent(attacker, i, firstAttackValue)
 
 	    //console.log("attackerpercent " + attackerHealthPercent)
-    	healthBars.eq(0).animate({width:attackerHealthPercent + "%"}, 800)   
+    	healthBars.eq(0).animate({width:attackerHealthPercent + "%"}, 400)   
    		$("#left-health-bar-percentage").html(attackerHealthPercent + "%")
 
-		audioFight1.play()
+		defenderSound.play()
+
+        $("#right-tool img").css({
+        	opacity: 0.0,
+        	visibility:"visible",
+        	transform: "rotate(-80deg)",
+        }).animate({
+        	opacity: 1.0,
+        }, 400, function() {
+        	$("#right-tool img").css({
+        		opacity: 1.0,
+        		visibility:"visible",
+        		transform: "rotate(-10deg)",
+        	}).animate({opacity: 0.0}, 400)
+        })
+
         $("#left-character-container").css({
         	boxShadow: "rgba(240, 28, 28, 1.0) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset"
         })
@@ -662,22 +1221,26 @@
 	    			defenderUsernamesCounter++
 					attackerProfileImagesCounter++
 					defenderProfileImagesCounter++
+					attackerAttributesCounter++
+					defenderAttributesCounter++
 					setLeftCharacter = true
 
 	    			if(attackerCounter < attackerTeamHealthValues.length){
-	  				   	healthBars.eq(0).animate({width: 100 + "%"}, 100)   
+
 
 			       		console.log("change first attack value...")
 			       		changeFirstAttackValue = true
 
-		    			setTimeout(function(){
+		    			leftHealthBarTimeout = setTimeout(function(){
+		    				healthBars.eq(0).animate({width: 100 + "%"}, 200)   
 		    				$("#left-health-bar-percentage").html(100 + "%")
 		    				startFight()
 
 		    			}, 400)
 	    			}
 	    			else{
-	    				console.log("attacker vesztett")
+	    				//console.log("attacker vesztett")
+	    				finishTeamFight(400)
 	    			}
 
 
@@ -706,6 +1269,8 @@
 	var firstDefendValue = null
 	var changeFirstDefendValue = true
 
+	var rightHealthBarTimeout = null
+
 	function defenderLoop(defender) {         
 	 	defenderTimeout = setTimeout(function() {   
 		    //console.log('defender', defender[j])
@@ -717,14 +1282,32 @@
 		    	changeFirstDefendValue = false
 		    }
 
-		  	defenderHealthPercent = calculatePercentDef(defender, j, firstDefendValue)
+		  	defenderHealthPercent = calculatePercent(defender, j, firstDefendValue)
 	    	
 	    	//console.log("defenderpercent " + defenderHealthPercent)
 
-        	healthBars.eq(1).animate({width:defenderHealthPercent + "%"}, 800)   
+        	healthBars.eq(1).animate({width:defenderHealthPercent + "%"}, 400)   
        		$("#right-health-bar-percentage").html(defenderHealthPercent + "%")
 
-			audioFight1.play()
+			attackerSound.play()
+
+
+	        $("#left-tool img").css({
+	        	opacity: 0.0,
+	        	visibility:"visible",
+	        	transform: "rotate(80deg)",
+	        }).animate({
+	        	opacity: 1.0,
+	        }, 400, function() {
+	        	$("#left-tool img").css({
+	        		opacity: 1.0,
+	        		visibility:"visible",
+	        		transform: "rotate(10deg)",
+	        	}).animate({opacity: 0.0}, 400)
+	        })
+
+
+
 		    $("#right-character-container").css({
 		    	boxShadow: "rgba(240, 28, 28, 1.0) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset"
 		    })
@@ -752,20 +1335,24 @@
 		       			attackerUsernamesCounter++
 						attackerProfileImagesCounter++
 						defenderProfileImagesCounter++
+						attackerAttributesCounter++
+						defenderAttributesCounter++
 						setRightCharacter = true
 
 		       			if (defenderCounter < defenderTeamHealthValues.length){
-				        	healthBars.eq(1).animate({width: 100 + "%"}, 100)   
+
 
 				       		console.log("change first defend value...")
 				       		changeFirstDefendValue = true
-				    		setTimeout(function(){
+				    		rightHealthBarTimeout = setTimeout(function(){
+				    			healthBars.eq(1).animate({width: 100 + "%"}, 200)   
 				    			$("#right-health-bar-percentage").html(100 + "%")
 				    			startFight()
 				    		}, 400)
 		       			}
 		       			else{
-		       				console.log("defender vesztett")
+		       				//console.log("defender vesztett")
+		       				finishTeamFight(400)
 		       			}
 
 		    		}
@@ -777,26 +1364,9 @@
 	
 
 
+
+
 	function calculatePercent(arrayOfHealthValues, currentIndex, firstElement){
-	    var firstElement = arrayOfHealthValues[0];
-	    console.log(firstElement)
-	    var length = arrayOfHealthValues.length
-	    if (currentIndex < length){
-	        var nextElement = arrayOfHealthValues[currentIndex];
-	        var healthPercent = (nextElement / firstElement) * 100;
-
-	        healthPercent = Math.round(healthPercent);
-	        //console.log(healthPercent);
-
-	        return healthPercent;
-	    }
-
-	    return 0 
-
-	}
-
-
-	function calculatePercentDef(arrayOfHealthValues, currentIndex, firstElement){
 	    //var firstElement = arrayOfHealthValues[0];
 	    console.log(firstElement)
 	    var length = arrayOfHealthValues.length
@@ -814,6 +1384,47 @@
 
 	}
 
+	$("#result-button").click(function(){
+		audio.play()
+		$(".result-container").css("display", "none")
+
+
+    	setTimeout(function(){
+	    	try {
+
+				var url = "{% url 'team:user_team_view' %}"
+				var win = window.location.replace(url) 
+				win.focus()
+			}
+			catch(error){
+				console.log(error)
+			}
+
+    	}, 100)
+	})
+
+
+	function setResultContainerValues(){
+		if("{{winner_of_all}}" == "attacker"){
+			$("#res-message").html("Nyertetek!")
+			$("#xp-span").html("{{gained_honor_points}}")
+		}
+		else{
+			$("#res-message").html("Vesztettetek!")
+			$("#xp-span").html("-{{lost_honor_points}}")
+
+		}
+	}
+
+
+	function finishTeamFight(timeout){
+		$("#start-fight-simulation").css("visibility", "hidden")
+
+		setTimeout(function(){
+			$(".result-container").css("display", "flex")
+		}, timeout)
+
+	}
 
 
 </script>

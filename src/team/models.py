@@ -14,6 +14,14 @@ from notification.models import Notification
 
 # https://docs.djangoproject.com/en/4.0/topics/db/models/#extra-fields-on-many-to-many-relationships
 
+class TeamManager(models.Manager):
+	def get_all_teams_in_ordered_list(self):
+		teams = Team.objects.all()
+		teams = sorted(teams, key=lambda team: team.honor, reverse=True)
+
+		return teams
+
+
 class Team(models.Model):
 	name 			= models.CharField(max_length=60, unique=True, blank=False)
 	description		= models.TextField(max_length=200, unique=False, blank=True, default="")
@@ -21,7 +29,10 @@ class Team(models.Model):
 	users 			= models.ManyToManyField(settings.AUTH_USER_MODEL, through='Membership')
 	users_in_chat 	= models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='users_in_chat')
 	rank			= models.DecimalField(verbose_name='rank', max_digits=19, decimal_places=0, blank = True, null = True) #helyezes
+	honor			= models.DecimalField(verbose_name='team honor', max_digits=19, decimal_places=0, default = 1) #becsuletpont
 	owner_of_team 	= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, related_name='owner_of_team')
+
+	objects 		= TeamManager()
 
 	def __str__(self):
 		return self.name
