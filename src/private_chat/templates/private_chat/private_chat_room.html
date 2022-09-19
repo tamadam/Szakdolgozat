@@ -106,7 +106,7 @@
 #private-chat-title{
 	display: flex;
 	align-items: row;
-	height: 14%;
+	height: 20%;
 	width: 100%;
 	align-items: center;
 	justify-content: center;
@@ -114,19 +114,30 @@
 
 }
 
+#private-chat-page-chat-container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 70%;
+}
+
 #private-chat-main-container{
 	width: 80%;
-	height: 60%;
+	height: 100%;
 	display: flex;
-	flex-grow: 1;
+	gap: 5%;
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
 }
 
 #private-chat-footer{
-	flex: 1;
-	height: 26%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 10%;
+	width: 100%;
 }
 
 #private-chat-page-messages{
@@ -141,6 +152,7 @@
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
+	height: 5%;
 	background-color: #e3cc4a;
 	border-top-left-radius: 20px;
 	border-top-right-radius: 20px;
@@ -173,13 +185,13 @@
 	height: 83.2%;
 
 	width: 100%;
-	margin-left: 2em;
+
 
 }
 
 
 #recent-users-title{
-	height: 5%;
+	height: 8%;
 	width: 100%;
 	background-color: #e3cc4a;
 	border-top-left-radius: 20px;
@@ -187,10 +199,13 @@
 	text-align: center;
 	font-size: 1em;
 	border: 2px solid black;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 #recent-users-list{
-	height: 95%;
+	height: 92%;
 
 	overflow-y: auto;
 	width: 100%;
@@ -212,7 +227,7 @@
 #private-chat-container{
 	display: flex;
 	flex-direction: column;
-	height: 100%;
+	height: 95%;
 }
 
 .chat-messages {
@@ -257,6 +272,7 @@
 	background-color: #e4c885;
 	display: flex;
 	align-items: center;
+	justify-content: center;
 
 }
 
@@ -431,14 +447,16 @@
 }
 
 .zero-message{
-	display: none;
+	display: flex;
 	align-items: center;
 	justify-content: center;
+	width: 100%;
+	height: 100%;
+	visibility: hidden;
 	color: red;
 	font-family: "Kanit-Regular";
 	font-size: 1.4em;
 	background-color: rgba(0, 0, 0, 0.8);
-	padding: 1em;
 	user-select: none;
 }
 
@@ -465,110 +483,109 @@
 		<div id="private-chat-title-right">	
 		</div>
 	</div>
+	<div id="private-chat-page-chat-container">
+		<div id="private-chat-main-container">
+			
 
-	<div id="private-chat-main-container">
-		
+			<div id="private-chat-page-messages">
 
-		<div id="private-chat-page-messages">
-
-				<div id="private-chat-room-title-container">
-					<div id="private-chat-room-title">
-						<!--<img class="profile-image rounded-circle img-fluid" id="id_other_profile_image" src="{{message_and_user.profile_image}}">-->
-						<h3 id="private-chat-other-user-name">...</h3>
-					</div>
-				</div>
-
-				<!-- eköré a div köré lehetne tenni 1 divet aminek paddingot allitunk-->
-				<div id="private-chat-container"> <!-- public chatnel ez a chat-containernek felel meg -->
-					<!--
-					LOADING SPINNER
-					<div class="d-flex flex-row justify-content-center" id="id_chatroom_loading_spinner_container">
-						<div class="spinner-border text-primary"  id="id_chatroom_loading_spinner" role="status"  style="display: none; ">
-							<span class="sr-only">Loading...</span>
+					<div id="private-chat-room-title-container">
+						<div id="private-chat-room-title">
+							<!--<img class="profile-image rounded-circle img-fluid" id="id_other_profile_image" src="{{message_and_user.profile_image}}">-->
+							<h3 id="private-chat-other-user-name">...</h3>
 						</div>
 					</div>
-					
-					-->
 
-
-					
-					<div class="chat-messages" id="chat_messages_id">
+					<!-- eköré a div köré lehetne tenni 1 divet aminek paddingot allitunk-->
+					<div id="private-chat-container"> <!-- public chatnel ez a chat-containernek felel meg -->
+						<!--
+						LOADING SPINNER
+						<div class="d-flex flex-row justify-content-center" id="id_chatroom_loading_spinner_container">
+							<div class="spinner-border text-primary"  id="id_chatroom_loading_spinner" role="status"  style="display: none; ">
+								<span class="sr-only">Loading...</span>
+							</div>
+						</div>
 						
-					</div>
+						-->
 
 
-					<div class="send-new-message-container">
-						<textarea class="send-new-message-textarea" id="send-new-message-textarea-id"></textarea>
-						<div id="send-new-message-button">
-							<img src="{% static 'images/send-message-icon.png' %}" alt="küldés">
+						
+						<div class="chat-messages" id="chat_messages_id">
+							
 						</div>
-					</div>
-					
-					<div id="error-message-div">
-						<!-- Hibaüzenetek chatelés közben -->
-						<span id="error-message-text">Hiba!</span>
-
-					</div>	
 
 
-				</div>
+						<div class="send-new-message-container">
+							<textarea class="send-new-message-textarea" id="send-new-message-textarea-id"></textarea>
+							<div id="send-new-message-button">
+								<img src="{% static 'images/send-message-icon.png' %}" alt="küldés">
+							</div>
+						</div>
+						
+						<div id="error-message-div">
+							<!-- Hibaüzenetek chatelés közben -->
+							<span id="error-message-text">Hiba!</span>
+
+						</div>	
 
 
-		</div>
-		<div id="private-chat-page-nav">
-			<div id="private-chat-page-recent-users">
-					<div id="recent-users-title">
-						<h3>Korábbi üzenetek</h3>
-					</div>
-
-					<div id="recent-users-list"> <!-- refresh me id -->
-						{% for message_and_user in messages_and_users %}
-							{% if message_and_user.has_new_messages %}
-								<!-- itt volt id  id="id_friend_container_{{message_and_user.other_user.id}}" -->
-								<div class="earlier-message" onclick="selectUserChatRoom('{{message_and_user.other_user.id}}')" style="background-color: #afafaf; font-family: 'Kanit-Bold'; color: #1743ff" onmouseover="changeBackgroundPrivateMessage(this, true)" onmouseout="resetBackgroundPrivateMessage(this, true)">
-									<div class="earlier-message-profile-image">
-										<!-- itt volt id id="id_friend_img_{{message_and_user.other_user.id}}" -->
-										<img class="profile-image" src="{{message_and_user.profile_image}}" >	
-									</div>
-									<div class="earlier-message-body">
-										<div class="earlier-message-body-username">
-											<span class="username-recent-message">{{message_and_user.other_user.username}} </span>										
-										</div>
-										<div class="earlier-message-body-message">
-											<span>{{message_and_user.message|truncatechars:25}}</span>										
-										</div>
-									</div>
-								</div>
-
-
-							{% else %}
-								<div class="earlier-message" onclick="selectUserChatRoom('{{message_and_user.other_user.id}}')" style="background-color: rgba(255, 255, 255, 0.6);" onmouseover="changeBackgroundPrivateMessage(this, false)" onmouseout="resetBackgroundPrivateMessage(this, false)">
-									<div class="earlier-message-profile-image">
-										<!-- itt volt id id="id_friend_img_{{message_and_user.other_user.id}}" -->
-										<img class="profile-image" src="{{message_and_user.profile_image}}" >
-									</div>
-									<div class="earlier-message-body">
-										<div class="earlier-message-body-username">
-											<span id="username-recent-message">{{message_and_user.other_user.username}}</span>										
-										</div>
-										<div class="earlier-message-body-message">
-											<span>{{message_and_user.message|truncatechars:25}}</span>										
-										</div>
-									</div>
-								</div>
-							{% endif %}
-
-						{% endfor %}
 					</div>
 
 
 			</div>
+			<div id="private-chat-page-nav">
+				<div id="private-chat-page-recent-users">
+						<div id="recent-users-title">
+							<h3>Korábbi üzenetek</h3>
+						</div>
+
+						<div id="recent-users-list"> <!-- refresh me id -->
+							{% for message_and_user in messages_and_users %}
+								{% if message_and_user.has_new_messages %}
+									<!-- itt volt id  id="id_friend_container_{{message_and_user.other_user.id}}" -->
+									<div class="earlier-message" onclick="selectUserChatRoom('{{message_and_user.other_user.id}}')" style="background-color: #afafaf; font-family: 'Kanit-Bold'; color: #1743ff" onmouseover="changeBackgroundPrivateMessage(this, true)" onmouseout="resetBackgroundPrivateMessage(this, true)">
+										<div class="earlier-message-profile-image">
+											<!-- itt volt id id="id_friend_img_{{message_and_user.other_user.id}}" -->
+											<img class="profile-image" src="{{message_and_user.profile_image}}" >	
+										</div>
+										<div class="earlier-message-body">
+											<div class="earlier-message-body-username">
+												<span class="username-recent-message">{{message_and_user.other_user.username}} </span>										
+											</div>
+											<div class="earlier-message-body-message">
+												<span>{{message_and_user.message|truncatechars:25}}</span>										
+											</div>
+										</div>
+									</div>
+
+
+								{% else %}
+									<div class="earlier-message" onclick="selectUserChatRoom('{{message_and_user.other_user.id}}')" style="background-color: rgba(255, 255, 255, 0.6);" onmouseover="changeBackgroundPrivateMessage(this, false)" onmouseout="resetBackgroundPrivateMessage(this, false)">
+										<div class="earlier-message-profile-image">
+											<!-- itt volt id id="id_friend_img_{{message_and_user.other_user.id}}" -->
+											<img class="profile-image" src="{{message_and_user.profile_image}}" >
+										</div>
+										<div class="earlier-message-body">
+											<div class="earlier-message-body-username">
+												<span id="username-recent-message">{{message_and_user.other_user.username}}</span>										
+											</div>
+											<div class="earlier-message-body-message">
+												<span>{{message_and_user.message|truncatechars:25}}</span>										
+											</div>
+										</div>
+									</div>
+								{% endif %}
+
+							{% endfor %}
+						</div>
+
+
+				</div>
+			</div>
 		</div>
 	</div>
 	<div id="private-chat-footer">
-		<div class="zero-message">
-			<span>Nincsen megjeleníthető üzeneted!</span>
-		</div>
+			<span class="zero-message">Nincsen megjeleníthető üzeneted!</span>
 	</div>
 
 </div>
@@ -683,7 +700,7 @@
 			$(".send-new-message-textarea").prop("disabled", true)
 			$("#send-new-message-button").css("pointerEvents", "none")
 			$("#private-chat-room-title").css("pointerEvents", "none")
-			$(".zero-message").css("display", "flex")
+			$(".zero-message").css("visibility", "visible")
 		}
 		else{
 			setInterval(refresh_page_part, 2500)
