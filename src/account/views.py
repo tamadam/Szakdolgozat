@@ -19,7 +19,7 @@ from django.conf import settings
 import os
 import re
 
-
+from datetime import datetime
 from core.constants import *
 
 @anonymous_user
@@ -121,11 +121,14 @@ def profile_view(request, *args, **kwargs):
 	character_fights_won = character_history.fights_won
 	character_fights_lost = character_history.fights_lost
 
+	last_login_date = account.last_login.strftime("%Y-%m-%d %H:%M")
+	date_joined_date = account.date_joined.strftime("%Y-%m-%d")
+
 	context = {
 		'user_id': account.id,
 		'username': account.username,
-		'date_joined': account.date_joined,
-		'last_login': account.last_login,
+		'date_joined': date_joined_date,
+		'last_login': last_login_date,
 		'description': account.description,
 		'profile_image': profile_image,
 		'character_type': account.character.character_type,

@@ -14,6 +14,8 @@ from account.utils import EncodeAccountObject, EncodeCharacterObjectInDetail
 
 from django.shortcuts import redirect
 
+import random
+
 
 def game_choice_view(request):
 	context = {}
@@ -381,11 +383,11 @@ def arena_view(request):
 def decide_winner(attacker, defender):
 	attacker_role = attacker.character_type
 	attacker_health = attacker.health_point * 30
-	#attacker_luck_value = attacker.fortune
+	attacker_luck_value = attacker.fortune
 	
 	defender_role = defender.character_type
 	defender_health = defender.health_point * 30
-	#defender_luck_value = defender.fortune
+	defender_luck_value = defender.fortune
 
 	attacker_health_value_list = []
 	defender_health_value_list = []
@@ -466,9 +468,41 @@ def decide_winner(attacker, defender):
 	did_attacker_win = False
 
 	
+	#kiszámoljuk hány % eséllyel sebez többet 
+	if attacker_luck_value > defender_luck_value:
+		attacker_bonus_damage_percent = round((defender_luck_value / attacker_luck_value) * 100)
+		if attacker_bonus_damage_percent > 50:
+			attacker_bonus_damage_percent = 50
+		defender_bonus_damage_percent = 50 - attacker_bonus_damage_percent
+	elif attacker_luck_value < defender_luck_value:
+		defender_bonus_damage_percent = round((attacker_luck_value / defender_luck_value) * 100)
+		if defender_bonus_damage_percent > 50:
+			defender_bonus_damage_percent = 50
+		attacker_bonus_damage_percent = 50 - defender_bonus_damage_percent
+
+
+	print(attacker_bonus_damage_percent, "----", defender_bonus_damage_percent)
+
+	damage_multiplier = [0, 1]
+
 	while True:
+		"""
+		a sebzés felépítése:
+			- van egy alap fő sebző tulajdonság és egy fő védekező tulajdonság, karakter típusonként más és más
+			- ennek a kettőnek a különbsége alkotja a fő sebzést 
+			- ehhez hozzájön a szerencse attribútum, amely maximum 50% lehet
+			- 0 és 1 szorzók közül választ ennek a %-nak megfelelően
+			-> akinek nagyobb a szerencseje az kapja a nagyobb %-ot a másik csak a maradékot
+			-> mivel a kalkuláció során a két értéket összehasonlítjük és ennek vesszük a százalékát
+		"""
 		# mindig a támadó kezd tehát mindig a védekező sérül először
-		defender_health -= attacker_main_attr_value * 10
+		attacker_added_damage = random.choices(damage_multiplier, weights=(100-attacker_bonus_damage_percent, attacker_bonus_damage_percent), k=1)[0]
+
+
+		attacker_damage = (attacker_main_attr_value * 10) - (defender_protect_attr_value * 4) + (200 * attacker_added_damage)
+		if attacker_damage <= 0:
+			attacker_damage = 10
+		defender_health -= attacker_damage
 
 
 
@@ -480,8 +514,13 @@ def decide_winner(attacker, defender):
 		defender_health_value_list.append(defender_health)
 
 		# ha nem halt meg a védekező, akkor ő jön, a támadó sebződik
+		defender_added_damage = random.choices(damage_multiplier, weights=(100-defender_bonus_damage_percent, defender_bonus_damage_percent), k=1)[0]
 
-		attacker_health -= defender_main_attr_value * 10
+
+		defender_damage = (defender_main_attr_value * 10) - (attacker_protect_attr_value * 4) + (200 * defender_added_damage)
+		if defender_damage <= 0:
+			defender_damage = 10
+		attacker_health -= defender_damage
 
 
 		if attacker_health <= 0:
@@ -537,11 +576,6 @@ def arena_fight(request):
 	#add arena matches
 	Arena.objects.create_arena_match(attacker_user, defender_user, 	json.dumps([int(num) for num in attacker_health_values]), json.dumps([int(num) for num in defender_health_values]), winner)
 
-
-
-	print('hey')
-	#print(json.dumps(attacker_health_values))
-	print('ho')
 
 	print('GYŐZTES', winner)
 	serialized_winner = serializers.serialize('json', [winner.account])
@@ -816,18 +850,19 @@ def team_arena_view(request):
 def decide_winner_team(attacker, defender, attacker_left_health, defender_left_health):
 	attacker_role = attacker.character_type
 	defender_role = defender.character_type
+	attacker_luck_value = attacker.fortune
+	defender_luck_value = defender.fortune
+
 
 	if attacker_left_health:
 		attacker_health = attacker_left_health
 	else:
 		attacker_health = attacker.health_point * 30
-		#attacker_luck_value = attacker.fortune
 	
 	if defender_left_health:
 		defender_health = defender_left_health
 	else:
 		defender_health = defender.health_point * 30
-		#defender_luck_value = defender.fortune
 
 	attacker_health_value_list = []
 	defender_health_value_list = []
@@ -908,9 +943,39 @@ def decide_winner_team(attacker, defender, attacker_left_health, defender_left_h
 	did_attacker_win = False
 
 	
+	
+	#kiszámoljuk hány % eséllyel sebez többet 
+	if attacker_luck_value > defender_luck_value:
+		attacker_bonus_damage_percent = round((defender_luck_value / attacker_luck_value) * 100)
+		if attacker_bonus_damage_percent > 50:
+			attacker_bonus_damage_percent = 50
+		defender_bonus_damage_percent = 50 - attacker_bonus_damage_percent
+	elif attacker_luck_value < defender_luck_value:
+		defender_bonus_damage_percent = round((attacker_luck_value / defender_luck_value) * 100)
+		if defender_bonus_damage_percent > 50:
+			defender_bonus_damage_percent = 50
+		attacker_bonus_damage_percent = 50 - defender_bonus_damage_percent
+
+
+	print(attacker_bonus_damage_percent, "----", defender_bonus_damage_percent)
+
+	damage_multiplier = [0, 1]
+
+
+
+
 	while True:
 		# mindig a támadó kezd tehát mindig a védekező sérül először
-		defender_health -= attacker_main_attr_value * 10
+
+		attacker_added_damage = random.choices(damage_multiplier, weights=(100-attacker_bonus_damage_percent, attacker_bonus_damage_percent), k=1)[0]
+
+
+		attacker_damage = (attacker_main_attr_value * 10) - (defender_protect_attr_value * 4) + (200 * attacker_added_damage)
+		if attacker_damage <= 0:
+			attacker_damage = 10
+		defender_health -= attacker_damage
+
+
 
 
 
@@ -922,8 +987,12 @@ def decide_winner_team(attacker, defender, attacker_left_health, defender_left_h
 		defender_health_value_list.append(int(defender_health))
 
 		# ha nem halt meg a védekező, akkor ő jön, a támadó sebződik
+		defender_added_damage = random.choices(damage_multiplier, weights=(100-defender_bonus_damage_percent, defender_bonus_damage_percent), k=1)[0]
 
-		attacker_health -= defender_main_attr_value * 10
+		defender_damage = (defender_main_attr_value * 10) - (attacker_protect_attr_value * 4) + (200 * defender_added_damage)
+		if defender_damage <= 0:
+			defender_damage = 10
+		attacker_health -= defender_damage
 
 
 		if attacker_health <= 0:
