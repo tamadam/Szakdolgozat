@@ -50,24 +50,6 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 ::-webkit-scrollbar {display:none;}
 
 
-#characters-list {
-	display: block;
-}	
-
-#characters-list p{
-	font-size: 20px;
-	display: inline-block;
-
-}
-
-#teams-list {
-	display: none;
-}
-
-#teams-list p{
-	display: inline-block;
-}
-
 
 
 #user-under-investigation:hover{
@@ -105,7 +87,7 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 	display: flex;
 	flex-direction: row;
 	font-family: "Kanit-Regular";
-	font-size: 2vh;
+	font-size: 1.4em;
 }
 
 #search-field{
@@ -188,7 +170,7 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 	background-image: linear-gradient(rgba(137, 111, 102, 0.4), rgba(167, 153, 118, 0.4));
 	padding: 1em;
 	box-shadow: rgba(0, 0, 0, 0.9) 0px 22px 70px 4px;
-	font-size: 1.8vh;
+	font-size: 1.2em;
 	font-family: "Kanit-Regular";
 
 }
@@ -203,7 +185,7 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 }
 
 .switch-button{
-	font-size: 1.8vh;
+	font-size: 1.2em;
 	position: relative;
 	display: inline-block;
 	width: 5em;
@@ -264,7 +246,7 @@ input:checked + .slider:before {
 	align-items: center;
 	justify-content: center;
 	font-family: "Kanit-Bold";
-	font-size: 2vh;
+	font-size: 1.2em;
 	color: white;
 	margin-bottom: 2%;
 	text-shadow: 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black; 
@@ -295,7 +277,7 @@ input:checked + .slider:before {
 	background-image: linear-gradient(rgba(137, 111, 102, 0.4), rgba(167, 153, 118, 0.4));
 	padding: 1em;
 	box-shadow: rgba(0, 0, 0, 0.9) 0px 22px 70px 4px;
-	font-size: 1.8vh;
+	font-size: 1.2em;
 	font-family: "Kanit-Regular";
 }
 
@@ -308,7 +290,7 @@ input:checked + .slider:before {
 	align-items: center;
 	justify-content: center;
 	font-family: "Kanit-Bold";
-	font-size: 2vh;
+	font-size: 1.2em;
 	color: white;
 	margin-bottom: 2%;
 	text-shadow: 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black; 
@@ -419,14 +401,13 @@ input:checked + .slider:before {
 
 .user-div-paginate {
 
-	min-height: 50px;
-	max-height: 80px;
+	height: 80px;
 
 	display: flex;
 	flex-direction: row;
 	width: 100%;
 	padding: 0.4em;
-	font-size: 1.9vh;
+	font-size: 1.2em;
 	border-bottom: 1px solid rgba(251, 244, 193, 0.6);
 
 
@@ -452,7 +433,7 @@ input:checked + .slider:before {
 	flex-direction: row;
 	width: 100%;
 	padding: 0.4em;
-	font-size: 1.9vh;
+	font-size: 1.2em;
 	border-bottom: 1px solid rgba(251, 244, 193, 0.6);
 
 }
@@ -527,7 +508,7 @@ input:checked + .slider:before {
 	flex-direction: row;
 	width: 100%;
 	padding: 0.4em;
-	font-size: 1.9vh;
+	font-size: 1.2em;
 	border-bottom: 1px solid rgba(251, 244, 193, 0.6);
 
 
@@ -548,7 +529,7 @@ input:checked + .slider:before {
 	flex-direction: row;
 	width: 100%;
 	padding: 0.4em;
-	font-size: 1.9vh;
+	font-size: 1.2em;
 	border-bottom: 1px solid rgba(251, 244, 193, 0.6);
 }
 
@@ -626,7 +607,7 @@ input:checked + .slider:before {
 
 #search-input{
 	font-family: "Kanit-Regular";
-	font-size: 1.8vh;
+	font-size: 1.2em;
 	padding: 0.4em;
 	width: 20%;
 	text-align: center;
@@ -713,32 +694,6 @@ input:checked + .slider:before {
 		</label>
 
 	</div>
-	<!--
-	<div id="rework">
-
-		<button id="characters-button" onclick="hideAndUnhide('showCharacters')">Karakterek</button>
-		<button id="teams-button" onclick="hideAndUnhide('showTeams')">Csapatok</button>
-		<div id="characters-list">
-			<h1>Characters</h1>
-			<h3>Név, ID, Szint, Becsületpont</h3>
-			{% for character in characters %}
-
-			<p id="user-under-investigation" onclick="selectUser('{{character.account.id}}')">{{character}}-{{character.account.id}}
-			{{character.level}}-{{character.honor}}</p><br>
-			
-			{% endfor %}
-		</div>
-		<div id="teams-list">
-
-			<p>Csapatok</p>
-			{% for team in teams %}
-				<h3><p id="team-paragh" onclick="selectTeam('{{team.id}}')">{{team.name}}</p></h3>
-			{% endfor %}
-		</div>
-
-	</div>
-	-->
-
 
 	<div class="loader-container">
 	</div>

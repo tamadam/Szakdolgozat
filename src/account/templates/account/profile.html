@@ -31,7 +31,7 @@
 
 body {
 	font-family: 'Kanit-Regular';
-	font-size: 2vh;
+	font-size: 1.4em;
 }
 
 .loader-container {
@@ -96,7 +96,7 @@ body {
 
 #profile-title-center span {
 	font-family: 'Kanit-Regular';
-	font-size: 6vh;
+	font-size: 2.4em;
 	color: black;
 	background-color: white;
 	background: url("{% static 'images/button-back.png' %}");	
@@ -181,7 +181,7 @@ body {
 
 #profile-container-left-profile-image{
 	height: 60%;
-	background-color: lightblue;
+	background-color: rgba(102, 122, 190, 0.8);
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -279,11 +279,11 @@ body {
 	cursor: pointer;
 }
 
-
+/*
 .increase-attribute-button:active {
 	content:url("{% static 'images/add-button-active.png' %}");
 }
-
+*/
 
 #profile-container-right{
 
@@ -564,7 +564,7 @@ body {
 
 	color: #fae455;
 	font-family: 'Kanit-Light';
-	font-size: 2vh;
+	font-size: 1em;
 
 	white-space: pre-wrap;
 
@@ -857,7 +857,7 @@ body {
 <script>
 	const audio = new Audio()
 	audio.src = "{% static 'audios/button_click.mp3' %}"
-
+	var outOfGoldSetter = false
 
 	$(window).on("load", function(){
 		$("#profile-container-left-profile-image").css("background-image", "url({{profile_image}}")
@@ -898,6 +898,14 @@ body {
 		{% if not is_owner %}
 			$(".character-info-item-increase-button").css("display", "none")	
 		{% endif %}
+
+		{% if is_owner %}
+			{% if gold < 4 %}
+				setOutOfGoldState()
+			{% endif %}	
+		{% endif %}
+
+
 
 
 		$(".loader-container").fadeOut("slow")
@@ -1025,12 +1033,17 @@ body {
 		imageElement.setAttribute("src", "{% static 'images/previous-button.png' %}")
 	}
 
+
 	function changeColorAdd(imageElement){
-		imageElement.setAttribute("src", "{% static 'images/add-button-hover.png' %}")
+		if(!outOfGoldSetter){
+			imageElement.setAttribute("src", "{% static 'images/add-button-hover.png' %}")
+		}
 	}
 
 	function resetColorAdd(imageElement){
-		imageElement.setAttribute("src", "{% static 'images/add-button.png' %}")
+		if(!outOfGoldSetter){
+			imageElement.setAttribute("src", "{% static 'images/add-button.png' %}")
+		}
 	}
 
 
@@ -1062,71 +1075,51 @@ body {
 
 
 	function increaseAttribute(userID, attributeType){
-  		audio.currentTime = 0;
-		audio.play()
+		if(!outOfGoldSetter){
+	  		audio.currentTime = 0;
+			audio.play()
 
-		info_packet = {
-			"csrfmiddlewaretoken": "{{csrf_token}}",
-			"user_id": userID,
-			"attribute_type": attributeType,
+			info_packet = {
+				"csrfmiddlewaretoken": "{{csrf_token}}",
+				"user_id": userID,
+				"attribute_type": attributeType,
+			}
+			$.ajax({
+				type: "POST",
+				dataType: "json",
+				url: "{% url 'account:increase_attribute_value' %}",
+				data: info_packet,
+				success: function(data) {
+					console.log('SUCCESS')
+					if (data.message == "Success"){
+						setIncreasedAttribute(data.attr_type, data.new_attr_value, data.new_gold_value)
+						var newGoldValue = data.new_gold_value
+						if(newGoldValue < 4){
+							setOutOfGoldState()
+						}
+					}
+					else if (data.message == "Out of gold"){
+						console.log("nincs eleg aranyad")
+						setOutOfGoldState()
+
+					}
+					else{
+						alert('Something went wrong')
+					}
+				},
+				error: function(data) {
+					console.log('ERROR')
+				},
+			})
 		}
-		$.ajax({
-			type: "POST",
-			dataType: "json",
-			url: "{% url 'account:increase_attribute_value' %}",
-			data: info_packet,
-			success: function(data) {
-				console.log('SUCCESS')
-				if (data.message == "Success"){
-					setIncreasedAttribute(data.attr_type, data.new_attr_value, data.new_gold_value)
-				}
-				else if (data.message == "Out of gold"){
-					console.log("nincs eleg aranyad")
-					//$(".increase-attribute-button").attr("src", "{% static 'images/add-button-inactive.png' %}")
-
-
-				}
-				else{
-					alert('Something went wrong')
-				}
-			},
-			error: function(data) {
-				console.log('ERROR')
-			},
-		})
 	}
 
 
-	function increaseAttr(userId, attributeType){
-		payload = {
-			"csrfmiddlewaretoken": "{{csrf_token}}",
-			"user_id": userId,
-			"attribute_type": attributeType,
-		}
-		$.ajax({
-			type: "POST",
-			dataType: "json",
-			url: "{% url 'account:increase_attribute_value' %}",
-			data: payload,
-			timeout: 5000,
-			success: function(data) {
-				console.log('SUCCESS')
-				if (data.message == "Success"){
-					setIncreasedAttr(data.attr_type, data.new_attr_value, data.new_gold_value)
-				}
-				else if (data.message == "Out of gold"){
-					alert("nincs eleg aranyad")
-				}
-				else{
-					alert('Something went wrong')
-				}
-			},
-			error: function(data) {
-				console.log('ERROR')
-			},
-		})
+	function setOutOfGoldState(){
+		outOfGoldSetter = true
+		$(".increase-attribute-button").attr("src", "{% static 'images/add-button-inactive.png' %}")
+		$(".increase-attribute-button").removeClass("increase-attribute-button")
 	}
-
 
 
 	$("#no-owner-buttons-first-container").click(function(){
@@ -1150,19 +1143,3 @@ body {
 </script>
 
 {% endblock %}
-
-
-<!--
-
-	{% if is_owner %}
-		<p>Tulajdonos</p>
-		<a href="{% url 'account:edit' user_id=user_id%}">Módosítás</a>
-	{% else %}
-		<p>Nem tulajdonos</p>
-		<div onclick="createOrReturnPrivateChat('{{user_id}}')">
-			<span class="message-btn-text">Message</span>
-		</div>
-		<p onclick="attackChoosenPlayer('{{user_id}}')">Támadás</p>
-	{% endif %}
-	{{character_type}}
--->

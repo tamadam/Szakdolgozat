@@ -363,7 +363,7 @@ def increase_attribute_value(request, *args, **kwargs):
 				user.save()
 				data['new_attr_value'] = str(user.fortune)
 
-			data['new_gold_value'] = str(user.gold)
+			data['new_gold_value'] = user.gold
 			data['message'] = 'Success'
 			data['attr_type'] = attr_type
 		else: 

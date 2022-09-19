@@ -955,7 +955,9 @@ def decide_winner_team(attacker, defender, attacker_left_health, defender_left_h
 		if defender_bonus_damage_percent > 50:
 			defender_bonus_damage_percent = 50
 		attacker_bonus_damage_percent = 50 - defender_bonus_damage_percent
-
+	else:
+		attacker_bonus_damage_percent = 0
+		defender_bonus_damage_percent = 0 # a randomnal pedig mivel 100-0 az 100, ezért 100% hogy mindig a 0-as szorzót választja
 
 	print(attacker_bonus_damage_percent, "----", defender_bonus_damage_percent)
 

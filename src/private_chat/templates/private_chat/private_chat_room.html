@@ -99,7 +99,7 @@
 	background-size: cover;
 	background-color: white;
 	font-family: "Kanit-Regular";
-	font-size: 1.8vh;
+	font-size: 1.2em;
 	max-width: 1900px;
 }
 
@@ -110,7 +110,7 @@
 	width: 100%;
 	align-items: center;
 	justify-content: center;
-	font-size: 3vh;
+	font-size: 1.4em;
 
 }
 
@@ -185,7 +185,7 @@
 	border-top-left-radius: 20px;
 	border-top-right-radius: 20px;
 	text-align: center;
-	font-size: 2vh;
+	font-size: 1em;
 	border: 2px solid black;
 }
 
@@ -220,7 +220,7 @@
 	flex-direction: column-reverse;
 	overflow-x: hidden;
 	overflow-y: auto;
-	font-size: 0.9em;
+	font-size: 1em;
 	background-color: rgba(255, 255, 255, 0.6);
 	height: 88%;
 	max-height: 600px;
@@ -235,18 +235,20 @@
 
 }
 
+
 .send-new-message-textarea{
 	width: 95%;
 	flex-basis: auto; 
 	resize: none;
-
-	padding: 4px;
+	outline: none;
+	padding: 0.2em;
 	font-size: 1em;
 	font-family: "Kanit-Light";
+	border: 4px solid transparent;
 }
 
 .send-new-message-textarea:focus{
-	outline-color: orange;
+	border: 4px solid orange;
 }
 
 #send-new-message-button{
@@ -417,8 +419,6 @@
 	width: 100%;
 	height: 100%;
 	position: absolute;
-	top: 0;
-	left: 0;
 	background-color: black;
 	display: flex;
 	justify-content: center;
@@ -426,7 +426,7 @@
 	z-index: 10;
 	color: white;
 	font-family: "Kanit-Regular";
-	font-size: 1.8vh;
+	font-size: 1.4em;
 
 }
 
@@ -446,6 +446,9 @@
 
 </style>
 
+<div class="loader-container">
+	<span id="loading-message"></span>
+</div>
 
 <div id="private-chat-page">
 	<div id="private-chat-title">
@@ -522,7 +525,7 @@
 						{% for message_and_user in messages_and_users %}
 							{% if message_and_user.has_new_messages %}
 								<!-- itt volt id  id="id_friend_container_{{message_and_user.other_user.id}}" -->
-								<div class="earlier-message" onclick="selectUserChatRoom('{{message_and_user.other_user.id}}')" style="background-color: #a3a29b; font-family: 'Kanit-Bold'; color: #1f23da" onmouseover="changeBackgroundPrivateMessage(this, true)" onmouseout="resetBackgroundPrivateMessage(this, true)">
+								<div class="earlier-message" onclick="selectUserChatRoom('{{message_and_user.other_user.id}}')" style="background-color: #afafaf; font-family: 'Kanit-Bold'; color: #1743ff" onmouseover="changeBackgroundPrivateMessage(this, true)" onmouseout="resetBackgroundPrivateMessage(this, true)">
 									<div class="earlier-message-profile-image">
 										<!-- itt volt id id="id_friend_img_{{message_and_user.other_user.id}}" -->
 										<img class="profile-image" src="{{message_and_user.profile_image}}" >	
@@ -567,9 +570,6 @@
 			<span>Nincsen megjeleníthető üzeneted!</span>
 		</div>
 	</div>
-	<div class="loader-container">
-		<span id="loading-message"></span>
-	</div>
 
 </div>
 
@@ -580,7 +580,7 @@
 
 	function changeBackgroundPrivateMessage(element, isNewMessage){
 		if (isNewMessage){
-			$(element).css("background-color", "grey")
+			$(element).css("background-color", "#9d9c9c")
 		}
 		else{
 			$(element).css("background-color", "#f6dfad")
@@ -590,7 +590,7 @@
 
 	function resetBackgroundPrivateMessage(element, isNewMessage){
 		if (isNewMessage){
-			$(element).css("background-color", "#a3a29b")
+			$(element).css("background-color", "#afafaf")
 		}
 		else{
 			$(element).css("background-color", "rgba(255, 255, 255, 0.6)")
@@ -1182,7 +1182,18 @@
 		messageField.style.borderRadius = "20px"
 		messageField.style.padding = "10px"
 		messageField.style.maxWidth = "75%"
-		messageField.innerHTML = message
+
+		// sortörések kezelése
+		var messageLines = message.split("\n")
+		var chatTextString = ""
+		for (var i=0; i < messageLines.length; i++){
+			if(messageLines[i] != ""){
+				chatTextString += messageLines[i] + "<br>"
+			}
+		}
+
+		messageField.innerHTML = chatTextString
+
 
 		var tooltipSpan = document.createElement("span")
 		tooltipSpan.innerHTML = sendingTime
@@ -1229,75 +1240,6 @@
 		newChatMessage.appendChild(newChatMessageTop)
 		newChatMessage.appendChild(newChatMessageBody)
 		newChatMessage.appendChild(newChatMessageBottom)
-
-
-
-
-
-	//var chatMessage = document.getElementById("chat_messages_id");
-
-	/*
-	var chatMessage = document.getElementById("chat_messages_id");
-
-		var newMessageDiv = document.createElement("div")
-		newMessageDiv.classList.add("d-flex")
-		newMessageDiv.classList.add("flex-row")
-		newMessageDiv.classList.add("message-container") //css
-		//ezeket lehet 1 sorba is hozzaadni
-
-		var profileImage = document.createElement("img")
-		profileImage.addEventListener("click", function(evenet){
-			selectUser(userId)
-		})
-		profileImage.classList.add("profile-image")
-		profileImage.classList.add("rounded-circle")
-		profileImage.classList.add("img-fluid")
-		profileImage.src = "{% static 'images/blank_profile_image.png' %}"
-		var profileImageId = "profile_image_id" + message_id 
-		profileImage.id = profileImageId
-		newMessageDiv.appendChild(profileImage)
-
-
-		var div1 = document.createElement("div")
-		div1.classList.add("d-flex")
-		div1.classList.add("flex-column")
-
-
-		var div2 = document.createElement("div")
-		div2.classList.add("d-flex")
-		div2.classList.add("flex-row")
-
-		var usernameSpan = document.createElement("span")
-		usernameSpan.addEventListener("click", function(evenet){
-			selectUser(userId)
-		})
-		usernameSpan.classList.add('username-span')
-		usernameSpan.innerHTML = username
-		div2.appendChild(usernameSpan)
-
-		// sending_time hozzáadása
-
-		var sendingTimeSpan = document.createElement("span")
-
-		sendingTimeSpan.innerHTML = sendingTime
-		sendingTimeSpan.classList.add("sendingTimeSpanClass")
-		sendingTimeSpan.classList.add("d-flex")
-		sendingTimeSpan.classList.add("align-items-center")
-
-		sendingTimeSpan.classList.add("sentMessagesTime")
-
-
-		div2.appendChild(sendingTimeSpan)
-
-		div1.appendChild(div2)
-
-		var msgP = document.createElement("p")
-		msgP.innerHTML = message
-		msgP.classList.add("msg-p")
-		div1.appendChild(msgP)
-
-		newMessageDiv.appendChild(div1)
-	*/
 
 		if(isNewMessage){
 			chatMessage.insertBefore(newChatMessage, chatMessage.firstChild)

@@ -20,7 +20,7 @@ from datetime import datetime
 
 @login_required(login_url='login')
 def private_chat_page_view(request, *args, **kwargs):
-	print("SZOBA ID", request.GET.get('szoba_id'))
+	#print("SZOBA ID", request.GET.get('szoba_id'))
 	user = request.user
 	room_id = request.GET.get('szoba_id')
 
@@ -29,12 +29,11 @@ def private_chat_page_view(request, *args, **kwargs):
 	if room_id:
 		try:
 			room = PrivateChatRoom.objects.get(id=room_id)
-			print('BELLÜL VAGYOK')
 			context['room'] = room
 		except PrivateChatRoom.DoesNotExist:
 			print('PrivChatroomDoesNotExists')
 			pass
-	print('TULJOTTEM')
+
 
 	# Összes szoba amiben a felhasználó benne van
 	rooms_parameter_user1 = PrivateChatRoom.objects.filter(user1=user)
@@ -78,15 +77,16 @@ def private_chat_page_view(request, *args, **kwargs):
 		has_new_messages = False
 		try:
 			unread_messages_count = UnreadPrivateChatRoomMessages.objects.get(room=room, user=user).unread_messages_count
-			print(unread_messages_count)
-			print('letezik')
+			#print(unread_messages_count)
+			#print('letezik')
 
 			if unread_messages_count > 0:
 				has_new_messages = True
 			else:
 				has_new_messages = False
 		except:
-			print('nem letezik')
+			#print('nem letezik')
+			pass
 
 
 

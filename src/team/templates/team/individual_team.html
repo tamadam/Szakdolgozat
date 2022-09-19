@@ -60,7 +60,7 @@
 
 	background-color: white;
 	font-family: "Kanit-Regular";
-	font-size: 1.8vh;
+	font-size: 1.2em;
 	display: flex;
 	flex-direction: column;
 	max-width: 1900px;
@@ -152,7 +152,7 @@
 	flex-direction: column-reverse;
 	overflow-x: hidden;
 	overflow-y: auto;
-	font-size: 0.9em;
+	font-size: 1em;
 	/*background-color: rgba(33, 80, 58, 0.6);*/
 	background-color: rgba(112, 139, 186, 0.6);
 	background-image: linear-gradient(to right, rgba(112, 139, 186, 0.6), rgba(95, 61, 49, 0.6));
@@ -173,14 +173,15 @@
 	width: 95%;
 	flex-basis: auto; 
 	resize: none;
-
-	padding: 4px;
+	outline: none;
+	padding: 0.2em;
 	font-size: 1em;
 	font-family: "Kanit-Light";
+	border: 4px solid transparent;
 }
 
 .send-new-message-textarea:focus{
-	outline-color: #8e939a;
+	border: 4px solid #8e939a;
 }
 
 #send-new-message-button{
@@ -347,7 +348,7 @@
 	z-index: 10;
 	color: white;
 	font-family: "Kanit-Regular";
-	font-size: 1.8vh;
+	font-size: 1.4em;
 
 }
 
@@ -364,11 +365,6 @@
 
 }
 
-#title-description{
-	height: 20%;
-	font-size: 0.9em;
-
-}
 
 #description-text{
 	height: 80%;
@@ -406,6 +402,7 @@
 	justify-content: flex-start;
 	height: 100%;
 	width: 100%;
+	font-size: 1.2em;
 }
 
 
@@ -508,6 +505,7 @@
 	justify-content: center;
 	color: red;
 	visibility: hidden;
+	font-size: 1.1em;
 }
 
 .team-join-leave-button{
@@ -535,6 +533,7 @@
 	width: 100%;
 	/*height: 100%;*/
 	height: 55px;
+	font-size: 1.2em;
 
 }
 
@@ -659,7 +658,7 @@
 
 #team-description-title{
 	font-weight: bold;
-	font-size: 2.0vh;
+	font-size: 1.2em;
 	background-image: url("{% static 'images/button-back.png' %}");
 	background-position: center;
 	background-repeat: no-repeat;
@@ -683,7 +682,7 @@
 	background: none;
 	color: #fae455;
 	font-family: 'Kanit-Light';
-	font-size: 2vh;
+	font-size: 1.2em;
 	white-space: pre-wrap;
 
 
@@ -730,6 +729,11 @@
 	background-color: rgba(0,0,0, 0.8);
 	border: 4px solid red;
 	cursor: pointer;
+}
+
+.owner-image{
+	max-height: 80%;
+	max-width: 80%;
 }
 
 </style>
@@ -805,7 +809,6 @@
 					<h4 id="team-description-title">Leírás</h4>
 				</div>
 					<div id="description-text">
-						<!--<h3>{{team.description}}</h3>-->
 						<textarea id="team-description-textarea" maxlength="100"></textarea>
 					</div>	
 
@@ -836,6 +839,9 @@
 			</div>
 			<div id="pending-requests-container">
 				<div id="pending-requests">
+					{% if not pending_requests %}
+						<span>Jelenleg nincs függőben lévő kérelem</span>
+					{% endif %}
 					{% for pending_request in pending_requests %}
 						<div class="current-pending-requests-container">
 							<div class="current-pending-requests-profile-image" onclick="selectUser('{{pending_request.user_id}}')">
@@ -859,7 +865,9 @@
 					
 					<div id="join-requests-container">
 						{% if is_team_owner_description %}
-							<div id="show-requests">Kérelmek</div>
+							<div id="show-requests">
+								<img class="owner-image" src="{% static 'images/add-user.png' %}" alt="kerelmek">
+							</div>
 						{% endif %}
 					</div>
 					<div id="join-leave-buttons-container">
@@ -874,7 +882,9 @@
 
 					<div id="start-attack-container">
 						{% if is_team_owner_description %}
-							<div id="team-attack-button">Támadás</div>
+							<div id="team-attack-button">
+								<img class="owner-image" src="{% static 'images/swords-team.png' %}" alt="tamadas">
+							</div>
 						{% endif %}
 					</div>
 					
@@ -903,13 +913,13 @@
 		if(!isPendingMembers){
 			$("#members-container").css("display", "none")
 			$("#pending-requests-container").css("display", "flex")
-			$("#show-requests").html("Vissza")
+			$("#show-requests").html('<img class="owner-image" src="{% static "images/back-button.png" %}" alt="vissza">')
 		}
 		else{
 			$("#members-container").css("display", "block")
 			$("#pending-requests-container").css("display", "none")
 			$("#error-field").css("visibility", "hidden	")
-			$("#show-requests").html("Kérelmek")
+			$("#show-requests").html('<img class="owner-image" src="{% static "images/add-user.png" %}" alt="kerelmek">')
 		}
 		
 		isPendingMembers = !isPendingMembers
@@ -1607,7 +1617,6 @@
 		message = data["message"]
 		profile_image = data["profile_image"]
 		sendingTime = data["sending_time"]
-
 		var messageReceived = message + "\n";
 		var username = usernameReceived; 
 
@@ -1719,7 +1728,18 @@
 		messageField.style.borderRadius = "20px"
 		messageField.style.padding = "10px"
 		messageField.style.maxWidth = "75%"	
-		messageField.innerHTML = message
+
+		// sortörések kezelése
+		var messageLines = message.split("\n")
+		var chatTextString = ""
+		for (var i=0; i < messageLines.length; i++){
+			if(messageLines[i] != ""){
+				chatTextString += messageLines[i] + "<br>"
+			}
+		}
+
+		messageField.innerHTML = chatTextString
+
 
 		var tooltipSpan = document.createElement("span")
 		tooltipSpan.innerHTML = sendingTime
@@ -1768,67 +1788,6 @@
 		newChatMessage.appendChild(newChatMessageBody)
 		newChatMessage.appendChild(newChatMessageBottom)
 
-		/*
-
-		var newMessageDiv = document.createElement("div")
-		newMessageDiv.classList.add("d-flex")
-		newMessageDiv.classList.add("flex-row")
-		newMessageDiv.classList.add("message-container") //css
-		//ezeket lehet 1 sorba is hozzaadni
-
-		var profileImage = document.createElement("img")
-		profileImage.addEventListener("click", function(evenet){
-			selectUser(userId)
-		})
-		profileImage.classList.add("profile-image")
-		profileImage.classList.add("rounded-circle")
-		profileImage.classList.add("img-fluid")
-		profileImage.src = "{% static 'images/blank_profile_image.png' %}"
-		var profileImageId = "profile_image_id" + message_id 
-		profileImage.id = profileImageId
-		newMessageDiv.appendChild(profileImage)
-
-
-		var div1 = document.createElement("div")
-		div1.classList.add("d-flex")
-		div1.classList.add("flex-column")
-
-
-		var div2 = document.createElement("div")
-		div2.classList.add("d-flex")
-		div2.classList.add("flex-row")
-
-		var usernameSpan = document.createElement("span")
-		usernameSpan.addEventListener("click", function(evenet){
-			selectUser(userId)
-		})
-		usernameSpan.classList.add('username-span')
-		usernameSpan.innerHTML = username
-		div2.appendChild(usernameSpan)
-
-		// sending_time hozzáadása
-
-		var sendingTimeSpan = document.createElement("span")
-
-		sendingTimeSpan.innerHTML = sendingTime
-		sendingTimeSpan.classList.add("sendingTimeSpanClass")
-		sendingTimeSpan.classList.add("d-flex")
-		sendingTimeSpan.classList.add("align-items-center")
-
-		sendingTimeSpan.classList.add("sentMessagesTime")
-
-
-		div2.appendChild(sendingTimeSpan)
-
-		div1.appendChild(div2)
-
-		var msgP = document.createElement("p")
-		msgP.innerHTML = message
-		msgP.classList.add("msg-p")
-		div1.appendChild(msgP)
-
-		newMessageDiv.appendChild(div1)
-		*/
 
 		if(isNewMessage){
 			chatMessage.insertBefore(newChatMessage, chatMessage.firstChild)

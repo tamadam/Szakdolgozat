@@ -25,6 +25,7 @@ from django.core.serializers import serialize
 # Értesítéshez
 from account.models import Account
 
+
 """
 Documentation used:
  	https://github.com/django/channels/blob/main/channels/generic/websocket.py
@@ -129,9 +130,11 @@ class PublicChatRoomConsumer(AsyncJsonWebsocketConsumer):
 
 		current_users = room.users.all()
 
-		all_registered_users = Account.objects.all() # ezeknek a usereknek kuldjuk ki az ertesitest akik nincsenek a chatszobaban benne
+		all_registered_users = Account.objects.all() 
+		# ezeknek a usereknek kuldjuk ki az ertesitest akik nincsenek a chatszobaban benne
 		# az uzenetkuldo user is benne van ebben a listaban de mivel neki feltetlen a chatszobaban kell legyen
 		# uzenetkuldeskor így nem gond
+
 
 		await add_or_update_unread_message(user, all_registered_users, room, current_users, message)
 
@@ -303,7 +306,6 @@ class PublicChatRoomConsumer(AsyncJsonWebsocketConsumer):
 				'num_of_online_users': event['online_users_count'],
 				'online_users_name': event['online_users_name'],
 			})
-
 
 
 

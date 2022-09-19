@@ -72,7 +72,7 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 	width: 100%;
 	height: 10%;
 	font-family: "Kanit-Regular";
-	font-size: 2vh;
+	font-size: 1.4em;
 }
 
 #main-public-chat-title-left{
@@ -97,7 +97,7 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 	display: flex;
 	flex-direction: column;
 	font-family: "Kanit-Regular";
-	font-size: 1.8vh;
+	font-size: 1.2em;
 	width: 50%;
 	height: 60%;
 	margin: 0 auto;
@@ -108,7 +108,7 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 	flex-direction: column-reverse;
 	overflow-x: hidden;
 	overflow-y: auto;
-	font-size: 0.9em;
+	font-size: 1em;
 	background-color: rgba(255, 255, 255, 0.6);
 
 
@@ -124,14 +124,17 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 	width: 95%;
 	flex-basis: auto; 
 	resize: none;
-	font-family: "Kanit-Light";
-	padding: 4px;
+	outline: none;
+	padding: 0.2em;
 	font-size: 1em;
+	font-family: "Kanit-Light";
+	border: 4px solid transparent;
 }
 
 .send-new-message-textarea:focus{
-	outline-color: orange;
+	border: 4px solid orange;
 }
+
 
 #send-new-message-button{
 	width: 5%;
@@ -239,7 +242,7 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 	flex-direction: row;
 	width: 100%;
 	font-family: "Kanit-Regular";
-	font-size: 1.8vh;
+	font-size: 1.2em;
 }
 
 #online-users-id{
@@ -309,7 +312,7 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 	z-index: 10;
 	color: white;
 	font-family: "Kanit-Regular";
-	font-size: 1.8vh;
+	font-size: 1.4em;
 
 }
 
@@ -760,7 +763,21 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 		messageField.style.borderRadius = "20px"
 		messageField.style.padding = "10px"
 		messageField.style.maxWidth = "75%"
-		messageField.innerHTML = message
+
+		// sortörések kezelése
+		var messageLines = message.split("\n")
+		var chatTextString = ""
+		for (var i=0; i < messageLines.length; i++){
+			if(messageLines[i] != ""){
+				chatTextString += messageLines[i] + "<br>"
+			}
+		}
+
+
+		messageField.innerHTML = chatTextString
+
+
+
 
 		var tooltipSpan = document.createElement("span")
 		tooltipSpan.innerHTML = sendingTime
@@ -827,123 +844,6 @@ url("{% static 'fonts/Kanit-Regular.ttf' %}");
 				messageID++
 
 
-		/*
-		$(".new-chat-message-container .new-chat-message-top").css("display", "none")
-		
-		$(".new-chat-message-container .new-chat-message-bottom").css("display", "none")
-		
-		$(".new-chat-message-container .profile-image").css("visibility", "hidden")
-
-		*/
-
-
-		/*
-		//1
-		var newMessageDiv = document.createElement("div")
-		newMessageDiv.style.display = "flex"
-		newMessageDiv.style.flexDirection = "row"
-		//newMessageDiv.classList.add("d-flex")
-		//newMessageDiv.classList.add("flex-row")
-	
-
-
-
-		//2
-		var profileImage = document.createElement("img")
-		profileImage.addEventListener("click", function(evenet){
-			selectUser(userId)
-		})
-		profileImage.classList.add("profile-image")
-		//profileImage.classList.add("rounded-circle")
-		//profileImage.classList.add("img-fluid")
-		profileImage.src = "{% static 'images/blank_profile_image.png' %}"
-		var profileImageId = "profile_image_id" + message_id 
-		profileImage.id = profileImageId
-		//newMessageDiv.appendChild(profileImage)
-
-		//3
-		var div1 = document.createElement("div")
-		div1.style.display = "flex"
-		div1.style.flexDirection = "column"
-		//div1.classList.add("d-flex")
-		//div1.classList.add("flex-column")
-
-		//4
-		var div2 = document.createElement("div")
-		div2.style.display = "flex"
-		div2.style.flexDirection = "row"
-		//div2.classList.add("d-flex")
-		//div2.classList.add("flex-row")
-
-		var usernameSpan = document.createElement("span")
-		usernameSpan.addEventListener("click", function(evenet){
-			selectUser(userId)
-		})
-		usernameSpan.classList.add('username-span')
-		usernameSpan.innerHTML = username
-
-		//div2.appendChild(usernameSpan)
-
-		// sending_time hozzáadása
-
-		var sendingTimeSpan = document.createElement("span")
-
-		sendingTimeSpan.style.display = "flex"
-		sendingTimeSpan.innerHTML = sendingTime
-		//sendingTimeSpan.classList.add("sendingTimeSpanClass")
-		//sendingTimeSpan.classList.add("d-flex")
-		//sendingTimeSpan.classList.add("align-items-center")
-
-		//sendingTimeSpan.classList.add("sentMessagesTime")
-
-
-		//div2.appendChild(sendingTimeSpan)
-
-		//div1.appendChild(div2)
-
-		var msgP = document.createElement("p")
-		msgP.innerHTML = message
-		msgP.classList.add("msg-p")
-		//div1.appendChild(msgP)
-
-		//newMessageDiv.appendChild(div1)
-
-
-
-		if (userId == currentUserID){
-			newMessageDiv.classList.add("chat-message-structure-own") //css
-			div2.style.justifyContent = "end"
-			div2.appendChild(usernameSpan)
-			//div2.appendChild(sendingTimeSpan)
-			div1.appendChild(div2)
-			div1.appendChild(msgP)
-			newMessageDiv.appendChild(div1)
-			newMessageDiv.appendChild(profileImage)
-
-
-		}
-		else{
-			newMessageDiv.classList.add("chat-message-structure-others") //css
-			newMessageDiv.appendChild(profileImage)
-			div2.appendChild(usernameSpan)
-			//div2.appendChild(sendingTimeSpan)
-			div1.appendChild(div2)
-			div1.appendChild(msgP)
-			newMessageDiv.appendChild(div1)
-		}
-
-
-
-
-
-		if(isNewMessage){
-			chatMessage.insertBefore(newMessageDiv, chatMessage.firstChild)
-		}
-		else {
-			chatMessage.appendChild(newMessageDiv)
-		}
-
-	*/
 
 		if(isNewMessage){
 			chatMessage.insertBefore(newChatMessage, chatMessage.firstChild)
