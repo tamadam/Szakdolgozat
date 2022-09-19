@@ -24,7 +24,7 @@ def game_choice_view(request):
 
 def easy_game_view(request):
 	context = {}
-	correct_field_values = ['4', '5', '6']
+	correct_field_values = ['2','4', '5', '6']
 	game_field_size = request.GET.get('jatek_tabla_meret')
 
 	if not game_field_size:
@@ -44,6 +44,9 @@ def easy_game_view(request):
 		seconds = 10
 	elif game_field_size == 6:
 		minutes = 2
+		seconds = 10
+	elif game_field_size == 2: #bemutató
+		minutes = 0
 		seconds = 10
 	else:
 		minutes = 0
@@ -109,7 +112,7 @@ def medium_game_view(request):
 def hard_game_view(request):
 	context = {}
 
-	correct_field_values = ['10', '20', '30']
+	correct_field_values = ['2', '10', '20', '30']
 	game_field_size = request.GET.get('bombak_szama')
 
 	if not game_field_size:
@@ -129,6 +132,9 @@ def hard_game_view(request):
 		seconds = 20
 	elif game_field_size == 30:
 		minutes = 3
+		seconds = 10
+	elif game_field_size == 2: #bemutató
+		minutes = 0
 		seconds = 10
 	else:
 		minutes = 1
@@ -193,11 +199,9 @@ def finished_game(request):
 	####
 	#second game-hez
 	increaser = 0
-	if game_level_puzzle == '2':
-		pass
-	elif game_level_puzzle == '3':
-		increaser = 20
-	elif game_level_puzzle == '4':
+	#if game_level_puzzle == '2':
+	#	pass
+	if game_level_puzzle == '4':
 		increaser = 30
 	elif game_level_puzzle == '5':
 		increaser = 40
@@ -216,20 +220,32 @@ def finished_game(request):
 
 		# játék fajták megkülönböztetése --> mindegyikért eltérő mennyiségű XP jár
 		if game_type == 'easy':
-			character.current_xp += DEFAULT_XP_INCREASE_EASY_GAME + multiplier
-			character.gold += DEFAULT_GOLD_INCREASE_EASY_GAME + multiplier
-			got_gold = DEFAULT_GOLD_INCREASE_EASY_GAME + multiplier
-			got_xp = DEFAULT_XP_INCREASE_EASY_GAME + multiplier
+			if game_level == '0':
+				got_gold = 0
+				got_xp = 0
+			else:
+				character.current_xp += DEFAULT_XP_INCREASE_EASY_GAME + multiplier
+				character.gold += DEFAULT_GOLD_INCREASE_EASY_GAME + multiplier
+				got_gold = DEFAULT_GOLD_INCREASE_EASY_GAME + multiplier
+				got_xp = DEFAULT_XP_INCREASE_EASY_GAME + multiplier
 		elif game_type == 'second':
-			character.current_xp += DEFAULT_XP_INCREASE_MEDIUM_GAME + increaser
-			character.gold += DEFAULT_GOLD_INCREASE_MEDIUM_GAME + increaser
-			got_gold = DEFAULT_GOLD_INCREASE_MEDIUM_GAME + increaser
-			got_xp = DEFAULT_XP_INCREASE_MEDIUM_GAME + increaser
+			if game_level_puzzle == '2':
+				got_gold = 0
+				got_xp = 0
+			else:
+				character.current_xp += DEFAULT_XP_INCREASE_MEDIUM_GAME + increaser
+				character.gold += DEFAULT_GOLD_INCREASE_MEDIUM_GAME + increaser
+				got_gold = DEFAULT_GOLD_INCREASE_MEDIUM_GAME + increaser
+				got_xp = DEFAULT_XP_INCREASE_MEDIUM_GAME + increaser
 		elif game_type == 'third':
-			character.current_xp += DEFAULT_XP_INCREASE_HARD_GAME + increaserBombs
-			character.gold += DEFAULT_GOLD_INCREASE_HARD_GAME + increaserBombs
-			got_gold = DEFAULT_GOLD_INCREASE_HARD_GAME + increaserBombs
-			got_xp = DEFAULT_XP_INCREASE_HARD_GAME + increaserBombs
+			if game_level_bombs == '2':
+				got_gold = 0
+				got_xp = 0
+			else:
+				character.current_xp += DEFAULT_XP_INCREASE_HARD_GAME + increaserBombs
+				character.gold += DEFAULT_GOLD_INCREASE_HARD_GAME + increaserBombs
+				got_gold = DEFAULT_GOLD_INCREASE_HARD_GAME + increaserBombs
+				got_xp = DEFAULT_XP_INCREASE_HARD_GAME + increaserBombs
 
 		# szintlépés, ilyenkor növekszik a szint 1-el, az xp 0-zódik, az elérendő xp növekszik az előzőhöz képest, és a tulajdonsagok is nonek
 		if character.current_xp >= character.next_level_xp:

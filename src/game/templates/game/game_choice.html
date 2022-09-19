@@ -380,6 +380,7 @@
 					<div class="detail-2" id="detail-2-first-game">
 						<div class="level-choice" id="level-choice-first-game">
 							<ul>
+								<li class="level-choice-li li-hover" id="level0-first-game"><span class="level-placeholder"></span><span class="level-text">Bemutató</span><div class="check-picture-div"><img src="{% static 'images/checked.png' %}" alt="pipa" class="check-picture"></div></li>
 								<li class="level-choice-li li-hover" id="level1-first-game"><span class="level-placeholder"></span><span class="level-text">Könnyű</span><div class="check-picture-div"><img src="{% static 'images/checked.png' %}" alt="pipa" class="check-picture"></div></li>
 								<li class="level-choice-li li-hover" id="level2-first-game"><span class="level-placeholder"></span><span class="level-text">Közepes</span><div class="check-picture-div"><img src="{% static 'images/checked.png' %}" alt="pipa" class="check-picture"></div></li>
 								<li class="level-choice-li li-hover" id="level3-first-game"><span class="level-placeholder"></span><span class="level-text">Nehéz</span><div class="check-picture-div"><img src="{% static 'images/checked.png' %}" alt="pipa" class="check-picture"></div></li>
@@ -425,6 +426,7 @@
 					<div class="detail-2" id="detail-2-third-game">
 						<div class="level-choice" id="level-choice-third-game">
 							<ul>
+								<li class="level-choice-li li-hover" id="level0-third-game"><span class="level-placeholder"></span><span class="level-text">Bemutató</span><div class="check-picture-div"><img src="{% static 'images/checked.png' %}" alt="pipa" class="check-picture"></div></li>
 								<li class="level-choice-li li-hover" id="level1-third-game"><span class="level-placeholder"></span><span class="level-text">Könnyű</span><div class="check-picture-div"><img src="{% static 'images/checked.png' %}" alt="pipa" class="check-picture"></div></li>
 								<li class="level-choice-li li-hover" id="level2-third-game"><span class="level-placeholder"></span><span class="level-text">Közepes</span><div class="check-picture-div"><img src="{% static 'images/checked.png' %}" alt="pipa" class="check-picture"></div></li>
 								<li class="level-choice-li li-hover" id="level3-third-game"><span class="level-placeholder"></span><span class="level-text">Nehéz</span><div class="check-picture-div"><img src="{% static 'images/checked.png' %}" alt="pipa" class="check-picture"></div></li>
@@ -531,6 +533,10 @@
 	})
 
 
+	$("#level0-first-game").on("click", function(){
+		setLevelFirstGame(0)
+	})
+
 	$("#level1-first-game").on("click", function(){
 		setLevelFirstGame(1)
 	})
@@ -556,6 +562,9 @@
 	})
 
 
+	$("#level0-third-game").on("click", function(){
+		setLevelThirdGame(0)
+	})
 
 	$("#level1-third-game").on("click", function(){
 		setLevelThirdGame(1)
@@ -572,7 +581,7 @@
 		audio.play()
     	$(".loader-container").fadeIn("fast")
 		setTimeout(function(){
-			//lehetséges értékek: 4-5-6: a pálya méretét jelölik (pl.: 4x4)
+			//lehetséges értékek: 4-5-6: a pálya méretét jelölik (pl.: 4x4) 2: 2x2
 			if(firstGameLevel == 1){
 				startFirstGame(4)
 			}
@@ -581,6 +590,9 @@
 			}
 			else if(firstGameLevel == 3){
 				startFirstGame(6)
+			}
+			else if(firstGameLevel == 0){
+				startFirstGame(2)
 			}
 			else{
 				startFirstGame(4)
@@ -622,7 +634,7 @@
 		audio.play()
     	$(".loader-container").fadeIn("fast")
 		setTimeout(function(){
-			//lehetséges értékek: 10-20-30: a bombák számát jelölik (10 bomba van)
+			//lehetséges értékek: 2-10-20-30: a bombák számát jelölik (10 bomba van)
 
 			if(thirdGameLevel == 1){
 				startThirdGame(10)
@@ -632,6 +644,9 @@
 			}
 			else if(thirdGameLevel == 3){
 				startThirdGame(30)
+			}
+			else if(thirdGameLevel == 0){
+				startThirdGame(2)
 			}
 			else{
 				startThirdGame(10)
@@ -650,24 +665,30 @@
 		audio.play()
 		thirdGameLevel = difficulty
 		if(difficulty == 1){
+			$("#level0-third-game img").css("visibility", "hidden")
+
 			$("#level2-third-game img").css("visibility", "hidden")
 			//$("#level2-first-game").css("background-color", "rgba(250, 228, 86, 0.6)")
 			$("#level3-third-game img").css("visibility", "hidden")
 			//$("#level3-first-game").css("background-color", "rgba(250, 228, 86, 0.6)")
 			$("#level1-third-game img").css("visibility", "visible")
 
+			$("#level0-third-game").removeClass("clicked-level")
 
 			$("#level2-third-game").removeClass("clicked-level")
 			$("#level3-third-game").removeClass("clicked-level")
 			$("#level1-third-game").addClass("clicked-level")
 		}
 		else if(difficulty == 2){
+			$("#level0-third-game img").css("visibility", "hidden")
+
 			$("#level1-third-game img").css("visibility", "hidden")
 			//$("#level1-first-game").css("background-color", "rgba(250, 228, 86, 0.6)")
 			$("#level3-third-game img").css("visibility", "hidden")
 			//$("#level3-first-game").css("background-color", "rgba(250, 228, 86, 0.6)")
 			$("#level2-third-game img").css("visibility", "visible")
 
+			$("#level0-third-game").removeClass("clicked-level")
 
 			$("#level1-third-game").removeClass("clicked-level")
 			$("#level3-third-game").removeClass("clicked-level")
@@ -676,12 +697,31 @@
 
 
 		}
+		else if(difficulty == 0){
+			$("#level1-third-game img").css("visibility", "hidden")
+
+			$("#level2-third-game img").css("visibility", "hidden")
+			//$("#level1-first-game").css("background-color", "rgba(250, 228, 86, 0.6)")
+			$("#level3-third-game img").css("visibility", "hidden")
+			//$("#level3-first-game").css("background-color", "rgba(250, 228, 86, 0.6)")
+			$("#level0-third-game img").css("visibility", "visible")
+
+			$("#level1-third-game").removeClass("clicked-level")
+
+			$("#level2-third-game").removeClass("clicked-level")
+			$("#level3-third-game").removeClass("clicked-level")
+			$("#level0-third-game").addClass("clicked-level")
+		}
 		else{
+			$("#level0-third-game img").css("visibility", "hidden")
+
 			$("#level1-third-game img").css("visibility", "hidden")
 			//$("#level1-first-game").css("background-color", "rgba(250, 228, 86, 0.6)")
 			$("#level2-third-game img").css("visibility", "hidden")
 			//$("#level2-first-game").css("background-color", "rgba(250, 228, 86, 0.6)")
 			$("#level3-third-game img").css("visibility", "visible")
+
+			$("#level0-third-game").removeClass("clicked-level")
 
 			$("#level1-third-game").removeClass("clicked-level")
 			$("#level2-third-game").removeClass("clicked-level")
@@ -780,25 +820,29 @@
 		//console.log(difficulty)
 		firstGameLevel = difficulty
 		if(difficulty == 1){
+			$("#level0-first-game img").css("visibility", "hidden")
+
 			$("#level2-first-game img").css("visibility", "hidden")
 			//$("#level2-first-game").css("background-color", "rgba(250, 228, 86, 0.6)")
 			$("#level3-first-game img").css("visibility", "hidden")
 			//$("#level3-first-game").css("background-color", "rgba(250, 228, 86, 0.6)")
 			$("#level1-first-game img").css("visibility", "visible")
 
-
+			$("#level0-first-game").removeClass("clicked-level")
 			$("#level2-first-game").removeClass("clicked-level")
 			$("#level3-first-game").removeClass("clicked-level")
 			$("#level1-first-game").addClass("clicked-level")
 		}
 		else if(difficulty == 2){
+			$("#level0-first-game img").css("visibility", "hidden")
+
 			$("#level1-first-game img").css("visibility", "hidden")
 			//$("#level1-first-game").css("background-color", "rgba(250, 228, 86, 0.6)")
 			$("#level3-first-game img").css("visibility", "hidden")
 			//$("#level3-first-game").css("background-color", "rgba(250, 228, 86, 0.6)")
 			$("#level2-first-game img").css("visibility", "visible")
 
-
+			$("#level0-first-game").removeClass("clicked-level")
 			$("#level1-first-game").removeClass("clicked-level")
 			$("#level3-first-game").removeClass("clicked-level")
 			$("#level2-first-game").addClass("clicked-level")
@@ -806,12 +850,29 @@
 
 
 		}
+		else if(difficulty == 0){
+			$("#level1-first-game img").css("visibility", "hidden")
+
+			$("#level2-first-game img").css("visibility", "hidden")
+			//$("#level1-first-game").css("background-color", "rgba(250, 228, 86, 0.6)")
+			$("#level3-first-game img").css("visibility", "hidden")
+			//$("#level3-first-game").css("background-color", "rgba(250, 228, 86, 0.6)")
+			$("#level0-first-game img").css("visibility", "visible")
+
+			$("#level1-first-game").removeClass("clicked-level")
+			$("#level2-first-game").removeClass("clicked-level")
+			$("#level3-first-game").removeClass("clicked-level")
+			$("#level0-first-game").addClass("clicked-level")
+		}
 		else{
+			$("#level0-first-game img").css("visibility", "hidden")
+
 			$("#level1-first-game img").css("visibility", "hidden")
 			//$("#level1-first-game").css("background-color", "rgba(250, 228, 86, 0.6)")
 			$("#level2-first-game img").css("visibility", "hidden")
 			//$("#level2-first-game").css("background-color", "rgba(250, 228, 86, 0.6)")
 			$("#level3-first-game img").css("visibility", "visible")
+			$("#level0-first-game").removeClass("clicked-level")
 
 			$("#level1-first-game").removeClass("clicked-level")
 			$("#level2-first-game").removeClass("clicked-level")
@@ -830,6 +891,8 @@
 
 
 	function setClickedItemGreen(itemNumber){
+			$("#level0-first-game img").css("visibility", "hidden")
+			$("#level0-first-game").removeClass("clicked-level")
 			$("#level1-first-game img").css("visibility", "hidden")
 			$("#level1-first-game").removeClass("clicked-level")
 			$("#level2-first-game img").css("visibility", "hidden")
@@ -846,6 +909,8 @@
 			$("#level4-second-game img").css("visibility", "hidden")
 			$("#level4-second-game").removeClass("clicked-level")
 
+			$("#level0-third-game img").css("visibility", "hidden")
+			$("#level0-third-game").removeClass("clicked-level")
 			$("#level1-third-game img").css("visibility", "hidden")
 			$("#level1-third-game").removeClass("clicked-level")
 			$("#level2-third-game img").css("visibility", "hidden")

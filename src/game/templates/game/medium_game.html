@@ -348,8 +348,26 @@
 }
 
 #shuffle-status-text{
+	display: flex;
 	color: red;
 	font-size: 1.4em;
+}
+
+#restart-button-container{
+	height: 100%;
+	width: 20%;
+	display: none;
+	align-items: center;
+	justify-content: center;
+}
+
+#reload-arrow-button{
+	max-height: 50%;
+	max-width: 50%;
+}
+
+#reload-arrow-button:hover{
+	cursor: pointer;
 }
 
 </style>
@@ -383,6 +401,9 @@
 	</div>
 	<div id="second-game-footer">
 		<div id="shuffle-status-text">Keverés...</div>
+		<div id="restart-button-container">
+			<img src="{% static 'images/reload-arrow.png' %}" alt="ujraindit" id="reload-arrow-button" onmouseover="changeRestartColor(this)" onmouseout="resetRestartColor(this)">
+		</div>
 	</div>
 	<div class="result-container">
 		<div id="result-message-container">
@@ -456,6 +477,25 @@
 
 	const puzzleSwap = new Audio()
 	puzzleSwap.src = "{% static 'audios/puzzle-swap.mp3' %}"
+
+
+	function changeRestartColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/reload-arrow-red.png' %}")
+	}
+
+	function resetRestartColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/reload-arrow.png' %}")
+	}
+
+	$("#reload-arrow-button").on("click", function(){
+		audio.play()
+		setTimeout(function(){
+			location.reload()
+		}, 200)
+	})
+
+
+
 
 	function changeColor(imageElement){
 		imageElement.setAttribute("src", "{% static 'images/previous-button-red.png' %}")
@@ -589,7 +629,7 @@
 			shufflePieces(shuffleMultiplier * initialValue)
 			disablePuzzleField = false
 			shuffleEnd = true
-			$("#shuffle-status-text").css("visibility", "hidden")
+			$("#shuffle-status-text").css("display", "none")
 		}, 1000)
 		timerInterval = setInterval(generateTime, 1000)
 
@@ -859,6 +899,7 @@
 
 		setTimeout(function(){
 			$(".result-container").css("display", "flex")
+			$("#restart-button-container").css("display", "flex")
 		}, 400)
 
 	}

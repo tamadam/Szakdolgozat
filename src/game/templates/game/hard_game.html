@@ -439,6 +439,23 @@
 	max-height: 100%;
 }
 
+#restart-button-container{
+	height: 100%;
+	width: 20%;
+	display: none;
+	align-items: center;
+	justify-content: center;
+}
+
+#reload-arrow-button{
+	max-height: 50%;
+	max-width: 50%;
+}
+
+#reload-arrow-button:hover{
+	cursor: pointer;
+}
+
 </style>
 
 <div id="third-game-content">
@@ -487,7 +504,9 @@
 		</div>
 	</div>
 	<div id="third-game-footer">
-		<!--footer-->
+		<div id="restart-button-container">
+			<img src="{% static 'images/reload-arrow.png' %}" alt="ujraindit" id="reload-arrow-button" onmouseover="changeRestartColor(this)" onmouseout="resetRestartColor(this)">
+		</div>
 	</div>
 	<div class="result-container">
 		<div id="result-message-container">
@@ -564,6 +583,26 @@
 	const clickFieldBombGame = new Audio()
 	clickFieldBombGame.src = "{% static 'audios/clickfieldbomb.mp3' %}"
 
+
+
+
+	function changeRestartColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/reload-arrow-red.png' %}")
+	}
+
+	function resetRestartColor(imageElement){
+		imageElement.setAttribute("src", "{% static 'images/reload-arrow.png' %}")
+	}
+
+	$("#reload-arrow-button").on("click", function(){
+		audio.play()
+		setTimeout(function(){
+			location.reload()
+		}, 200)
+	})
+
+
+
 	function changeColor(imageElement){
 		imageElement.setAttribute("src", "{% static 'images/previous-button-red.png' %}")
 	}
@@ -607,7 +646,7 @@
 		{name: "black", code: "#000000"},
 	]
 
-	var gameFieldSize = 10
+	var gameFieldSize = 10 // ez a sorok és oszlopok száma, nem a bombáké, a tábla állandó méretű
 	var gameBoard = []
 	var fieldsContainer = null
 
@@ -837,7 +876,7 @@
 
 		//console.log("Megtalált bombák száma: " + foundBombsCount)
 		$(".result-container").css("display", "flex")
-
+		$("#restart-button-container").css("display", "flex")
 	}
 
 	function showBombs(){
